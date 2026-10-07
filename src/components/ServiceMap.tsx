@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import { getProperties } from '../services/wordpress';
@@ -7,28 +6,49 @@ import { Property } from '../types';
 const ServiceMap: React.FC = () => {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
 
-  // 1. Fetch properties (simulating headless WP fetch)
+  // Fetch properties once and keep the map alive between updates.
   useEffect(() => {
-     getProperties().then(data => setProperties(data));
+    let isMounted = true;
+
+    getProperties().then(data => {
+      if (isMounted) setProperties(data);
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // 2. Initialize Map when properties are loaded
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current || properties.length === 0) return;
+    if (!mapContainerRef.current || mapRef.current) return;
 
-    // Initialize Map centered on Cape May County
     mapRef.current = L.map(mapContainerRef.current).setView([39.05, -74.78], 10);
 
-    // Add OpenStreetMap Tile Layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(mapRef.current);
 
-    // Custom Icon for Pins
+    markersLayerRef.current = L.layerGroup().addTo(mapRef.current);
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+      markersLayerRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || !markersLayerRef.current || properties.length === 0) return;
+
+    markersLayerRef.current.clearLayers();
+
     const customIcon = L.divIcon({
       className: 'custom-div-icon',
       html: `<div style="background-color: #0f172a; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
@@ -37,10 +57,8 @@ const ServiceMap: React.FC = () => {
       popupAnchor: [0, -10]
     });
 
-    // Add Markers
     properties.forEach((prop) => {
       const marker = L.marker([prop.coordinates.lat, prop.coordinates.lng], { icon: customIcon })
-        .addTo(mapRef.current!)
         .bindPopup(`
           <div class="font-sans">
             <div class="relative h-32 w-full">
@@ -53,24 +71,16 @@ const ServiceMap: React.FC = () => {
               <div class="text-xs text-slate-500 mb-2">${prop.city}, NJ</div>
               <div class="flex gap-2">
                  <a href="#/portfolio/${prop.id}" class="flex-1 text-center py-1 px-2 rounded bg-slate-100 text-xs font-bold text-slate-700 uppercase hover:bg-slate-200">View Album</a>
-                 ${prop.listingUrl ? `<a href="${prop.listingUrl}" target="_blank" class="flex-1 text-center py-1 px-2 rounded bg-brand-gold/20 text-xs font-bold text-[#c0a062] uppercase hover:bg-brand-gold/30">Listing</a>` : ''}
+                 ${prop.listingUrl ? `<a href="${prop.listingUrl}" target="_blank" class="flex-1 text-center py-1 px-2 rounded bg-brand-gold/20 text-xs font-bold text-[#c0a062] uppercase hover:bg-brand-gold/30">View Listing</a>` : ''}
               </div>
             </div>
           </div>
         `);
-      
-      marker.on('mouseover', function (this: L.Marker) {
-        this.openPopup();
-      });
-    });
 
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [properties]); // Re-run when properties data arrives
+      marker.on('mouseover', () => marker.openPopup());
+      marker.addTo(markersLayerRef.current!);
+    });
+  }, [properties]);
 
   return (
     <div className="relative w-full h-[600px] bg-slate-100 rounded-xl overflow-hidden shadow-xl border border-slate-200 z-0">
