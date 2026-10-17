@@ -1,5 +1,4 @@
-node_modules
-dist
-.netlify
+# Internal notes -- never publish
+claude-review-prompt.md
+__pycache__/
 .DS_Store
-.vercel

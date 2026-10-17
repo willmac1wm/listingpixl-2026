@@ -1,21 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Listing Pixl | Cape May Real Estate Photography</title>
-    <meta name="description" content="Professional real estate photography serving Cape May County. HDR photos, drone photography, twilight shoots, and virtual tours for Avalon, Stone Harbor, Wildwood, Sea Isle City, and all Jersey Shore communities." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <!-- Leaflet Map CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-  </head>
-  <body class="bg-slate-50 text-slate-800 antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate Photographer Cape May County NJ | Listing Pixl</title>
+  <meta name="description" content="Listing Pixl — real estate photographer in Cape May County & South Jersey NJ. HDR photos, drone aerials, twilights, 3D tours, floor plans.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Real Estate Photographer Cape May County NJ | Listing Pixl">
+  <meta property="og:description" content="HDR photos, drone aerials, twilight shoots, 3D tours, floor plans & virtual staging for South Jersey listings.">
+  <meta property="og:image" content="images/riogrande_01_twilight.jpg">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Listing Pixl",
+    "description": "Real estate photographer in Cape May County & South Jersey NJ. HDR photos, drone aerials, twilight shoots, 3D tours, floor plans.",
+    "telephone": "+1-609-780-7027",
+    "email": "ListingPixl.Media@gmail.com",
+    "url": "https://listingpixl.com",
+    "sameAs": ["https://www.facebook.com/listing.pixl.media/"],
+    "priceRange": "$295–$750",
+    "areaServed": ["Cape May", "Wildwood", "North Wildwood", "Ocean City", "Stone Harbor", "Avalon", "Sea Isle City", "Villas", "Somers Point", "Millville", "Buena", "Lower Township", "Middle Township", "Dennis Township", "Ocean View", "Cape May Court House", "North Cape May"],
+    "makesOffer": [
+      {"@type": "Offer", "name": "Essential", "price": "295", "priceCurrency": "USD"},
+      {"@type": "Offer", "name": "Showcase", "price": "475", "priceCurrency": "USD"},
+      {"@type": "Offer", "name": "Premiere", "price": "750", "priceCurrency": "USD"}
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1900535534248768');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1900535534248768&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5EWNW94QHH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5EWNW94QHH');
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top">Listing&nbsp;Pixl</a>
+      <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#areas">Service Area</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="#contact" class="nav-cta">Lock In Your Shoot</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-bg" role="img" aria-label="Wildwood, New Jersey home glowing at twilight"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Real Estate Photography That Sells the Listing</h1>
+        <p class="hero-sub">HDR photos, drone aerials, twilights, 3D tours &amp; more — Cape May County &amp; South Jersey</p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn btn-primary">Lock In Your Shoot</a>
+          <a href="#packages" class="btn btn-secondary">See Packages</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="section" aria-labelledby="services-heading">
+      <div class="wrap">
+        <h2 id="services-heading">Services</h2>
+        <p class="section-lede">Everything your listing needs to stop the scroll — shot, edited and delivered fast.</p>
+        <div class="services-grid">
+          <article class="service-card">
+            <h3>HDR Listing Photography</h3>
+            <p>Bright, true-color listing photos that make rooms look their best.</p>
+          </article>
+          <article class="service-card">
+            <h3>Aerial Drone Photo &amp; Video</h3>
+            <p>Drone aerials showing the lot, setting and neighborhood.</p>
+          </article>
+          <article class="service-card">
+            <h3>Twilight / Dusk Photography</h3>
+            <p>Golden-hour exterior shoots that stop the scroll.</p>
+          </article>
+          <article class="service-card">
+            <h3>3D Matterport Tours</h3>
+            <p>Immersive walkthroughs buyers explore from anywhere.</p>
+          </article>
+          <article class="service-card">
+            <h3>2D Floor Plans</h3>
+            <p>Measured floor plans for your listing.</p>
+          </article>
+          <article class="service-card">
+            <h3>Virtual Staging</h3>
+            <p>Empty rooms digitally furnished to sell the vision.</p>
+          </article>
+          <article class="service-card">
+            <h3>Cinematic Property Video</h3>
+            <p>Walkthrough films for social and MLS.</p>
+          </article>
+          <article class="service-card">
+            <h3>Property Websites</h3>
+            <p>Single-property sites for premium listings.</p>
+          </article>
+          <article class="service-card">
+            <h3>Vacation Rental Photography</h3>
+            <p>Airbnb &amp; VRBO shoots that keep your calendar full.</p>
+          </article>
+          <article class="service-card">
+            <h3>360&deg; Drone Panoramas</h3>
+            <p>Interactive aerial panoramas buyers can spin around.</p>
+          </article>
+          <article class="service-card">
+            <h3>Neighborhood Highlight Videos</h3>
+            <p>Sell the town, not just the house.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKAGES -->
+    <section id="packages" class="section section-alt" aria-labelledby="packages-heading">
+      <div class="wrap">
+        <h2 id="packages-heading">Packages</h2>
+        <p class="section-lede">Simple pricing, no surprises. Every package includes professional editing and fast delivery.</p>
+        <div class="packages-grid">
+          <article class="package-card">
+            <h3>Essential</h3>
+            <p class="price">$295</p>
+            <ul>
+              <li>40&ndash;50 HDR photos (30&ndash;35 ground + 10&ndash;15&nbsp;drone)</li>
+              <li>Professional editing &amp; color correction</li>
+              <li>Next-day delivery</li>
+              <li>MLS-ready sizing</li>
+            </ul>
+            <a href="#contact" class="btn btn-outline">Lock In Essential</a>
+          </article>
+          <article class="package-card featured">
+            <h3>Showcase</h3>
+            <p class="price">$475</p>
+            <ul>
+              <li>Everything in Essential</li>
+              <li>60-second exterior drone video</li>
+              <li>2 virtual twilight edits</li>
+              <li>2D floor plan</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary">Lock In Showcase</a>
+          </article>
+          <article class="package-card">
+            <h3>Premiere</h3>
+            <p class="price">$750</p>
+            <ul>
+              <li>Everything in Showcase</li>
+              <li>1&ndash;2 minute cinematic walkthrough video</li>
+              <li>Matterport 3D virtual tour (3 months hosting)</li>
+            </ul>
+            <a href="#contact" class="btn btn-outline">Lock In Premiere</a>
+          </article>
+        </div>
+        <div class="alacarte">
+          <h3>À la carte</h3>
+          <p class="section-lede">Add to any package, or order on its own.</p>
+          <ul class="alacarte-list">
+            <li><strong>Virtual staging</strong> — empty rooms digitally furnished <span class="alacarte-price">$35 / photo</span></li>
+            <li><strong>Virtual decluttering</strong> — remove clutter and old furniture from photos <span class="alacarte-price">$25 / photo</span></li>
+            <li><strong>Vacation rental shoot</strong> — lifestyle shoot + house shoot, two sessions <span class="alacarte-price">$800</span></li>
+            <li><strong>360&deg; drone panorama</strong> — interactive aerial panorama, add-on to any shoot <span class="alacarte-price">$95</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="section" aria-labelledby="portfolio-heading">
+      <div class="wrap">
+        <h2 id="portfolio-heading">Recent Work</h2>
+        <p class="section-lede">A sample of recent shoots across Cape May County &amp; South Jersey.</p>
+        <div class="gallery">
+          <figure class="gallery-item"><img src="images/riogrande_01_twilight.jpg" srcset="images/riogrande_01_twilight-480.jpg 480w, images/riogrande_01_twilight-800.jpg 800w, images/riogrande_01_twilight-1200.jpg 1200w, images/riogrande_01_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Wildwood, NJ home glowing at twilight under a purple and pink dusk sky" loading="lazy"><figcaption>Twilight — Wildwood</figcaption></figure>
+          <figure class="gallery-item"><img src="images/riogrande_02_drone_twilight.jpg" srcset="images/riogrande_02_drone_twilight-480.jpg 480w, images/riogrande_02_drone_twilight-800.jpg 800w, images/riogrande_02_drone_twilight-1200.jpg 1200w, images/riogrande_02_drone_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Drone aerial of Wildwood NJ at blue hour with the ocean in the distance" loading="lazy"><figcaption>Drone twilight — Wildwood</figcaption></figure>
+          <figure class="gallery-item"><img src="images/dovedr_01_twilight.jpg" srcset="images/dovedr_01_twilight-480.jpg 480w, images/dovedr_01_twilight-800.jpg 800w, images/dovedr_01_twilight-1200.jpg 1200w, images/dovedr_01_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Mid-century modern home in Millville NJ photographed at twilight" loading="lazy"><figcaption>Twilight — Millville</figcaption></figure>
+          <figure class="gallery-item"><img src="images/dovedr_04_aerial_lake.jpg" srcset="images/dovedr_04_aerial_lake-480.jpg 480w, images/dovedr_04_aerial_lake-800.jpg 800w, images/dovedr_04_aerial_lake-1200.jpg 1200w, images/dovedr_04_aerial_lake.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Drone view of a wooded lake lot with a home in Millville NJ" loading="lazy"><figcaption>Drone aerial — Millville</figcaption></figure>
+          <figure class="gallery-item"><img src="images/villas_01_exterior.jpg" srcset="images/villas_01_exterior-480.jpg 480w, images/villas_01_exterior-800.jpg 800w, images/villas_01_exterior-1200.jpg 1200w, images/villas_01_exterior.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Charming shore cottage exterior with deck in Villas NJ" loading="lazy"><figcaption>Exterior — Villas</figcaption></figure>
+          <figure class="gallery-item"><img src="images/villas_02_aerial.jpg" srcset="images/villas_02_aerial-480.jpg 480w, images/villas_02_aerial-800.jpg 800w, images/villas_02_aerial-1200.jpg 1200w, images/villas_02_aerial.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Drone aerial of a Villas NJ cottage and surrounding neighborhood" loading="lazy"><figcaption>Drone aerial — Villas</figcaption></figure>
+          <figure class="gallery-item"><img src="images/standrews_01_staged_twilight.jpg" srcset="images/standrews_01_staged_twilight-480.jpg 480w, images/standrews_01_staged_twilight-800.jpg 800w, images/standrews_01_staged_twilight-1200.jpg 1200w, images/standrews_01_staged_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Cape May Court House NJ townhome glowing at twilight" loading="lazy"><figcaption>Twilight — Cape May Court House</figcaption></figure>
+          <figure class="gallery-item"><img src="images/paradiseway_01_staged.jpg" srcset="images/paradiseway_01_staged-480.jpg 480w, images/paradiseway_01_staged-800.jpg 800w, images/paradiseway_01_staged-1200.jpg 1200w, images/paradiseway_01_staged.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="North Wildwood NJ townhomes glowing at twilight" loading="lazy"><figcaption>Twilight — North Wildwood</figcaption></figure>
+          <figure class="gallery-item"><img src="images/paradiseway_03_floorplan.jpg" srcset="images/paradiseway_03_floorplan-480.jpg 480w, images/paradiseway_03_floorplan-800.jpg 800w, images/paradiseway_03_floorplan-1200.jpg 1200w, images/paradiseway_03_floorplan.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Measured 2D floor plan of a North Wildwood NJ listing" loading="lazy"><figcaption>Floor plan — North Wildwood</figcaption></figure>
+          <figure class="gallery-item"><img src="images/euclid_01_aerial.jpg" srcset="images/euclid_01_aerial-480.jpg 480w, images/euclid_01_aerial-800.jpg 800w, images/euclid_01_aerial-1200.jpg 1200w, images/euclid_01_aerial.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Drone aerial of a Somers Point NJ home showing the lot and roof" loading="lazy"><figcaption>Drone aerial — Somers Point</figcaption></figure>
+          <figure class="gallery-item"><img src="images/williamsway_01_twilight.jpg" srcset="images/williamsway_01_twilight-480.jpg 480w, images/williamsway_01_twilight-800.jpg 800w, images/williamsway_01_twilight-1200.jpg 1200w, images/williamsway_01_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Ocean View NJ home at twilight with warm glowing windows" loading="lazy"><figcaption>Twilight — Ocean View</figcaption></figure>
+          <figure class="gallery-item"><img src="images/villasny_01_twilight.jpg" srcset="images/villasny_01_twilight-480.jpg 480w, images/villasny_01_twilight-800.jpg 800w, images/villasny_01_twilight-1200.jpg 1200w, images/villasny_01_twilight.jpg 1600w" sizes="(max-width: 720px) 100vw, 480px" alt="Villas NJ home at dusk with warm windows against a blue-hour sky" loading="lazy"><figcaption>Twilight — Villas</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICE AREA -->
+    <section id="areas" class="section section-alt" aria-labelledby="areas-heading">
+      <div class="wrap">
+        <h2 id="areas-heading">Service Area</h2>
+        <p class="section-lede">Proudly shooting across Cape May County &amp; South Jersey:</p>
+        <ul class="town-list">
+          <li>Cape May</li>
+          <li>Wildwood</li>
+          <li>North Wildwood</li>
+          <li>Ocean City</li>
+          <li>Stone Harbor</li>
+          <li>Avalon</li>
+          <li>Sea Isle City</li>
+          <li>Villas</li>
+          <li>Somers Point</li>
+          <li>Millville</li>
+          <li>Buena</li>
+          <li>Lower Township</li>
+          <li>Middle Township</li>
+          <li>Dennis Township</li>
+          <li>Ocean View</li>
+          <li>Cape May Court House</li>
+          <li>North Cape May</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" aria-labelledby="about-heading">
+      <div class="wrap narrow">
+        <h2 id="about-heading">About</h2>
+        <p class="about-text">Listing Pixl is a South Jersey real estate media studio helping agents win listings and sell homes faster with photography that stops the scroll.</p>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section section-alt" aria-labelledby="contact-heading">
+      <div class="wrap narrow">
+        <h2 id="contact-heading">Lock In Your Shoot</h2>
+        <p class="section-lede">Pick your package and preferred time — your slot is reserved the moment you send this.</p>
+        <div class="contact-details">
+          <p>Phone: <a href="tel:+16097807027">(609) 780-7027</a></p>
+          <p>Email: <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a></p>
+        </div>
+        <form id="booking-form" novalidate>
+          <div class="form-row">
+            <label>Name <span aria-hidden="true">*</span><input type="text" name="name" required autocomplete="name"></label>
+            <label>Email <span aria-hidden="true">*</span><input type="email" name="email" required autocomplete="email"></label>
+          </div>
+          <div class="form-row">
+            <label>Phone <span aria-hidden="true">*</span><input type="tel" name="phone" autocomplete="tel" required></label>
+            <label>Package
+              <select name="package">
+                <option value="">Not sure yet</option>
+                <option>Essential — $295</option>
+                <option>Showcase — $475</option>
+                <option>Premiere — $750</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Property address<input type="text" name="address" autocomplete="off"></label>
+            <label>Preferred date<input type="date" name="date"></label>
+          </div>
+          <label>Message<textarea name="message" rows="4" placeholder="Shoot date, services needed, anything else…"></textarea></label>
+          <button type="submit" class="btn btn-primary">Lock In My Shoot</button>
+          <p class="form-note" id="form-fallback" role="status" hidden>Nothing opened? Email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a> instead.</p>
+          <p class="form-note">This opens your email app with your booking pre-filled. We'll text you to confirm the details.</p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
+      <p><a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
+      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+    });
+    const toggle = document.querySelector('.nav-toggle');
+    const links = document.querySelector('.nav-links');
+    function setMenu(open) {
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open);
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+    toggle.addEventListener('click', () => setMenu(!links.classList.contains('open')));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+    // Booking form -> prefilled email
+    const bookingForm = document.getElementById('booking-form');
+    const dateInput = bookingForm.querySelector('input[name="date"]');
+    const d = new Date();
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    dateInput.min = `${y}-${m}-${day}`;
+    bookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!bookingForm.reportValidity()) return;
+      const data = new FormData(bookingForm);
+      const get = (k) => (data.get(k) || '').toString().trim();
+      const pkg = get('package') || 'Not sure yet';
+      const subject = encodeURIComponent('Shoot booking — ' + (get('address') || get('name') || 'Listing Pixl'));
+      const body = encodeURIComponent(
+        'Name: ' + get('name') + '\r\n' +
+        'Email: ' + get('email') + '\r\n' +
+        'Phone: ' + get('phone') + '\r\n' +
+        'Property address: ' + get('address') + '\r\n' +
+        'Preferred date: ' + get('date') + '\r\n' +
+        'Package: ' + pkg + '\r\n\r\n' +
+        'Message:\r\n' + get('message')
+      );
+      window.location.href = 'mailto:ListingPixl.Media@gmail.com?subject=' + subject + '&body=' + body;
+      if (window.fbq) fbq('track', 'Lead', {content_name: pkg});
+      const note = document.getElementById('form-fallback');
+      if (note) note.hidden = false;
+    });
+  </script>
+</body>
 </html>
