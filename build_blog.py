@@ -11,6 +11,7 @@ IMAGES = os.path.join(HERE, "images")
 os.makedirs(BLOG, exist_ok=True)
 
 PHONE = "(609) 780-7027"
+DOMAIN = "https://listingpixl.com"
 PIXEL_ID = "1900535534248768"
 PIXEL_SNIPPET = """  <!-- Meta Pixel Code -->
   <script>
@@ -80,6 +81,7 @@ SHOOTS = [
          blurb="Staged twilight shots and drone aerials in Cape May Court House."),
     dict(slug="7710-atlantic-ave-wildwood-nj", address="7710 Atlantic Ave Unit 403", town="Wildwood", zip="08260",
          agent="Alexander M. Powers", brokerage="Keller Williams Jersey Shore", date="2025",
+         desc="Listing Pixl photographed this Wildwood NJ condo at 7710 Atlantic Ave Unit 403. Drone aerials over the beach.",
          photos=[("atlantic_01.jpg", "Drone aerial over Wildwood NJ beach and oceanfront buildings"),
                  ("atlantic_02.jpg", "Aerial view of Wildwood beach, ocean and shoreline hotels"),
                  ("atlantic_03.jpg", "Wide drone aerial of the Wildwood NJ coastline")],
@@ -132,6 +134,7 @@ NAV = """  <header class="site-header">
         <li><a href="../index.html#portfolio">Portfolio</a></li>
         <li><a href="../index.html#areas">Service Area</a></li>
         <li><a href="index.html">Blog</a></li>
+        <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
         <li><a href="../index.html#contact" class="nav-cta">Lock In Your Shoot</a></li>
       </ul>
     </nav>
@@ -140,7 +143,7 @@ NAV = """  <header class="site-header">
 FOOTER = f"""  <footer class="site-footer">
     <div class="wrap">
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a></p>
+      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a></p>
     </div>
   </footer>
 
@@ -190,8 +193,8 @@ def srcset(fname, prefix="../images/"):
     return ' srcset="' + ", ".join(parts) + '" sizes="(max-width: 720px) 100vw, 720px"'
 
 def post_page(s):
-    title = f"{s['address']}, {s['town']} NJ | Listing Pixl"
-    desc = (f"Listing Pixl photographed this {s['town']}, NJ listing at {s['address']} "
+    title = f"{s['address']}, {s['town']} NJ Real Estate Photos | Listing Pixl"
+    desc = s.get("desc") or (f"Listing Pixl photographed this {s['town']}, NJ listing at {s['address']} "
             f"for {s['agent']} ({s['brokerage']}). HDR photos, drone aerials and twilights.")
     services = s.get("services_note") or DEFAULT_SERVICES_NOTE.format(town=html.escape(s['town']))
     def _img(i, p, a):
@@ -221,9 +224,12 @@ def post_page(s):
   <title>{html.escape(title)}</title>
   <meta name="description" content="{html.escape(desc)}">
   <meta property="og:type" content="article">
+  <link rel="canonical" href="{DOMAIN}/blog/{s['slug']}.html">
+  <meta property="og:url" content="{DOMAIN}/blog/{s['slug']}.html">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:title" content="{html.escape(title)}">
   <meta property="og:description" content="{html.escape(desc)}">
-  <meta property="og:image" content="../images/{s['photos'][0][0]}">
+  <meta property="og:image" content="{DOMAIN}/images/{s['photos'][0][0]}">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="icon" href="../favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -283,6 +289,10 @@ def index_page():
   <title>Recent Shoots | Listing Pixl South Jersey Real Estate Photography</title>
   <meta name="description" content="Recent real estate photography shoots by Listing Pixl across Cape May County & South Jersey NJ.">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="{DOMAIN}/blog/">
+  <meta property="og:url" content="{DOMAIN}/blog/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image" content="{DOMAIN}/images/riogrande_01_twilight.jpg">
   <meta property="og:title" content="Recent Shoots | Listing Pixl">
   <meta property="og:description" content="Recent listing shoots across Cape May County & South Jersey NJ.">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">

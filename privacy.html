@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | Listing Pixl</title>
+  <meta name="description" content="Privacy policy for Listing Pixl — how we handle booking inquiries, Google Analytics, and the Meta Pixel.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1900535534248768');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1900535534248768&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5EWNW94QHH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5EWNW94QHH');
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html" class="brand">Listing Pixl</a>
+      <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html#packages">Packages</a></li>
+        <li><a href="index.html#work">Work</a></li>
+        <li><a href="index.html#areas">Service Area</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
+        <li><a href="index.html#contact" class="nav-cta">Lock In Your Shoot</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <div class="wrap narrow">
+        <h1>Privacy Policy</h1>
+        <p><em>Last updated: October 16, 2026. This is a plain-English summary of how this site handles your information. It is not legal advice.</em></p>
+
+        <h2>Booking inquiries</h2>
+        <p>When you fill out the "Lock In Your Shoot" form, your browser opens your own email app with your details pre-filled, addressed to ListingPixl.Media@gmail.com. We receive whatever you choose to send: your name, email, phone number, property address, preferred date, and package choice. We use it only to confirm and schedule your shoot, and we never sell it or share it with anyone else.</p>
+
+        <h2>Google Analytics</h2>
+        <p>We use Google Analytics to understand how visitors use the site (for example, which pages are viewed). Google may collect your IP address, device and browser information. You can opt out with Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a>, or by blocking analytics cookies in your browser settings.</p>
+
+        <h2>Meta Pixel</h2>
+        <p>We use the Meta Pixel to measure visits and, in the future, to show relevant ads to people who visited the site. Meta may collect page views and interactions as described in <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">Meta's privacy policy</a>. You can control ad preferences in your <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener">Facebook ad preferences</a>.</p>
+
+        <h2>Your choices</h2>
+        <p>You can browse the site with JavaScript disabled, use your browser's private mode, or install a tracker blocker — the site will still work. To ask what information we hold about you, or to ask us to delete it, email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a>.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
+      <p><a href="privacy.html">Privacy Policy</a> &middot; <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a></p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
+      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+    });
+    const toggle = document.querySelector('.nav-toggle');
+    const links = document.querySelector('.nav-links');
+    function setMenu(open) {
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open);
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+    toggle.addEventListener('click', () => setMenu(!links.classList.contains('open')));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  </script>
+</body>
+</html>

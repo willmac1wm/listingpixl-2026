@@ -6,9 +6,12 @@
   <title>Real Estate Photographer Cape May County NJ | Listing Pixl</title>
   <meta name="description" content="Listing Pixl — real estate photographer in Cape May County & South Jersey NJ. HDR photos, drone aerials, twilights, 3D tours, floor plans.">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="https://listingpixl.com/">
+  <meta property="og:url" content="https://listingpixl.com/">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:title" content="Real Estate Photographer Cape May County NJ | Listing Pixl">
   <meta property="og:description" content="HDR photos, drone aerials, twilight shoots, 3D tours, floor plans & virtual staging for South Jersey listings.">
-  <meta property="og:image" content="images/riogrande_01_twilight.jpg">
+  <meta property="og:image" content="https://listingpixl.com/images/riogrande_01_twilight.jpg">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -62,7 +65,7 @@
 
   <header class="site-header">
     <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="#top">Listing&nbsp;Pixl</a>
+      <a class="brand" href="#top" aria-label="Listing Pixl home"><img src="images/logo-horizontal.jpg" alt="Listing Pixl" class="brand-logo"></a>
       <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="#services">Services</a></li>
@@ -70,7 +73,8 @@
         <li><a href="#portfolio">Portfolio</a></li>
         <li><a href="#areas">Service Area</a></li>
         <li><a href="blog/index.html">Blog</a></li>
-        <li><a href="#contact" class="nav-cta">Lock In Your Shoot</a></li>
+        <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
+        <li><a href="#contact" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
       </ul>
     </nav>
   </header>
@@ -85,7 +89,7 @@
         <h1>Real Estate Photography That Sells the Listing</h1>
         <p class="hero-sub">HDR photos, drone aerials, twilights, 3D tours &amp; more — Cape May County &amp; South Jersey</p>
         <div class="hero-ctas">
-          <a href="#contact" class="btn btn-primary">Lock In Your Shoot</a>
+          <a href="#contact" class="btn btn-pink">Lock In Your Shoot</a>
           <a href="#packages" class="btn btn-secondary">See Packages</a>
         </div>
       </div>
@@ -284,7 +288,7 @@
             <label>Preferred date<input type="date" name="date"></label>
           </div>
           <label>Message<textarea name="message" rows="4" placeholder="Shoot date, services needed, anything else…"></textarea></label>
-          <button type="submit" class="btn btn-primary">Lock In My Shoot</button>
+          <button type="submit" class="btn btn-pink">Lock In My Shoot</button>
           <p class="form-note" id="form-fallback" role="status" hidden>Nothing opened? Email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a> instead.</p>
           <p class="form-note">This opens your email app with your booking pre-filled. We'll text you to confirm the details.</p>
         </form>
@@ -296,7 +300,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a></p>
+      <p><a href="privacy.html">Privacy Policy</a> &middot; <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a></p>
     </div>
   </footer>
 
@@ -339,6 +343,7 @@
       );
       window.location.href = 'mailto:ListingPixl.Media@gmail.com?subject=' + subject + '&body=' + body;
       if (window.fbq) fbq('track', 'Lead', {content_name: pkg});
+      if (window.gtag) gtag('event', 'generate_lead', {package: pkg});
       const note = document.getElementById('form-fallback');
       if (note) note.hidden = false;
     });
