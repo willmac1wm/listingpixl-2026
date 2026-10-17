@@ -328,7 +328,18 @@ a[href^="tel:"] { white-space: nowrap; }
   }
   .nav-links.open { display: flex; }
   .nav-links a { display: block; padding: 0.65rem 0.25rem; min-height: 44px; }
-}
   .form-row { grid-template-columns: 1fr; }
   .section { padding: 2.75rem 0; }
+  /* Two compact service cards per row so phones reach Packages sooner */
+  .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+  .service-card { padding: 1rem; }
+  .service-card h3 { font-size: 0.98rem; }
+  .service-card p { font-size: 0.88rem; }
+  /* Lighter hero photo on phones (~83 KB instead of ~290 KB) */
+  .hero-bg { background-image: url("images/riogrande_01_twilight-800.jpg"); }
+}
+
+/* Mid-size screens: 1200px hero is plenty */
+@media (min-width: 721px) and (max-width: 1200px) {
+  .hero-bg { background-image: url("images/riogrande_01_twilight-1200.jpg"); }
 }
