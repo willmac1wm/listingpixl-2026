@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>205 St Andrews Dr, Cape May Court House NJ Real Estate Photos | Listing Pixl</title>
+  <title>205 St Andrews Dr, Cape May Court House NJ Real Estate Photos</title>
   <meta name="description" content="Listing Pixl photographed this Cape May Court House, NJ listing at 205 St Andrews Dr for Jason Ruffenach (eXp Realty). HDR photos, drone aerials and twilights.">
   <meta property="og:type" content="article">
   <link rel="canonical" href="https://listingpixl.com/blog/205-st-andrews-dr-cape-may-court-house-nj.html">
   <meta property="og:url" content="https://listingpixl.com/blog/205-st-andrews-dr-cape-may-court-house-nj.html">
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:title" content="205 St Andrews Dr, Cape May Court House NJ Real Estate Photos | Listing Pixl">
+  <meta property="og:title" content="205 St Andrews Dr, Cape May Court House NJ Real Estate Photos">
   <meta property="og:description" content="Listing Pixl photographed this Cape May Court House, NJ listing at 205 St Andrews Dr for Jason Ruffenach (eXp Realty). HDR photos, drone aerials and twilights.">
   <meta property="og:image" content="https://listingpixl.com/images/standrews_01_staged_twilight.jpg">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -22,9 +22,9 @@
   "@type": "BlogPosting",
   "headline": "Real Estate Photography in Cape May Court House, NJ: 205 St Andrews Dr",
   "image": [
-    "../images/standrews_01_staged_twilight.jpg",
-    "../images/standrews_02_twilight.jpg",
-    "../images/standrews_03_aerial.jpg"
+    "https://listingpixl.com/images/standrews_01_staged_twilight.jpg",
+    "https://listingpixl.com/images/standrews_02_twilight.jpg",
+    "https://listingpixl.com/images/standrews_03_aerial.jpg"
   ],
   "author": {
     "@type": "Organization",
@@ -123,7 +123,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');

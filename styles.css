@@ -5,9 +5,9 @@
   --muted: #5c5c5c;
   --bg: #ffffff;
   --bg-alt: #f6f5f2;
-  --accent: #0e8fa3;        /* brand teal (from logo) */
+  --accent: #0c7a8c;        /* brand teal, a touch deeper than the logo's #0e8fa3 so text meets WCAG AA (5.0:1 on white) */
   --accent-dark: #0a6e7f;    /* deep teal */
-  --accent-pink: #ec1c74;    /* brand hot pink (from logo) */
+  --accent-pink: #d71266;    /* brand hot pink, a touch deeper than the logo's #ec1c74 so white button text meets WCAG AA (5.0:1) */
   --accent-pink-dark: #c2145f;
   --card-border: #e5e2da;
   --field-border: #8a8478;
@@ -81,12 +81,12 @@ h2 { font-size: 2rem; text-align: center; }
 .nav-links a:hover { color: var(--accent); }
 
 .nav-cta {
-  background: var(--accent);
+  background: var(--accent-pink);
   color: #fff !important;
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
 }
-.nav-cta:hover { background: var(--accent-dark); }
+.nav-cta:hover { background: var(--accent-pink-dark); }
 .nav-cta.btn-pink { background: var(--accent-pink); }
 .nav-cta.btn-pink:hover { background: var(--accent-pink-dark); }
 

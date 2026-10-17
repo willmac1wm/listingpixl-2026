@@ -22,8 +22,8 @@
   "@type": "BlogPosting",
   "headline": "Real Estate Photography in Buena, NJ: 114 Catherine Ave",
   "image": [
-    "../images/catherine_01_exterior.jpg",
-    "../images/catherine_02_aerial.jpg"
+    "https://listingpixl.com/images/catherine_01_exterior.jpg",
+    "https://listingpixl.com/images/catherine_02_aerial.jpg"
   ],
   "author": {
     "@type": "Organization",
@@ -119,7 +119,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');

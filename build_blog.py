@@ -149,7 +149,10 @@ FOOTER = f"""  <footer class="site-footer">
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {{
-      a.addEventListener('click', () => {{ if (window.fbq) fbq('track', 'Contact'); }});
+      a.addEventListener('click', () => {{
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {{method: a.href.startsWith('tel:') ? 'phone' : 'email'}});
+      }});
     }});
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');
@@ -194,6 +197,8 @@ def srcset(fname, prefix="../images/"):
 
 def post_page(s):
     title = f"{s['address']}, {s['town']} NJ Real Estate Photos | Listing Pixl"
+    if len(title) > 62:  # Google truncates around 60 characters; drop the brand suffix on long addresses
+        title = f"{s['address']}, {s['town']} NJ Real Estate Photos"
     desc = s.get("desc") or (f"Listing Pixl photographed this {s['town']}, NJ listing at {s['address']} "
             f"for {s['agent']} ({s['brokerage']}). HDR photos, drone aerials and twilights.")
     services = s.get("services_note") or DEFAULT_SERVICES_NOTE.format(town=html.escape(s['town']))
@@ -212,7 +217,7 @@ def post_page(s):
            f'Call or text <a href="tel:+16097807027">{PHONE}</a> or <a href="../index.html#contact">lock in your shoot online</a>.')
     schema = {"@context": "https://schema.org", "@type": "BlogPosting",
               "headline": f"Real Estate Photography in {s['town']}, NJ: {s['address']}",
-              "image": [f"../images/{p}" for p, _ in s["photos"]],
+              "image": [f"{DOMAIN}/images/{p}" for p, _ in s["photos"]],
               "author": {"@type": "Organization", "name": "Listing Pixl", "telephone": PHONE},
               "publisher": {"@type": "Organization", "name": "Listing Pixl"},
               "about": f"Real estate photography in {s['town']}, New Jersey"}

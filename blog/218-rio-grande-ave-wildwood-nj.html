@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>218 Rio Grande Ave, Wildwood NJ Real Estate Photos | Listing Pixl</title>
+  <title>218 Rio Grande Ave, Wildwood NJ Real Estate Photos</title>
   <meta name="description" content="Listing Pixl photographed this Wildwood, NJ listing at 218 Rio Grande Ave for Jason Ruffenach (eXp Realty). HDR photos, drone aerials and twilights.">
   <meta property="og:type" content="article">
   <link rel="canonical" href="https://listingpixl.com/blog/218-rio-grande-ave-wildwood-nj.html">
   <meta property="og:url" content="https://listingpixl.com/blog/218-rio-grande-ave-wildwood-nj.html">
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:title" content="218 Rio Grande Ave, Wildwood NJ Real Estate Photos | Listing Pixl">
+  <meta property="og:title" content="218 Rio Grande Ave, Wildwood NJ Real Estate Photos">
   <meta property="og:description" content="Listing Pixl photographed this Wildwood, NJ listing at 218 Rio Grande Ave for Jason Ruffenach (eXp Realty). HDR photos, drone aerials and twilights.">
   <meta property="og:image" content="https://listingpixl.com/images/riogrande_01_twilight.jpg">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -22,8 +22,8 @@
   "@type": "BlogPosting",
   "headline": "Real Estate Photography in Wildwood, NJ: 218 Rio Grande Ave",
   "image": [
-    "../images/riogrande_01_twilight.jpg",
-    "../images/riogrande_02_drone_twilight.jpg"
+    "https://listingpixl.com/images/riogrande_01_twilight.jpg",
+    "https://listingpixl.com/images/riogrande_02_drone_twilight.jpg"
   ],
   "author": {
     "@type": "Organization",
@@ -119,7 +119,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');

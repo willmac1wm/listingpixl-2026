@@ -161,7 +161,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');

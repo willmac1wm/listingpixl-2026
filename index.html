@@ -24,6 +24,9 @@
     "telephone": "+1-609-780-7027",
     "email": "ListingPixl.Media@gmail.com",
     "url": "https://listingpixl.com",
+    "image": "https://listingpixl.com/images/riogrande_01_twilight.jpg",
+    "logo": "https://listingpixl.com/listing-pixl-logo-official.png",
+    "address": {"@type": "PostalAddress", "addressRegion": "NJ", "addressCountry": "US"},
     "sameAs": ["https://www.facebook.com/listing.pixl.media/"],
     "priceRange": "$295–$750",
     "areaServed": ["Cape May", "Wildwood", "North Wildwood", "Ocean City", "Stone Harbor", "Avalon", "Sea Isle City", "Villas", "Somers Point", "Millville", "Buena", "Lower Township", "Middle Township", "Dennis Township", "Ocean View", "Cape May Court House", "North Cape May"],
@@ -164,7 +167,7 @@
               <li>Next-day delivery</li>
               <li>MLS-ready sizing</li>
             </ul>
-            <a href="#contact" class="btn btn-outline">Lock In Essential</a>
+            <a href="#contact" class="btn btn-outline" data-package="Essential">Lock In Essential</a>
           </article>
           <article class="package-card featured">
             <h3>Showcase</h3>
@@ -175,7 +178,7 @@
               <li>2 virtual twilight edits</li>
               <li>2D floor plan</li>
             </ul>
-            <a href="#contact" class="btn btn-primary">Lock In Showcase</a>
+            <a href="#contact" class="btn btn-primary" data-package="Showcase">Lock In Showcase</a>
           </article>
           <article class="package-card">
             <h3>Premiere</h3>
@@ -185,7 +188,7 @@
               <li>1&ndash;2 minute cinematic walkthrough video</li>
               <li>Matterport 3D virtual tour (3 months hosting)</li>
             </ul>
-            <a href="#contact" class="btn btn-outline">Lock In Premiere</a>
+            <a href="#contact" class="btn btn-outline" data-package="Premiere">Lock In Premiere</a>
           </article>
         </div>
         <div class="alacarte">
@@ -307,7 +310,10 @@
   <script>
     // Mobile nav toggle
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');
@@ -318,6 +324,13 @@
     }
     toggle.addEventListener('click', () => setMenu(!links.classList.contains('open')));
     links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+    // Package buttons preselect their package in the booking form
+    document.querySelectorAll('a[data-package]').forEach(a => a.addEventListener('click', () => {
+      const sel = document.querySelector('#booking-form select[name="package"]');
+      const opt = sel && [...sel.options].find(o => o.text.startsWith(a.dataset.package));
+      if (opt) sel.value = opt.value;
+    }));
 
     // Booking form -> prefilled email
     const bookingForm = document.getElementById('booking-form');

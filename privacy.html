@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy | Listing Pixl</title>
   <meta name="description" content="Privacy policy for Listing Pixl — how we handle booking inquiries, Google Analytics, and the Meta Pixel.">
+  <link rel="canonical" href="https://listingpixl.com/privacy.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://listingpixl.com/privacy.html">
+  <meta property="og:title" content="Privacy Policy | Listing Pixl">
+  <meta property="og:description" content="How Listing Pixl handles booking inquiries, client photo delivery, Google Analytics and the Meta Pixel.">
+  <meta property="og:image" content="https://listingpixl.com/images/riogrande_01_twilight.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -60,6 +67,9 @@
         <h2>Booking inquiries</h2>
         <p>When you fill out the "Lock In Your Shoot" form, your browser opens your own email app with your details pre-filled, addressed to ListingPixl.Media@gmail.com. We receive whatever you choose to send: your name, email, phone number, property address, preferred date, and package choice. We use it only to confirm and schedule your shoot, and we never sell it or share it with anyone else.</p>
 
+        <h2>Client portal (HD Photo Hub)</h2>
+        <p>The "Client Login" link opens our client portal at <a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">listingpixl.hd.pics</a>, run by our photo-delivery provider, HD Photo Hub. Orders, invoices and finished photo downloads happen there, so any details you enter in the portal are handled by HD Photo Hub under its own privacy policy as well as this one.</p>
+
         <h2>Google Analytics</h2>
         <p>We use Google Analytics to understand how visitors use the site (for example, which pages are viewed). Google may collect your IP address, device and browser information. You can opt out with Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">opt-out browser add-on</a>, or by blocking analytics cookies in your browser settings.</p>
 
@@ -81,7 +91,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');

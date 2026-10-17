@@ -22,12 +22,12 @@
   "@type": "BlogPosting",
   "headline": "Real Estate Photography in Millville, NJ: 601 Dove Dr",
   "image": [
-    "../images/dovedr_01_twilight.jpg",
-    "../images/dovedr_02_exterior.jpg",
-    "../images/dovedr_04_aerial_lake.jpg",
-    "../images/dovedr_03_aerial_topdown.jpg",
-    "../images/dovedr_05_aerial_wide.jpg",
-    "../images/dovedr_06_greatroom.jpg"
+    "https://listingpixl.com/images/dovedr_01_twilight.jpg",
+    "https://listingpixl.com/images/dovedr_02_exterior.jpg",
+    "https://listingpixl.com/images/dovedr_04_aerial_lake.jpg",
+    "https://listingpixl.com/images/dovedr_03_aerial_topdown.jpg",
+    "https://listingpixl.com/images/dovedr_05_aerial_wide.jpg",
+    "https://listingpixl.com/images/dovedr_06_greatroom.jpg"
   ],
   "author": {
     "@type": "Organization",
@@ -135,7 +135,10 @@
 
   <script>
     document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => { if (window.fbq) fbq('track', 'Contact'); });
+      a.addEventListener('click', () => {
+        if (window.fbq) fbq('track', 'Contact');
+        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
+      });
     });
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');
