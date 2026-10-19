@@ -60,13 +60,13 @@ SHOOTS = [
          agent="Jason Ruffenach", brokerage="eXp Realty", date="2025",
          photos=[("riogrande_01_twilight.jpg", "Wildwood NJ beach house glowing at twilight"),
                  ("riogrande_02_drone_twilight.jpg", "Drone aerial of a Wildwood NJ street at twilight")],
-         blurb="A scroll-stopping twilight shoot with drone coverage in Wildwood."),
+         blurb="Scroll-stopping virtual twilights with drone coverage in Wildwood."),
     dict(slug="10-williams-way-ocean-view-nj", address="10 Williams Way", town="Ocean View", zip="08230",
          agent="Jason Ruffenach", brokerage="eXp Realty", date="2025",
          photos=[("williamsway_01_twilight.jpg", "Two-story colonial home at twilight in Ocean View NJ"),
                  ("williamsway_02_twilight.jpg", "Front exterior of an Ocean View NJ home at dusk")],
-         blurb="Golden-hour twilight photography for this Ocean View listing.",
-         services_note="This Ocean View NJ shoot included HDR listing photography with professional editing and color correction, delivered next-day and sized ready for the MLS, plus twilight exterior shots that make the listing stand out online."),
+         blurb="Virtual twilight exteriors for this Ocean View listing.",
+         services_note="HDR listing photography with professional editing and color correction, delivered next-day and sized ready for the MLS, plus virtual twilight exteriors that make the listing stand out online."),
     dict(slug="124-w-new-york-ave-villas-nj", address="124 W New York Ave", town="Villas", zip="08251",
          agent="Jason Ruffenach", brokerage="eXp Realty", date="2025",
          photos=[("nyave_01.jpg", "Light blue Villas NJ cottage with red shutters at twilight"),
@@ -340,7 +340,7 @@ def index_page():
     <section class="section">
       <div class="wrap">
         <h1>Recent Shoots: Real Estate Photography Across South Jersey</h1>
-        <p class="section-lede">Every listing we shoot in Cape May County and South Jersey NJ &mdash; HDR photography, drone aerials, and twilight shoots for local listing agents.</p>
+        <p class="section-lede">Every listing we shoot in Cape May County and South Jersey NJ &mdash; HDR photography, drone aerials, and virtual twilights for local listing agents.</p>
         <div class="blog-grid">
 {cards}
         </div>
