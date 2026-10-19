@@ -116,6 +116,57 @@ SHOOTS = [
          blurb="Drone-heavy coverage showing the lot and setting in Villas."),
 ]
 
+# Town-level map pins for the homepage Service Area map (data/shoots.json).
+# Pins mark the town, never the house. Coordinates are town centers from
+# GeoNames (via the all-the-cities dataset); Ocean View, which GeoNames does
+# not list, uses the USPS ZIP 08230 centroid. A shoot in a town missing from
+# this table stops the build -- add the town here first.
+TOWN_COORDS = {
+    "Wildwood": (38.9918, -74.8149),
+    "North Wildwood": (39.0007, -74.7993),
+    "Wildwood Crest": (38.9748, -74.8335),
+    "Villas": (39.0287, -74.9385),
+    "Cape May": (38.9351, -74.9060),
+    "North Cape May": (38.9821, -74.9579),
+    "Cape May Court House": (39.0826, -74.8238),
+    "Rio Grande": (39.0146, -74.8816),
+    "Erma": (38.9878, -74.9017),
+    "Ocean View": (39.2154, -74.7075),
+    "Sea Isle City": (39.1534, -74.6929),
+    "Avalon": (39.1012, -74.7177),
+    "Ocean City": (39.2776, -74.5746),
+    "Woodbine": (39.2418, -74.8152),
+    "Somers Point": (39.3176, -74.5946),
+    "Millville": (39.4021, -75.0393),
+    "Buena": (39.5137, -74.9246),
+}
+
+# Which NJGIN municipality each town sits in, so the map can highlight its
+# outline. Villas / Cape May Court House / Ocean View etc. are communities
+# inside a township, so they light up the whole township.
+TOWN_MUNI = {
+    "Wildwood": "WILDWOOD CITY", "North Wildwood": "NORTH WILDWOOD CITY",
+    "Wildwood Crest": "WILDWOOD CREST BORO", "Cape May": "CAPE MAY CITY",
+    "Villas": "LOWER TWP", "North Cape May": "LOWER TWP", "Erma": "LOWER TWP",
+    "Cape May Court House": "MIDDLE TWP", "Rio Grande": "MIDDLE TWP",
+    "Ocean View": "DENNIS TWP", "Sea Isle City": "SEA ISLE CITY", "Avalon": "AVALON BORO",
+    "Ocean City": "OCEAN CITY", "Woodbine": "WOODBINE BORO",
+    "Somers Point": "SOMERS POINT CITY", "Millville": "MILLVILLE CITY", "Buena": "BUENA BORO",
+}
+
+def shoots_json():
+    """Group shoots by town for the Service Area map."""
+    towns = {}
+    for s in SHOOTS:
+        if s["town"] not in TOWN_COORDS:
+            raise SystemExit(f"build_blog.py: add map coordinates for '{s['town']}' to TOWN_COORDS")
+        lat, lng = TOWN_COORDS[s["town"]]
+        t = towns.setdefault(s["town"], {"town": s["town"], "mun": TOWN_MUNI.get(s["town"], ""),
+                                         "lat": lat, "lng": lng, "shoots": []})
+        t["shoots"].append({"address": s["address"], "url": f"blog/{s['slug']}.html",
+                            "thumb": f"images/{s['photos'][0][0][:-4]}-480.jpg"})
+    return {"towns": sorted(towns.values(), key=lambda t: -len(t["shoots"])), "count": len(SHOOTS)}
+
 DEFAULT_SERVICES_NOTE = ("HDR listing photography with professional editing and color correction, "
                          "delivered next-day and sized ready for the MLS. Drone aerial photography showed "
                          "the lot, the setting, and the surrounding {town} neighborhood \u2014 the views "
@@ -330,6 +381,9 @@ def index_page():
 for s in SHOOTS:
     open(os.path.join(BLOG, s["slug"] + ".html"), "w", encoding="utf-8").write(post_page(s))
 open(os.path.join(BLOG, "index.html"), "w", encoding="utf-8").write(index_page())
+os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
+with open(os.path.join(HERE, "data", "shoots.json"), "w", encoding="utf-8") as fh:
+    json.dump(shoots_json(), fh, indent=1)
 # remove the deleted post if it exists
 stale = os.path.join(BLOG, "301-e-pacific-ave-villas-nj.html")
 if os.path.exists(stale):

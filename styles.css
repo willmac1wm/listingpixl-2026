@@ -207,26 +207,81 @@ h2 { font-size: 2rem; text-align: center; }
 .alacarte-list li:last-child { border-bottom: none; }
 .alacarte-price { float: right; font-weight: 700; color: var(--accent); }
 
-/* ---------- Gallery ---------- */
-.gallery {
+/* ---------- Listings we've shot ---------- */
+.work-feature {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
 }
+.work-feature-media { display: block; height: 100%; }
+.work-feature-media img { width: 100%; height: 100%; min-height: 360px; max-height: 440px; object-fit: cover; display: block; }
+.work-feature-body { padding: 1.75rem 1.75rem 1.75rem 0; }
+.work-feature-body .work-eyebrow { margin: 0 0 0.35rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-pink); }
+.work-feature-body h3 { font-size: 1.45rem; margin: 0 0 0.6rem; }
+.work-feature-body p { color: var(--muted); }
+.work-tags { list-style: none; padding: 0; margin: 1rem 0; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.work-tags li { background: var(--bg-alt); border: 1px solid var(--card-border); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+.work-agent { font-size: 0.9rem; margin-bottom: 1.25rem; }
 
-.gallery-item { margin: 0; position: relative; overflow: hidden; border-radius: var(--radius); }
-.gallery-item img { width: 100%; height: 260px; object-fit: cover; display: block; transition: transform 0.3s ease; }
-.gallery-item:hover img { transform: scale(1.04); }
-.gallery-item figcaption {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: 0.6rem 0.9rem;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-  color: #fff;
-  font-size: 0.9rem;
+.work-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.work-tile { position: relative; display: block; overflow: hidden; border-radius: var(--radius); color: #fff; text-decoration: none; }
+.work-tile img { width: 100%; height: 250px; object-fit: cover; display: block; transition: transform 0.3s ease; }
+.work-tile:hover img, .work-tile:focus-visible img { transform: scale(1.04); }
+.work-tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.work-tile-cap {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.5rem 0.9rem 0.7rem;
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.55) 35%, rgba(0, 0, 0, 0.85));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  display: flex; flex-direction: column; gap: 0.1rem;
 }
+.work-tile-town { font-weight: 700; font-size: 1.05rem; }
+.work-tile-meta { font-size: 0.85rem; opacity: 0.92; }
+
+.work-trust { text-align: center; color: var(--muted); margin: 1.75rem 0 0; font-size: 0.95rem; }
+.work-trust strong { color: var(--ink); }
+.work-trust a { color: var(--accent); font-weight: 600; }
+.work-cta { text-align: center; margin-top: 1.5rem; }
+.work-cta p { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
 
 /* ---------- Service area ---------- */
+.area-map-wrap { margin: 0 0 1.75rem; }
+.area-map {
+  height: 460px;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: #eef3f4;
+  overflow: hidden;
+  z-index: 0;
+}
+.area-map.is-failed { display: flex; align-items: center; justify-content: center; color: var(--muted); padding: 1rem; text-align: center; }
+.area-map-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; justify-content: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--muted); }
+.area-map-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.lg-pin { width: 14px; height: 14px; border-radius: 50%; background: var(--accent-pink); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--accent-pink); }
+.lg-county { width: 18px; height: 12px; border: 2px solid var(--accent); border-radius: 2px; }
+.lg-town { width: 18px; height: 12px; border: 1.5px solid var(--accent-pink); background: rgba(215, 18, 102, 0.18); border-radius: 2px; }
+.lg-county.lg-dash { border-style: dashed; background: transparent; }
+.job-pin span {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  color: #fff; font-weight: 700; font-size: 0.85rem;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.job-pin:focus-visible span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.map-pop strong { display: block; margin-bottom: 0.4rem; font-size: 0.95rem; }
+.map-pop a { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; color: var(--accent); font-weight: 600; text-decoration: none; }
+.map-pop a:hover span { text-decoration: underline; }
+.map-pop img { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; flex: none; }
+
 .town-list {
   list-style: none;
   padding: 0;
@@ -310,7 +365,7 @@ a[href^="tel:"] { white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .gallery-item img { transition: none; }
+  .work-tile img { transition: none; }
 }
 
 /* ---------- Responsive ---------- */
@@ -330,6 +385,16 @@ a[href^="tel:"] { white-space: nowrap; }
   .nav-links a { display: block; padding: 0.65rem 0.25rem; min-height: 44px; }
   .form-row { grid-template-columns: 1fr; }
   .section { padding: 2.75rem 0; }
+  .work-feature { grid-template-columns: 1fr; gap: 0; }
+  .work-feature-media img { min-height: 0; height: 240px; }
+  .work-feature-body { padding: 1.25rem; }
+  .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  .work-tile img { height: 170px; }
+  .work-tile-cap { padding: 2rem 0.6rem 0.5rem; }
+  .work-tile-town { font-size: 0.92rem; }
+  .work-tile-meta { font-size: 0.75rem; }
+  .work-tile-addr { display: none; }
+  .area-map { height: 360px; }
   /* Two compact service cards per row so phones reach Packages sooner */
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
   .service-card { padding: 1rem; }
@@ -337,6 +402,12 @@ a[href^="tel:"] { white-space: nowrap; }
   .service-card p { font-size: 0.88rem; }
   /* Lighter hero photo on phones (~83 KB instead of ~290 KB) */
   .hero-bg { background-image: url("images/riogrande_01_twilight-800.jpg"); }
+}
+
+@media (min-width: 721px) and (max-width: 980px) {
+  .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .work-feature { grid-template-columns: 1fr; gap: 0; }
+  .work-feature-body { padding: 1.5rem; }
 }
 
 /* Mid-size screens: 1200px hero is plenty */

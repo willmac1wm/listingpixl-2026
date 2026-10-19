@@ -1,0 +1,119 @@
+{
+ "towns": [
+  {
+   "town": "Wildwood",
+   "mun": "WILDWOOD CITY",
+   "lat": 38.9918,
+   "lng": -74.8149,
+   "shoots": [
+    {
+     "address": "218 Rio Grande Ave",
+     "url": "blog/218-rio-grande-ave-wildwood-nj.html",
+     "thumb": "images/riogrande_01_twilight-480.jpg"
+    },
+    {
+     "address": "7710 Atlantic Ave Unit 403",
+     "url": "blog/7710-atlantic-ave-wildwood-nj.html",
+     "thumb": "images/atlantic_01-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Villas",
+   "mun": "LOWER TWP",
+   "lat": 39.0287,
+   "lng": -74.9385,
+   "shoots": [
+    {
+     "address": "124 W New York Ave",
+     "url": "blog/124-w-new-york-ave-villas-nj.html",
+     "thumb": "images/nyave_01-480.jpg"
+    },
+    {
+     "address": "101 Pennsylvania Ave",
+     "url": "blog/101-pennsylvania-ave-villas-nj.html",
+     "thumb": "images/paave_01-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "North Wildwood",
+   "mun": "NORTH WILDWOOD CITY",
+   "lat": 39.0007,
+   "lng": -74.7993,
+   "shoots": [
+    {
+     "address": "414 Paradise Way",
+     "url": "blog/414-paradise-way-north-wildwood-nj.html",
+     "thumb": "images/paradiseway_01_staged-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Ocean View",
+   "mun": "DENNIS TWP",
+   "lat": 39.2154,
+   "lng": -74.7075,
+   "shoots": [
+    {
+     "address": "10 Williams Way",
+     "url": "blog/10-williams-way-ocean-view-nj.html",
+     "thumb": "images/williamsway_01_twilight-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Cape May Court House",
+   "mun": "MIDDLE TWP",
+   "lat": 39.0826,
+   "lng": -74.8238,
+   "shoots": [
+    {
+     "address": "205 St Andrews Dr",
+     "url": "blog/205-st-andrews-dr-cape-may-court-house-nj.html",
+     "thumb": "images/standrews_01_staged_twilight-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Somers Point",
+   "mun": "SOMERS POINT CITY",
+   "lat": 39.3176,
+   "lng": -74.5946,
+   "shoots": [
+    {
+     "address": "205 Euclid Ave",
+     "url": "blog/205-euclid-ave-somers-point-nj.html",
+     "thumb": "images/euclid_01_aerial-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Millville",
+   "mun": "MILLVILLE CITY",
+   "lat": 39.4021,
+   "lng": -75.0393,
+   "shoots": [
+    {
+     "address": "601 Dove Dr",
+     "url": "blog/601-dove-dr-millville-nj.html",
+     "thumb": "images/dovedr_01_twilight-480.jpg"
+    }
+   ]
+  },
+  {
+   "town": "Buena",
+   "mun": "BUENA BORO",
+   "lat": 39.5137,
+   "lng": -74.9246,
+   "shoots": [
+    {
+     "address": "114 Catherine Ave",
+     "url": "blog/114-catherine-ave-buena-nj.html",
+     "thumb": "images/catherine_01_exterior-480.jpg"
+    }
+   ]
+  }
+ ],
+ "count": 10
+}

@@ -1,4 +1,5 @@
 # Repo-only files: never served on the live site
 build_blog.py
+tools/
 .gitignore
 claude-review-prompt.md
