@@ -11,7 +11,7 @@ IMAGES = os.path.join(HERE, "images")
 os.makedirs(BLOG, exist_ok=True)
 
 PHONE = "(609) 780-7027"
-DOMAIN = "https://listingpixl.com"
+DOMAIN = "https://www.listingpixl.com"
 PIXEL_ID = "1900535534248768"
 PIXEL_SNIPPET = """  <!-- Meta Pixel Code -->
   <script>
@@ -153,7 +153,7 @@ def a_an(word):
 
 NAV = """  <header class="site-header">
     <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="../index.html">Listing&nbsp;Pixl</a>
+      <a class="brand" href="../index.html" aria-label="Listing Pixl home"><img src="../images/logo-horizontal-156.jpg" srcset="../images/logo-horizontal-156.jpg 1x, ../images/logo-horizontal-312.jpg 2x" alt="Listing Pixl" class="brand-logo" width="156" height="66"></a>
       <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="../index.html#services">Services</a></li>
@@ -162,35 +162,27 @@ NAV = """  <header class="site-header">
         <li><a href="../index.html#areas">Service Area</a></li>
         <li><a href="index.html">Blog</a></li>
         <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
-        <li><a href="../index.html#contact" class="nav-cta">Lock In Your Shoot</a></li>
+        <li><a href="../index.html#contact" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
       </ul>
     </nav>
   </header>"""
 
-FOOTER = f"""  <footer class="site-footer">
+FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
+    <a href="tel:+16097807027">Call</a>
+    <a href="sms:+16097807027">Text</a>
+    <a href="../index.html#contact" class="is-pink">Book a shoot</a>
+  </nav>
+
+  <footer class="site-footer">
     <div class="wrap">
+      <p class="footer-contact">Call or text <a href="tel:+16097807027">{PHONE}</a> &middot; <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+      <p>Real estate photography across Cape May County &amp; South Jersey</p>
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
       <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a></p>
     </div>
   </footer>
 
-  <script>
-    document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {{
-      a.addEventListener('click', () => {{
-        if (window.fbq) fbq('track', 'Contact');
-        if (window.gtag) gtag('event', 'contact', {{method: a.href.startsWith('tel:') ? 'phone' : 'email'}});
-      }});
-    }});
-    const toggle = document.querySelector('.nav-toggle');
-    const links = document.querySelector('.nav-links');
-    function setMenu(open) {{
-      links.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', open);
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    }}
-    toggle.addEventListener('click', () => setMenu(!links.classList.contains('open')));
-    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
-  </script>"""
+  <script src="../site.js" defer></script>"""
 
 try:
     from PIL import Image
@@ -233,8 +225,9 @@ def post_page(s):
         first = (i == 0)
         load = 'loading="eager" fetchpriority="high"' if first else 'loading="lazy"'
         return (f'        <figure class="blog-photo">\n'
-                f'          <img src="../images/{p}"{srcset(p)} alt="{html.escape(a)}" '
-                f'{load}{img_size(p)}>\n'
+                f'          <a class="blog-photo-link" href="../images/{p}">'
+                f'<img src="../images/{p}"{srcset(p)} alt="{html.escape(a)}" '
+                f'{load}{img_size(p)}></a>\n'
                 f'        </figure>')
     imgs = "\n".join(_img(i, p, a) for i, (p, a) in enumerate(s["photos"]))
     areas = ["Wildwood", "Ocean City", "Stone Harbor", "Avalon", "Sea Isle City"]
@@ -246,12 +239,15 @@ def post_page(s):
               "headline": f"Real Estate Photography in {s['town']}, NJ: {s['address']}",
               "image": [f"{DOMAIN}/images/{p}" for p, _ in s["photos"]],
               "author": {"@type": "Organization", "name": "Listing Pixl", "telephone": PHONE},
-              "publisher": {"@type": "Organization", "name": "Listing Pixl"},
+              "publisher": {"@type": "Organization", "name": "Listing Pixl",
+                            "logo": {"@type": "ImageObject", "url": f"{DOMAIN}/listing-pixl-logo-official.png"}},
+              "mainEntityOfPage": f"{DOMAIN}/blog/{s['slug']}.html",
               "about": f"Real estate photography in {s['town']}, New Jersey"}
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{html.escape(title)}</title>
   <meta name="description" content="{html.escape(desc)}">
@@ -294,6 +290,7 @@ def post_page(s):
 
         <h2>Lock In {a_an(s['town'])} {html.escape(s['town'])}, NJ Real Estate Photographer</h2>
         <p>{cta}</p>
+        <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="index.html">See more shoots</a></p>
       </div>
     </article>
   </main>
@@ -317,6 +314,7 @@ def index_page():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recent Shoots | Listing Pixl South Jersey Real Estate Photography</title>
   <meta name="description" content="Recent real estate photography shoots by Listing Pixl across Cape May County & South Jersey NJ.">
@@ -345,6 +343,10 @@ def index_page():
         <div class="blog-grid">
 {cards}
         </div>
+        <div class="work-cta">
+          <p>Want your listing to look like this?</p>
+          <a href="../index.html#contact" class="btn btn-pink">Lock In Your Shoot</a>
+        </div>
       </div>
     </section>
   </main>
@@ -360,6 +362,11 @@ open(os.path.join(BLOG, "index.html"), "w", encoding="utf-8").write(index_page()
 os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
 with open(os.path.join(HERE, "data", "jobs.json"), "w", encoding="utf-8") as fh:
     json.dump(jobs_json(), fh, indent=1)
+urls = ["/", "/blog/", "/privacy.html"] + [f"/blog/{s['slug']}.html" for s in SHOOTS]
+with open(os.path.join(HERE, "sitemap.xml"), "w", encoding="utf-8") as fh:
+    fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+    fh.writelines(f"  <url>\n    <loc>{DOMAIN}{u}</loc>\n  </url>\n" for u in urls)
+    fh.write("</urlset>\n")
 # remove the deleted post if it exists
 stale = os.path.join(BLOG, "301-e-pacific-ave-villas-nj.html")
 if os.path.exists(stale):

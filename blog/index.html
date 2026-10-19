@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recent Shoots | Listing Pixl South Jersey Real Estate Photography</title>
   <meta name="description" content="Recent real estate photography shoots by Listing Pixl across Cape May County & South Jersey NJ.">
   <meta property="og:type" content="website">
-  <link rel="canonical" href="https://listingpixl.com/blog/">
-  <meta property="og:url" content="https://listingpixl.com/blog/">
+  <link rel="canonical" href="https://www.listingpixl.com/blog/">
+  <meta property="og:url" content="https://www.listingpixl.com/blog/">
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:image" content="https://listingpixl.com/images/riogrande_01_twilight.jpg">
+  <meta property="og:image" content="https://www.listingpixl.com/images/riogrande_01_twilight.jpg">
   <meta property="og:title" content="Recent Shoots | Listing Pixl">
   <meta property="og:description" content="Recent listing shoots across Cape May County & South Jersey NJ.">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -47,7 +48,7 @@
 <body>
   <header class="site-header">
     <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="../index.html">Listing&nbsp;Pixl</a>
+      <a class="brand" href="../index.html" aria-label="Listing Pixl home"><img src="../images/logo-horizontal-156.jpg" srcset="../images/logo-horizontal-156.jpg 1x, ../images/logo-horizontal-312.jpg 2x" alt="Listing Pixl" class="brand-logo" width="156" height="66"></a>
       <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">&#9776;</button>
       <ul class="nav-links">
         <li><a href="../index.html#services">Services</a></li>
@@ -56,7 +57,7 @@
         <li><a href="../index.html#areas">Service Area</a></li>
         <li><a href="index.html">Blog</a></li>
         <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
-        <li><a href="../index.html#contact" class="nav-cta">Lock In Your Shoot</a></li>
+        <li><a href="../index.html#contact" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
       </ul>
     </nav>
   </header>
@@ -148,33 +149,29 @@
           <p class="blog-meta">2025 &middot; Jason Ruffenach</p>
         </article>
         </div>
+        <div class="work-cta">
+          <p>Want your listing to look like this?</p>
+          <a href="../index.html#contact" class="btn btn-pink">Lock In Your Shoot</a>
+        </div>
       </div>
     </section>
   </main>
 
+  <nav class="mobile-cta" aria-label="Quick contact">
+    <a href="tel:+16097807027">Call</a>
+    <a href="sms:+16097807027">Text</a>
+    <a href="../index.html#contact" class="is-pink">Book a shoot</a>
+  </nav>
+
   <footer class="site-footer">
     <div class="wrap">
+      <p class="footer-contact">Call or text <a href="tel:+16097807027">(609) 780-7027</a> &middot; <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a></p>
+      <p>Real estate photography across Cape May County &amp; South Jersey</p>
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
       <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a></p>
     </div>
   </footer>
 
-  <script>
-    document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach(a => {
-      a.addEventListener('click', () => {
-        if (window.fbq) fbq('track', 'Contact');
-        if (window.gtag) gtag('event', 'contact', {method: a.href.startsWith('tel:') ? 'phone' : 'email'});
-      });
-    });
-    const toggle = document.querySelector('.nav-toggle');
-    const links = document.querySelector('.nav-links');
-    function setMenu(open) {
-      links.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', open);
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    }
-    toggle.addEventListener('click', () => setMenu(!links.classList.contains('open')));
-    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
-  </script>
+  <script src="../site.js" defer></script>
 </body>
 </html>
