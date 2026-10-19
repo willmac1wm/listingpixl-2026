@@ -422,9 +422,11 @@
             <label>Preferred date<input type="date" name="date"></label>
           </div>
           <label>Message<textarea name="message" rows="4" placeholder="Shoot date, services needed, anything else…"></textarea></label>
+          <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
           <button type="submit" class="btn btn-pink">Lock In My Shoot</button>
-          <p class="form-note" id="form-fallback" role="status" hidden>Nothing opened? Email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a> instead.</p>
-          <p class="form-note">This opens your email app with your booking pre-filled. We'll text you to confirm the details.</p>
+          <p class="form-status" id="form-status" role="status" aria-live="polite" hidden></p>
+          <p class="form-note" id="form-fallback" hidden>Nothing opened? Email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a> instead.</p>
+          <p class="form-note">Your request comes straight to us. We&rsquo;ll text you to confirm the details.</p>
         </form>
       </div>
     </section>
@@ -537,18 +539,20 @@
       } else { init(); }
     })();
 
-    // Booking form -> prefilled email
+    // Booking form -> /api/book emails it to us; the visitor's email app is only the fallback
     const bookingForm = document.getElementById('booking-form');
+    const loadedAt = Date.now();
     const dateInput = bookingForm.querySelector('input[name="date"]');
     const d = new Date();
     const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
     dateInput.min = `${y}-${m}-${day}`;
-    bookingForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!bookingForm.reportValidity()) return;
-      const data = new FormData(bookingForm);
-      const get = (k) => (data.get(k) || '').toString().trim();
-      const pkg = get('package') || 'Not sure yet';
+    const formStatus = document.getElementById('form-status');
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    const trackLead = pkg => {
+      if (window.fbq) fbq('track', 'Lead', {content_name: pkg});
+      if (window.gtag) gtag('event', 'generate_lead', {package: pkg});
+    };
+    const openEmailApp = (get, pkg) => {
       const subject = encodeURIComponent('Shoot booking — ' + (get('address') || get('name') || 'Listing Pixl'));
       const body = encodeURIComponent(
         'Name: ' + get('name') + '\r\n' +
@@ -560,10 +564,35 @@
         'Message:\r\n' + get('message')
       );
       window.location.href = 'mailto:ListingPixl.Media@gmail.com?subject=' + subject + '&body=' + body;
-      if (window.fbq) fbq('track', 'Lead', {content_name: pkg});
-      if (window.gtag) gtag('event', 'generate_lead', {package: pkg});
-      const note = document.getElementById('form-fallback');
-      if (note) note.hidden = false;
+      document.getElementById('form-fallback').hidden = false;
+    };
+    bookingForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!bookingForm.reportValidity()) return;
+      const data = new FormData(bookingForm);
+      const get = (k) => (data.get(k) || '').toString().trim();
+      const pkg = get('package') || 'Not sure yet';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      let sent = false;
+      try {
+        const r = await fetch('/api/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...Object.fromEntries(data), elapsed: Date.now() - loadedAt }),
+        });
+        sent = r.ok;
+      } catch (err) { /* offline or blocked: fall back to the email app */ }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Lock In My Shoot';
+      trackLead(pkg);
+      if (!sent) { openEmailApp(get, pkg); return; }
+      const first = get('name').split(/\s+/)[0];
+      bookingForm.reset();
+      formStatus.className = 'form-status is-sent';
+      formStatus.textContent = 'Got it, ' + first + '! Your request is in. We’ll text you at ' + get('phone') + ' to confirm your shoot time.';
+      formStatus.hidden = false;
+      formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   </script>
   <script src="site.js" defer></script>
