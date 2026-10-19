@@ -432,9 +432,9 @@
               .bindPopup(() => popup(j), { maxWidth: 260 }).addTo(map);
           });
           // Frame the county and the nearby out-of-county jobs; far-off ones show when you zoom out
-          const near = countyLayer.getBounds().pad(0.65), view = countyLayer.getBounds();
+          const near = countyLayer.getBounds().pad(0.25), view = countyLayer.getBounds();
           data.jobs.forEach(j => { if (near.contains([j.lat, j.lng])) view.extend([j.lat, j.lng]); });
-          map.fitBounds(view, { padding: [24, 24] });
+          map.fitBounds(view, { paddingTopLeft: [20, 40], paddingBottomRight: [20, 16] });
           document.getElementById('jobs-count').textContent = ' — ' + data.count + ' so far';
           el.classList.add('is-ready');
         } catch (err) {

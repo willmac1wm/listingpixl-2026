@@ -3,8 +3,9 @@
     python3 tools/geocode_jobs.py
 
 Uses the free US Census batch geocoder (no key). Only rows with an empty
-lat/lng are looked up, so hand-placed pins are never overwritten. Unit
-numbers are dropped before lookup -- the pin goes on the building.
+lat/lng, or a placeholder pin (approx=1), are looked up, so hand-placed pins
+are never overwritten. Unit numbers are dropped before lookup -- the pin goes
+on the building.
 """
 import csv
 import io
@@ -48,14 +49,15 @@ def batch(rows):
 def main():
     with open(JOBS, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    todo = [(i, r) for i, r in enumerate(rows) if not (r["lat"] and r["lng"])]
+    todo = [(i, r) for i, r in enumerate(rows) if not (r["lat"] and r["lng"]) or r.get("approx") == "1"]
     if not todo:
-        print("All jobs already have coordinates.")
+        print("All jobs already have exact coordinates.")
         return
     found = batch(todo)
     for i, r in todo:
         if i in found:
             r["lat"], r["lng"] = found[i]
+            r["approx"] = ""
     with open(JOBS, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()

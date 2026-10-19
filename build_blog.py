@@ -117,8 +117,9 @@ SHOOTS = [
 ]
 
 # Service Area map pins (data/jobs.json): one pin per property in
-# tools/jobs.csv, the full job list from HD Photo Hub. Fill in coordinates
-# for new rows with tools/geocode_jobs.py. A job with a blog post gets its
+# tools/jobs.csv, the full job list from HD Photo Hub. Rows marked approx=1
+# sit in the right town but not on the house; tools/geocode_jobs.py swaps in
+# exact spots (and fills new rows) once the Census geocoder is reachable. A job with a blog post gets its
 # photo and a link in the pin's popup.
 def _addr_key(address, town):
     return "".join(ch for ch in f"{address}{town}".lower() if ch.isalnum())
