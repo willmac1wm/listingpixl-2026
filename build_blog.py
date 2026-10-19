@@ -3,7 +3,7 @@
 
 Run from anywhere: output goes to blog/ next to this script.
 """
-import os, html, json
+import os, html, json, csv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLOG = os.path.join(HERE, "blog")
@@ -116,42 +116,31 @@ SHOOTS = [
          blurb="Drone-heavy coverage showing the lot and setting in Villas."),
 ]
 
-# Town-level map pins for the homepage Service Area map (data/shoots.json).
-# Pins mark the town, never the house. Coordinates are town centers from
-# GeoNames (via the all-the-cities dataset); Ocean View, which GeoNames does
-# not list, uses the USPS ZIP 08230 centroid. A shoot in a town missing from
-# this table stops the build -- add the town here first.
-TOWN_COORDS = {
-    "Wildwood": (38.9918, -74.8149),
-    "North Wildwood": (39.0007, -74.7993),
-    "Wildwood Crest": (38.9748, -74.8335),
-    "Villas": (39.0287, -74.9385),
-    "Cape May": (38.9351, -74.9060),
-    "North Cape May": (38.9821, -74.9579),
-    "Cape May Court House": (39.0826, -74.8238),
-    "Rio Grande": (39.0146, -74.8816),
-    "Erma": (38.9878, -74.9017),
-    "Ocean View": (39.2154, -74.7075),
-    "Sea Isle City": (39.1534, -74.6929),
-    "Avalon": (39.1012, -74.7177),
-    "Ocean City": (39.2776, -74.5746),
-    "Woodbine": (39.2418, -74.8152),
-    "Somers Point": (39.3176, -74.5946),
-    "Millville": (39.4021, -75.0393),
-    "Buena": (39.5137, -74.9246),
-}
+# Service Area map pins (data/jobs.json): one pin per property in
+# tools/jobs.csv, the full job list from HD Photo Hub. Fill in coordinates
+# for new rows with tools/geocode_jobs.py. A job with a blog post gets its
+# photo and a link in the pin's popup.
+def _addr_key(address, town):
+    return "".join(ch for ch in f"{address}{town}".lower() if ch.isalnum())
 
-def shoots_json():
-    """Group shoots by town for the Service Area map."""
-    towns = {}
-    for s in SHOOTS:
-        if s["town"] not in TOWN_COORDS:
-            raise SystemExit(f"build_blog.py: add map coordinates for '{s['town']}' to TOWN_COORDS")
-        lat, lng = TOWN_COORDS[s["town"]]
-        t = towns.setdefault(s["town"], {"town": s["town"], "lat": lat, "lng": lng, "shoots": []})
-        t["shoots"].append({"address": s["address"], "url": f"blog/{s['slug']}.html",
-                            "thumb": f"images/{s['photos'][0][0][:-4]}-480.jpg"})
-    return {"towns": sorted(towns.values(), key=lambda t: -len(t["shoots"])), "count": len(SHOOTS)}
+def jobs_json():
+    posts = {_addr_key(s["address"], s["town"]): s for s in SHOOTS}
+    jobs = []
+    with open(os.path.join(HERE, "tools", "jobs.csv"), newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            if not (row["lat"] and row["lng"]):
+                print(f"build_blog.py: no map pin for {row['address']}, {row['town']} -- run tools/geocode_jobs.py")
+                continue
+            job = {"address": row["address"], "town": row["town"],
+                   "lat": float(row["lat"]), "lng": float(row["lng"])}
+            if int(row["shoots"] or 1) > 1:
+                job["shoots"] = int(row["shoots"])
+            post = posts.get(_addr_key(row["address"], row["town"]))
+            if post:
+                job["url"] = f"blog/{post['slug']}.html"
+                job["thumb"] = f"images/{post['photos'][0][0][:-4]}-480.jpg"
+            jobs.append(job)
+    return {"jobs": jobs, "count": len(jobs)}
 
 DEFAULT_SERVICES_NOTE = ("HDR listing photography with professional editing and color correction, "
                          "delivered next-day and sized ready for the MLS. Drone aerial photography showed "
@@ -368,8 +357,8 @@ for s in SHOOTS:
     open(os.path.join(BLOG, s["slug"] + ".html"), "w", encoding="utf-8").write(post_page(s))
 open(os.path.join(BLOG, "index.html"), "w", encoding="utf-8").write(index_page())
 os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
-with open(os.path.join(HERE, "data", "shoots.json"), "w", encoding="utf-8") as fh:
-    json.dump(shoots_json(), fh, indent=1)
+with open(os.path.join(HERE, "data", "jobs.json"), "w", encoding="utf-8") as fh:
+    json.dump(jobs_json(), fh, indent=1)
 # remove the deleted post if it exists
 stale = os.path.join(BLOG, "301-e-pacific-ave-villas-nj.html")
 if os.path.exists(stale):

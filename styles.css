@@ -251,48 +251,21 @@ h2 { font-size: 2rem; text-align: center; }
 .work-cta p { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
 
 /* ---------- Service area ---------- */
-.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.area-layout {
-  display: grid; grid-template-columns: minmax(0, 1fr) 340px;
-  background: #fff; border: 1px solid var(--card-border); border-radius: var(--radius);
-  overflow: hidden; margin-bottom: 1.75rem;
+.area-map {
+  height: 560px; background: #e8eef0; z-index: 0;
+  border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden;
 }
-.area-map { height: 540px; background: #e8eef0; z-index: 0; }
 .area-map.is-failed { display: flex; align-items: center; justify-content: center; color: var(--muted); padding: 1rem; text-align: center; }
-.area-panel { border-left: 1px solid var(--card-border); display: flex; flex-direction: column; max-height: 540px; overflow-y: auto; }
-.area-check { display: flex; gap: 0.5rem; padding: 1rem; border-bottom: 1px solid var(--card-border); }
-.area-check input { flex: 1; min-width: 0; padding: 0.65rem 0.75rem; border: 1px solid var(--field-border); border-radius: 8px; font: inherit; font-size: 0.95rem; }
-.area-check .btn { padding: 0.6rem 1rem; }
-.area-result { margin: 0; padding: 0.75rem 1rem; font-size: 0.92rem; font-weight: 600; border-bottom: 1px solid var(--card-border); }
-.area-result.is-in { background: #fdf0f5; color: #9d0e4b; }
-.area-result.is-out { background: #fff4ec; color: #9a3a06; }
-.area-tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--card-border); }
-.area-tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 0.8rem; font: inherit; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); cursor: pointer; }
-.area-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent-pink); background: #fdf6f9; }
-#panel-zones, #panel-jobs { padding: 1rem; }
-.zone-card { border: 1px solid var(--card-border); border-radius: 10px; padding: 0.9rem 1rem; margin-bottom: 0.75rem; }
-.zone-card h3 { font-size: 0.98rem; margin: 0 0 0.35rem; display: flex; gap: 0.5rem; align-items: center; }
-.zone-card h3 i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-.zone-card p { margin: 0; font-size: 0.9rem; color: var(--muted); }
-.zone-in { border-color: #f1b3cc; background: #fdf6f9; }
-.zone-in h3 i { background: var(--accent-pink); }
-.zone-out h3 i { background: #e8590c; }
-.zone-link { display: inline-block; margin-top: 0.5rem; color: var(--accent); font-weight: 600; font-size: 0.92rem; }
-.zone-hq { margin: 0.25rem 0 0; font-size: 0.9rem; color: var(--ink); }
-.zone-hq span { color: #d71266; }
-.job-list { list-style: none; margin: 0 0 0.5rem; padding: 0; }
-.job-town { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: 0; border-bottom: 1px dashed var(--card-border); padding: 0.6rem 0.25rem; font: inherit; font-size: 0.95rem; cursor: pointer; text-align: left; }
-.job-town:hover span { color: var(--accent); text-decoration: underline; }
-.job-town b { min-width: 1.8rem; text-align: center; border-radius: 999px; background: var(--accent-pink); color: #fff; font-size: 0.8rem; padding: 0.1rem 0.45rem; }
-.job-town.is-out b { background: #b84a0a; }
+/* Teardrop pin, tip on the property */
 .job-pin span {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 100%;
-  border-radius: 50%;
-  background: var(--accent-pink);
-  color: #fff; font-weight: 700; font-size: 0.85rem;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  position: absolute; left: 0; top: 0; width: 20px; height: 20px; box-sizing: border-box;
+  background: var(--accent-pink); border: 2px solid #fff;
+  border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+.job-pin span::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px;
+  margin: -3px 0 0 -3px; border-radius: 50%; background: #fff;
 }
 .job-pin.is-out span { background: #e8590c; }
 .hq-pin span {
@@ -300,11 +273,20 @@ h2 { font-size: 2rem; text-align: center; }
   border-radius: 50%; background: #fff; color: #d71266; font-size: 1.15rem;
   border: 2px solid #d71266; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
-.job-pin:focus-visible span { outline: 3px solid var(--accent); outline-offset: 2px; }
-.map-pop strong { display: block; margin-bottom: 0.4rem; font-size: 0.95rem; }
-.map-pop a { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; color: var(--accent); font-weight: 600; text-decoration: none; }
+.map-pop strong { display: block; font-size: 0.95rem; }
+.map-pop > span { display: block; color: var(--muted); font-size: 0.85rem; }
+.map-pop a { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; color: var(--accent); font-weight: 600; text-decoration: none; }
 .map-pop a:hover span { text-decoration: underline; }
 .map-pop img { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; flex: none; }
+.map-key {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem 1.25rem;
+  margin: 0.75rem 0 1.75rem; font-size: 0.9rem; color: var(--muted);
+}
+.map-key span { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
+.map-key i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2); }
+.map-key .key-in { background: var(--accent-pink); }
+.map-key .key-out { background: #e8590c; }
+.map-key .key-hq { width: auto; height: auto; border: 0; box-shadow: none; color: #d71266; font-size: 1rem; font-style: normal; line-height: 1; }
 
 .town-list {
   list-style: none;
@@ -418,9 +400,7 @@ a[href^="tel:"] { white-space: nowrap; }
   .work-tile-town { font-size: 0.92rem; }
   .work-tile-meta { font-size: 0.75rem; }
   .work-tile-addr { display: none; }
-  .area-layout { grid-template-columns: 1fr; }
-  .area-map { height: 380px; }
-  .area-panel { border-left: 0; border-top: 1px solid var(--card-border); max-height: none; }
+  .area-map { height: 420px; }
   /* Two compact service cards per row so phones reach Packages sooner */
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
   .service-card { padding: 1rem; }
@@ -431,8 +411,6 @@ a[href^="tel:"] { white-space: nowrap; }
 }
 
 @media (min-width: 721px) and (max-width: 980px) {
-  .area-layout { grid-template-columns: 1fr; }
-  .area-panel { border-left: 0; border-top: 1px solid var(--card-border); max-height: none; }
   .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .work-feature { grid-template-columns: 1fr; gap: 0; }
   .work-feature-body { padding: 1.5rem; }
