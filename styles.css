@@ -309,6 +309,21 @@ h2 { font-size: 2rem; text-align: center; }
 /* ---------- About ---------- */
 .about-text { font-size: 1.2rem; text-align: center; color: var(--muted); }
 
+/* ---------- FAQ ---------- */
+.section-joined { padding-top: 0; }
+.faq { border-top: 1px solid var(--card-border); }
+.faq-item { border-bottom: 1px solid var(--card-border); }
+.faq-item summary {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 1rem 0.25rem; font-weight: 600; font-size: 1.05rem; cursor: pointer; list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; flex: none; font-size: 1.4rem; line-height: 1; color: var(--accent-pink); }
+.faq-item[open] summary::after { content: "\2212"; }
+.faq-item summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.faq-item p { margin: 0 0.25rem 1.1rem; color: var(--muted); }
+.faq-item a { color: var(--accent); }
+
 /* ---------- Contact ---------- */
 .contact-details { text-align: center; margin-bottom: 2rem; font-size: 1.1rem; }
 .contact-details a { color: var(--accent-dark); }
