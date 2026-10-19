@@ -59,6 +59,7 @@
     const slides = [...track.children];
     const dots = [...root.querySelectorAll('.fc-dot')];
     const pause = root.querySelector('.fc-pause');
+    const count = root.querySelector('.fc-count');
     let current = 0, timer = null, userPaused = reduceMotion, hovering = false, inView = false;
 
     const go = (i, smooth = true) => {
@@ -68,6 +69,7 @@
     const mark = i => {
       current = i;
       dots.forEach((d, j) => d.setAttribute('aria-current', j === i ? 'true' : 'false'));
+      if (count) count.textContent = (i + 1) + ' / ' + slides.length;
       slides.forEach((s, j) => s.toggleAttribute('inert', j !== i));
     };
     const run = () => {

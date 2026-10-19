@@ -43,7 +43,9 @@
    "address": "125 E Atlantic Ave",
    "town": "Villas",
    "lat": 39.02276,
-   "lng": -74.93783
+   "lng": -74.93783,
+   "url": "blog/125-e-atlantic-ave-villas-nj.html",
+   "thumb": "images/125-e-atlantic-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "7710 Atlantic Ave Unit 403",
@@ -57,7 +59,9 @@
    "address": "514 Village Rd",
    "town": "Villas",
    "lat": 39.0343,
-   "lng": -74.93297
+   "lng": -74.93297,
+   "url": "blog/514-village-rd-villas-nj.html",
+   "thumb": "images/514-village-rd-villas-nj-bayfront-home-480.jpg"
   },
   {
    "address": "205 St Andrews Dr",
@@ -71,7 +75,9 @@
    "address": "15 White Oak Dr",
    "town": "Ocean View",
    "lat": 39.2154,
-   "lng": -74.70406
+   "lng": -74.70406,
+   "url": "blog/15-white-oak-dr-ocean-view-nj.html",
+   "thumb": "images/15-white-oak-dr-ocean-view-nj-front-exterior-480.jpg"
   },
   {
    "address": "124 W New York Ave",
@@ -93,7 +99,9 @@
    "address": "15 N 11th St",
    "town": "Villas",
    "lat": 39.01953,
-   "lng": -74.94463
+   "lng": -74.94463,
+   "url": "blog/15-n-11th-st-villas-nj.html",
+   "thumb": "images/15-n-11th-st-villas-nj-virtual-twilight-480.jpg"
   },
   {
    "address": "218 Rio Grande Ave",
@@ -107,13 +115,17 @@
    "address": "101 Rutledge Ave",
    "town": "Villas",
    "lat": 39.01763,
-   "lng": -74.93183
+   "lng": -74.93183,
+   "url": "blog/101-rutledge-ave-villas-nj.html",
+   "thumb": "images/101-rutledge-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "116 W Wilde Ave",
    "town": "Villas",
    "lat": 39.02572,
-   "lng": -74.92107
+   "lng": -74.92107,
+   "url": "blog/116-w-wilde-ave-villas-nj.html",
+   "thumb": "images/116-w-wilde-ave-villas-nj-virtual-twilight-480.jpg"
   },
   {
    "address": "414 Paradise Way",
@@ -127,67 +139,89 @@
    "address": "26 Lomurno Ln",
    "town": "Cape May Court House",
    "lat": 39.07666,
-   "lng": -74.82313
+   "lng": -74.82313,
+   "url": "blog/26-lomurno-ln-cape-may-court-house-nj.html",
+   "thumb": "images/26-lomurno-ln-cape-may-court-house-nj-front-exterior-480.jpg"
   },
   {
    "address": "320 Oakdale Ave",
    "town": "Villas",
    "lat": 39.01397,
-   "lng": -74.94096
+   "lng": -74.94096,
+   "url": "blog/320-oakdale-ave-villas-nj.html",
+   "thumb": "images/320-oakdale-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "606 New Jersey Ave",
    "town": "North Wildwood",
    "lat": 39.00382,
-   "lng": -74.80368
+   "lng": -74.80368,
+   "url": "blog/606-new-jersey-ave-north-wildwood-nj.html",
+   "thumb": "images/606-new-jersey-ave-north-wildwood-nj-storefront-480.jpg"
   },
   {
    "address": "430 W Pine Ave",
    "town": "Wildwood",
    "lat": 38.98586,
-   "lng": -74.81423
+   "lng": -74.81423,
+   "url": "blog/430-w-pine-ave-wildwood-nj.html",
+   "thumb": "images/430-w-pine-ave-wildwood-nj-front-exterior-480.jpg"
   },
   {
    "address": "110 W Wilde Ave",
    "town": "Villas",
    "lat": 39.01725,
-   "lng": -74.92369
+   "lng": -74.92369,
+   "url": "blog/110-w-wilde-ave-villas-nj.html",
+   "thumb": "images/110-w-wilde-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "108 W Harrison Ave",
    "town": "Millville",
    "lat": 39.40522,
-   "lng": -75.04371
+   "lng": -75.04371,
+   "url": "blog/108-w-harrison-ave-millville-nj.html",
+   "thumb": "images/108-w-harrison-ave-millville-nj-front-exterior-480.jpg"
   },
   {
    "address": "1140 Pixwhey Ct",
    "town": "Vineland",
    "lat": 39.4655,
-   "lng": -74.96184
+   "lng": -74.96184,
+   "url": "blog/1140-pixwhey-ct-vineland-nj.html",
+   "thumb": "images/1140-pixwhey-ct-vineland-nj-front-exterior-480.jpg"
   },
   {
    "address": "604 Scott Ave",
    "town": "North Cape May",
    "lat": 38.9821,
-   "lng": -74.95447
+   "lng": -74.95447,
+   "url": "blog/604-scott-ave-north-cape-may-nj.html",
+   "thumb": "images/604-scott-ave-north-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "38 Alexander Ave",
    "town": "Villas",
    "lat": 39.01086,
-   "lng": -74.93333
+   "lng": -74.93333,
+   "url": "blog/38-alexander-ave-villas-nj.html",
+   "thumb": "images/38-alexander-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "507 Adriatic Ave",
    "town": "North Cape May",
    "lat": 38.97616,
-   "lng": -74.95723
+   "lng": -74.95723,
+   "url": "blog/507-adriatic-ave-north-cape-may-nj.html",
+   "thumb": "images/507-adriatic-ave-north-cape-may-nj-route-to-bay-480.jpg"
   },
   {
    "address": "216 Iselin Rd",
    "town": "Cape May",
    "lat": 38.9711,
-   "lng": -74.91797
+   "lng": -74.91797,
+   "url": "blog/216-iselin-rd-cape-may-nj.html",
+   "thumb": "images/216-iselin-rd-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "216 Town Bank Rd",
@@ -199,43 +233,57 @@
    "address": "3 Blueberry Ln S",
    "town": "Cape May",
    "lat": 38.96516,
-   "lng": -74.92073
+   "lng": -74.92073,
+   "url": "blog/3-blueberry-ln-s-cape-may-nj.html",
+   "thumb": "images/3-blueberry-ln-s-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "707 Adriatic Ave",
    "town": "North Cape May",
    "lat": 38.9877,
-   "lng": -74.95238
+   "lng": -74.95238,
+   "url": "blog/707-adriatic-ave-north-cape-may-nj.html",
+   "thumb": "images/707-adriatic-ave-north-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "1622 Jennings Ave",
    "town": "Villas",
    "lat": 39.02055,
-   "lng": -74.9158
+   "lng": -74.9158,
+   "url": "blog/1622-jennings-ave-villas-nj.html",
+   "thumb": "images/1622-jennings-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "15 Harmony Ln",
    "town": "North Cape May",
    "lat": 38.97735,
-   "lng": -74.9483
+   "lng": -74.9483,
+   "url": "blog/15-harmony-ln-north-cape-may-nj.html",
+   "thumb": "images/15-harmony-ln-north-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "10 E Atlantic Ave",
    "town": "Villas",
    "lat": 39.00975,
-   "lng": -74.94728
+   "lng": -74.94728,
+   "url": "blog/10-e-atlantic-ave-villas-nj.html",
+   "thumb": "images/10-e-atlantic-ave-villas-nj-virtual-twilight-480.jpg"
   },
   {
    "address": "2 Walnut Ave",
    "town": "Villas",
    "lat": 39.01089,
-   "lng": -74.92376
+   "lng": -74.92376,
+   "url": "blog/2-walnut-ave-villas-nj.html",
+   "thumb": "images/2-walnut-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "225 E Garfield Ave",
    "town": "Wildwood",
    "lat": 38.99041,
-   "lng": -74.82504
+   "lng": -74.82504,
+   "url": "blog/225-e-garfield-ave-wildwood-nj.html",
+   "thumb": "images/225-e-garfield-ave-wildwood-nj-front-exterior-480.jpg"
   },
   {
    "address": "1202 Golf Club Rd",
@@ -253,19 +301,25 @@
    "address": "5 Cedar Mill Ln",
    "town": "Cape May Court House",
    "lat": 39.08121,
-   "lng": -74.83395
+   "lng": -74.83395,
+   "url": "blog/5-cedar-mill-ln-cape-may-court-house-nj.html",
+   "thumb": "images/5-cedar-mill-ln-cape-may-court-house-nj-front-exterior-480.jpg"
   },
   {
    "address": "14 Thistle Ln",
    "town": "Cape May",
    "lat": 38.96971,
-   "lng": -74.93154
+   "lng": -74.93154,
+   "url": "blog/14-thistle-ln-cape-may-nj.html",
+   "thumb": "images/14-thistle-ln-cape-may-nj-front-exterior-480.jpg"
   },
   {
    "address": "500 Desoto Ave",
    "town": "Villas",
    "lat": 39.00591,
-   "lng": -74.93836
+   "lng": -74.93836,
+   "url": "blog/500-desoto-ave-villas-nj.html",
+   "thumb": "images/500-desoto-ave-villas-nj-front-exterior-480.jpg"
   },
   {
    "address": "15 Heritage Dr",
@@ -295,7 +349,9 @@
    "address": "207 W Bennett Ave",
    "town": "Wildwood",
    "lat": 38.98705,
-   "lng": -74.80529
+   "lng": -74.80529,
+   "url": "blog/207-w-bennett-ave-wildwood-nj.html",
+   "thumb": "images/207-w-bennett-ave-wildwood-nj-front-exterior-480.jpg"
   }
  ],
  "count": 46

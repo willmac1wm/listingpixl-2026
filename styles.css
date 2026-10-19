@@ -441,6 +441,7 @@ a[href^="tel:"] { white-space: nowrap; }
 .fc-controls .fc-pause { font-size: 0.85rem; }
 .fc-controls .fc-pause[aria-pressed="true"]::before { content: "\25B6"; }
 .fc-controls .fc-pause[aria-pressed="false"]::before { content: "\275A\275A"; letter-spacing: -2px; }
+.fc-count { min-width: 4.5rem; margin: 0; text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
 .fc-dots { display: flex; gap: 0.15rem; }
 .fc-dots .fc-dot { width: 28px; height: 44px; border: 0; background: none; padding: 0; border-radius: 0; }
 .fc-dots .fc-dot::before { content: ""; display: block; width: 10px; height: 10px; margin: 0 auto; border-radius: 50%; background: #c9c4b8; transition: background-color 0.2s ease, transform 0.2s ease; }
@@ -538,3 +539,8 @@ a[href^="tel:"] { white-space: nowrap; }
 @media (min-width: 721px) and (max-width: 1200px) {
   .hero-bg { background-image: url("images/riogrande_01_twilight-1200.jpg"); }
 }
+
+/* Blog post highlights and related shoots */
+.post-highlights, .post-related { padding-left: 1.2rem; color: var(--muted); }
+.post-highlights li, .post-related li { margin: 0.35rem 0; }
+.post-related a { font-weight: 600; }
