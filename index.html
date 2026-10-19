@@ -264,18 +264,40 @@
     <section id="areas" class="section section-alt" aria-labelledby="areas-heading">
       <div class="wrap">
         <h2 id="areas-heading">Service Area</h2>
-        <p class="section-lede">Proudly shooting across Cape May County &amp; South Jersey &mdash; every pin is a listing we&rsquo;ve photographed.</p>
-        <figure class="area-map-wrap">
+        <p class="section-lede">Based in Cape May County and shooting every town in it &mdash; every pin is a listing we&rsquo;ve photographed.</p>
+        <div class="area-layout">
           <div id="area-map" class="area-map" role="region" aria-label="Map of Listing Pixl shoots across Cape May County and South Jersey">
             <noscript>Turn on JavaScript to see the map of our shoots, or browse <a href="blog/index.html">every shoot</a>.</noscript>
           </div>
-          <figcaption class="area-map-legend">
-            <span><i class="lg-pin" aria-hidden="true"></i>Listings we&rsquo;ve shot (tap a pin)</span>
-            <span><i class="lg-town" aria-hidden="true"></i>Towns we&rsquo;ve worked in</span>
-            <span><i class="lg-county" aria-hidden="true"></i>Cape May County</span>
-            <span><i class="lg-county lg-dash" aria-hidden="true"></i>Also serving Atlantic &amp; Cumberland Counties</span>
-          </figcaption>
-        </figure>
+          <aside class="area-panel" aria-label="Service area details">
+            <form class="area-check" id="area-check">
+              <label for="area-q" class="visually-hidden">Check a zip code or town</label>
+              <input id="area-q" type="text" inputmode="search" autocomplete="off" placeholder="Check zip / town &mdash; 08210, Villas, Linwood&hellip;">
+              <button type="submit" class="btn btn-pink">Check</button>
+            </form>
+            <p id="area-result" class="area-result" role="status" aria-live="polite" hidden></p>
+            <div class="area-tabs" role="tablist">
+              <button type="button" role="tab" id="tab-zones" aria-controls="panel-zones" aria-selected="true">Zones</button>
+              <button type="button" role="tab" id="tab-jobs" aria-controls="panel-jobs" aria-selected="false">Jobs <span id="jobs-count"></span></button>
+            </div>
+            <div id="panel-zones" role="tabpanel" aria-labelledby="tab-zones">
+              <div class="zone-card zone-in">
+                <h3><i aria-hidden="true"></i>Cape May County &mdash; home turf</h3>
+                <p>Every town from Ocean City and Tuckahoe down to Cape May Point, shot at the package prices listed above.</p>
+              </div>
+              <div class="zone-card zone-out">
+                <h3><i aria-hidden="true"></i>Outside the county &mdash; quoted case by case</h3>
+                <p>We travel for the right listing: Somers Point, Linwood, Millville, Buena and beyond. Send the address and we&rsquo;ll quote it.</p>
+                <a href="#contact" class="zone-link">Ask for a quote &rarr;</a>
+              </div>
+              <p class="zone-hq"><span aria-hidden="true">&#9733;</span> Based in Dennisville, Cape May County</p>
+            </div>
+            <div id="panel-jobs" role="tabpanel" aria-labelledby="tab-jobs" hidden>
+              <ul class="job-list" id="job-list"></ul>
+              <a href="blog/index.html" class="zone-link">See every shoot &rarr;</a>
+            </div>
+          </aside>
+        </div>
         <ul class="town-list">
           <li>Cape May</li>
           <li>Wildwood</li>
@@ -377,88 +399,147 @@
       if (opt) sel.value = opt.value;
     }));
 
-    // Service area map: loads only when scrolled near, so it costs nothing up front
+    // Service area: map + zip/town checker + jobs list
     (function () {
       const el = document.getElementById('area-map');
       if (!el) return;
-      let started = false;
+      const HQ = { name: 'Dennisville', lat: 39.1932, lng: -74.8252 };
+      const $ = id => document.getElementById(id);
+      let map = null, county = null, zones = null, data = null, checkPin = null, started = false;
+
+      // Tabs
+      const tabs = [['tab-zones', 'panel-zones'], ['tab-jobs', 'panel-jobs']];
+      tabs.forEach(([t, p]) => $(t).addEventListener('click', () => tabs.forEach(([t2, p2]) => {
+        $(t2).setAttribute('aria-selected', String(t2 === t)); $(p2).hidden = t2 !== t;
+      })));
+
       const load = (src, isCss) => new Promise((ok, fail) => {
         const t = document.createElement(isCss ? 'link' : 'script');
         if (isCss) { t.rel = 'stylesheet'; t.href = src; } else { t.src = src; }
         t.onload = ok; t.onerror = fail; document.head.appendChild(t);
       });
+      // Point-in-polygon against the official county outline
+      const inRing = (x, y, ring) => {
+        let inside = false;
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+          const [xi, yi] = ring[i], [xj, yj] = ring[j];
+          if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+        }
+        return inside;
+      };
+      const inCounty = (lat, lng) => {
+        const g = county.geometry, polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+        return polys.some(p => inRing(lng, lat, p[0]));
+      };
+      const listings = n => n + (n > 1 ? ' listings' : ' listing');
       const popup = (towns) => {
         const box = document.createElement('div'); box.className = 'map-pop';
         towns.forEach(town => {
           const h = document.createElement('strong');
-          h.textContent = town.town + ' \u2014 ' + town.shoots.length + (town.shoots.length > 1 ? ' listings' : ' listing');
+          h.textContent = town.town + ' — ' + listings(town.shoots.length);
           box.appendChild(h);
           town.shoots.forEach(s => {
             const a = document.createElement('a'); a.href = s.url;
             const img = document.createElement('img'); img.src = s.thumb; img.alt = ''; img.loading = 'lazy';
-            const span = document.createElement('span'); span.textContent = s.address + ' \u2192';
+            const span = document.createElement('span'); span.textContent = s.address + ' →';
             a.append(img, span); box.appendChild(a);
           });
         });
         return box;
       };
+
       async function init() {
         if (started) return; started = true;
         try {
           await Promise.all([load('vendor/leaflet/leaflet.css', true), load('vendor/leaflet/leaflet.js')]);
-          const [area, data] = await Promise.all([
-            fetch('data/service-area.geojson').then(r => r.json()),
-            fetch('data/shoots.json').then(r => r.json())
-          ]);
-          const map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.25 });
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            subdomains: 'abcd', maxZoom: 18,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          const [area, shoots, z] = await Promise.all(['data/service-area.geojson', 'data/shoots.json', 'data/zones.json']
+            .map(u => fetch(u).then(r => r.json())));
+          county = area.features[0]; data = shoots; zones = z;
+          data.towns.forEach(t => { t.inside = inCounty(t.lat, t.lng); });
+          map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.25 });
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           }).addTo(map);
-          const served = new Set(data.towns.map(t => t.mun));
-          L.geoJSON(area, {
-            interactive: false,
-            filter: f => f.properties.kind === 'county' || f.properties.county === 'CAPE MAY' || served.has(f.properties.mun),
-            style: f => {
-              const p = f.properties;
-              if (p.kind === 'county') return p.primary
-                ? { color: '#0c7a8c', weight: 2.5, fill: false }
-                : { color: '#0c7a8c', weight: 1.5, dashArray: '5 6', fill: false };
-              return served.has(p.mun)
-                ? { color: '#d71266', weight: 1.5, fillColor: '#d71266', fillOpacity: 0.16 }
-                : { color: '#0c7a8c', weight: 0.75, opacity: 0.45, fillColor: '#0c7a8c', fillOpacity: 0.04 };
-            }
-          }).addTo(map);
-          // Towns close together on screen share one pin until you zoom in.
+          const countyLayer = L.geoJSON(area, { interactive: false,
+            style: { color: '#d71266', weight: 3.5, opacity: 0.95, fillColor: '#d71266', fillOpacity: 0.07 } }).addTo(map);
+          L.marker([HQ.lat, HQ.lng], { icon: L.divIcon({ className: 'hq-pin', html: '<span>★</span>', iconSize: [30, 30] }),
+            title: 'Listing Pixl HQ — ' + HQ.name, zIndexOffset: 1000 })
+            .bindPopup('<strong>Listing Pixl HQ</strong><br>' + HQ.name + ', Cape May County').addTo(map);
+
+          // Pins: nearby towns in the same zone share one pin until you zoom in
           const pins = L.layerGroup().addTo(map);
           const drawPins = () => {
             pins.clearLayers();
             const groups = [];
             data.towns.forEach(t => {
               const pt = map.latLngToContainerPoint([t.lat, t.lng]);
-              const g = groups.find(g => g.pt.distanceTo(pt) < 34);
-              if (g) g.towns.push(t); else groups.push({ pt, towns: [t] });
+              const g = groups.find(g => g.inside === t.inside && g.pt.distanceTo(pt) < 34);
+              if (g) g.towns.push(t); else groups.push({ pt, inside: t.inside, towns: [t] });
             });
             groups.forEach(g => {
-              const n = g.towns.reduce((sum, t) => sum + t.shoots.length, 0);
-              const lat = g.towns.reduce((sum, t) => sum + t.lat, 0) / g.towns.length;
-              const lng = g.towns.reduce((sum, t) => sum + t.lng, 0) / g.towns.length;
+              const n = g.towns.reduce((s, t) => s + t.shoots.length, 0);
+              const lat = g.towns.reduce((s, t) => s + t.lat, 0) / g.towns.length;
+              const lng = g.towns.reduce((s, t) => s + t.lng, 0) / g.towns.length;
               const size = 26 + Math.min(n - 1, 4) * 6;
-              const names = g.towns.map(t => t.town).join(' & ');
-              const icon = L.divIcon({ className: 'job-pin', html: '<span>' + n + '</span>', iconSize: [size, size] });
-              L.marker([lat, lng], { icon, title: names + ': ' + n + (n > 1 ? ' listings' : ' listing'), riseOnHover: true })
+              const icon = L.divIcon({ className: 'job-pin' + (g.inside ? '' : ' is-out'), html: '<span>' + n + '</span>', iconSize: [size, size] });
+              L.marker([lat, lng], { icon, title: g.towns.map(t => t.town).join(' & ') + ': ' + listings(n), riseOnHover: true })
                 .bindPopup(() => popup(g.towns), { maxWidth: 270 }).addTo(pins);
             });
           };
-          map.fitBounds(data.towns.map(t => [t.lat, t.lng]), { padding: [36, 36] });
-          drawPins();
-          map.on('zoomend', drawPins);
+          const fit = () => map.fitBounds(countyLayer.getBounds().extend(L.latLngBounds(data.towns.map(t => [t.lat, t.lng]))), { padding: [28, 28] });
+          fit(); drawPins(); map.on('zoomend', drawPins);
           el.classList.add('is-ready');
+
+          // Jobs tab
+          $('jobs-count').textContent = '(' + data.count + ')';
+          const list = $('job-list');
+          data.towns.forEach(t => {
+            const li = document.createElement('li');
+            const b = document.createElement('button'); b.type = 'button';
+            b.className = 'job-town' + (t.inside ? '' : ' is-out');
+            const name = document.createElement('span'); name.textContent = t.town;
+            const cnt = document.createElement('b'); cnt.textContent = t.shoots.length;
+            b.append(name, cnt);
+            b.addEventListener('click', () => { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); map.flyTo([t.lat, t.lng], 13); });
+            li.appendChild(b); list.appendChild(li);
+          });
         } catch (err) {
           el.classList.add('is-failed');
           el.textContent = 'The map could not load. Browse every shoot on our blog instead.';
         }
       }
+
+      // Zip / town checker
+      const norm = s => s.toLowerCase().replace(/\b(nj|new jersey)\b/g, '').replace(/\btwp\b/g, 'township')
+        .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+      $('area-check').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const q = norm($('area-q').value);
+        const out = $('area-result');
+        if (!q) return;
+        await init();
+        if (!zones) return;
+        const zip = (q.match(/\b\d{5}\b/) || [])[0];
+        const hit = zip ? zones.find(z => z.zip === zip)
+          : zones.find(z => norm(z.name) === q) || zones.find(z => norm(z.name).startsWith(q)) || zones.find(z => q.startsWith(norm(z.name)));
+        out.hidden = false;
+        if (!hit) {
+          out.className = 'area-result is-out';
+          out.textContent = (zip ? zip : $('area-q').value.trim()) + ' is outside Cape May County — we quote those case by case. Send the address and we’ll get back to you.';
+        } else if (hit.county === 'Cape May') {
+          out.className = 'area-result is-in';
+          out.textContent = '✓ ' + hit.name + (hit.zip ? ' (' + hit.zip + ')' : '') + ' is in Cape May County — standard package pricing.';
+        } else {
+          out.className = 'area-result is-out';
+          out.textContent = hit.name + (hit.zip ? ' (' + hit.zip + ')' : '') + ' is in ' + hit.county + ' County — quoted case by case. Send the address and we’ll quote it.';
+        }
+        if (hit && hit.lat && map) {
+          if (checkPin) map.removeLayer(checkPin);
+          checkPin = L.circleMarker([hit.lat, hit.lng], { radius: 11, weight: 3, color: hit.county === 'Cape May' ? '#d71266' : '#e8590c', fillOpacity: 0.15 }).addTo(map);
+          map.flyTo([hit.lat, hit.lng], 11);
+        }
+      });
+
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); init(); } }, { rootMargin: '400px' });
         io.observe(el);

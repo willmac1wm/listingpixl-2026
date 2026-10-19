@@ -2,7 +2,6 @@
  "towns": [
   {
    "town": "Wildwood",
-   "mun": "WILDWOOD CITY",
    "lat": 38.9918,
    "lng": -74.8149,
    "shoots": [
@@ -20,7 +19,6 @@
   },
   {
    "town": "Villas",
-   "mun": "LOWER TWP",
    "lat": 39.0287,
    "lng": -74.9385,
    "shoots": [
@@ -38,7 +36,6 @@
   },
   {
    "town": "North Wildwood",
-   "mun": "NORTH WILDWOOD CITY",
    "lat": 39.0007,
    "lng": -74.7993,
    "shoots": [
@@ -51,7 +48,6 @@
   },
   {
    "town": "Ocean View",
-   "mun": "DENNIS TWP",
    "lat": 39.2154,
    "lng": -74.7075,
    "shoots": [
@@ -64,7 +60,6 @@
   },
   {
    "town": "Cape May Court House",
-   "mun": "MIDDLE TWP",
    "lat": 39.0826,
    "lng": -74.8238,
    "shoots": [
@@ -77,7 +72,6 @@
   },
   {
    "town": "Somers Point",
-   "mun": "SOMERS POINT CITY",
    "lat": 39.3176,
    "lng": -74.5946,
    "shoots": [
@@ -90,7 +84,6 @@
   },
   {
    "town": "Millville",
-   "mun": "MILLVILLE CITY",
    "lat": 39.4021,
    "lng": -75.0393,
    "shoots": [
@@ -103,7 +96,6 @@
   },
   {
    "town": "Buena",
-   "mun": "BUENA BORO",
    "lat": 39.5137,
    "lng": -74.9246,
    "shoots": [

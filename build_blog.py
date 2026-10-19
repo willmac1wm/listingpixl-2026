@@ -141,19 +141,6 @@ TOWN_COORDS = {
     "Buena": (39.5137, -74.9246),
 }
 
-# Which NJGIN municipality each town sits in, so the map can highlight its
-# outline. Villas / Cape May Court House / Ocean View etc. are communities
-# inside a township, so they light up the whole township.
-TOWN_MUNI = {
-    "Wildwood": "WILDWOOD CITY", "North Wildwood": "NORTH WILDWOOD CITY",
-    "Wildwood Crest": "WILDWOOD CREST BORO", "Cape May": "CAPE MAY CITY",
-    "Villas": "LOWER TWP", "North Cape May": "LOWER TWP", "Erma": "LOWER TWP",
-    "Cape May Court House": "MIDDLE TWP", "Rio Grande": "MIDDLE TWP",
-    "Ocean View": "DENNIS TWP", "Sea Isle City": "SEA ISLE CITY", "Avalon": "AVALON BORO",
-    "Ocean City": "OCEAN CITY", "Woodbine": "WOODBINE BORO",
-    "Somers Point": "SOMERS POINT CITY", "Millville": "MILLVILLE CITY", "Buena": "BUENA BORO",
-}
-
 def shoots_json():
     """Group shoots by town for the Service Area map."""
     towns = {}
@@ -161,8 +148,7 @@ def shoots_json():
         if s["town"] not in TOWN_COORDS:
             raise SystemExit(f"build_blog.py: add map coordinates for '{s['town']}' to TOWN_COORDS")
         lat, lng = TOWN_COORDS[s["town"]]
-        t = towns.setdefault(s["town"], {"town": s["town"], "mun": TOWN_MUNI.get(s["town"], ""),
-                                         "lat": lat, "lng": lng, "shoots": []})
+        t = towns.setdefault(s["town"], {"town": s["town"], "lat": lat, "lng": lng, "shoots": []})
         t["shoots"].append({"address": s["address"], "url": f"blog/{s['slug']}.html",
                             "thumb": f"images/{s['photos'][0][0][:-4]}-480.jpg"})
     return {"towns": sorted(towns.values(), key=lambda t: -len(t["shoots"])), "count": len(SHOOTS)}
