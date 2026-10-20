@@ -115,11 +115,14 @@ const actions = {
       const [f, preview] = await Promise.all([readJson(`drafts/${enc(slug)}.json`, branch), previewUrl(r.object.sha).catch(() => null)]);
       return f && { ...f.data, branch, preview, photoBase: `https://raw.githubusercontent.com/${REPO}/${branchPath(branch)}/images/` };
     }));
-    // Approved posts still waiting to go out (or that failed) on the publish branch
+    // Approved shoots with something left to do on the publish branch: social posts
+    // waiting or failed, or the Google Business post not yet marked as posted by hand
     const listing = (await gh(`/contents/drafts?ref=${enc(BASE || 'main')}`, { allow404: true })) || [];
     const pending = (await Promise.all(listing.filter(f => f.name.endsWith('.json') && f.name !== 'request.json')
       .map(f => readJson(f.path, BASE || 'main')))).map(f => f && f.data)
-      .filter(d => d && (d.status === 'approved' || Object.keys(d.errors || {}).length));
+      .filter(d => d && (d.status === 'approved' || Object.keys(d.errors || {}).length || (d.google && !d.google.posted_at)))
+      .map(d => ({ ...d, photoBase: BASE === 'main' ? 'https://www.listingpixl.com/images/'
+        : `https://raw.githubusercontent.com/${REPO}/${branchPath(BASE || 'main')}/images/` }));
     const runs = await gh('/actions/runs?per_page=30&event=push'); // works before the workflow is on main
     const working = runs.workflow_runs
       .filter(w => w.head_branch.startsWith('draft-request/') && (w.status !== 'completed' || w.conclusion === 'failure')
@@ -169,6 +172,18 @@ const actions = {
     return { ok: true };
   },
 
+  // Will posts the Google Business update by hand (no API access yet) and ticks it off here
+  async googleDone(body) {
+    const slug = String(body.slug || '');
+    if (!/^[a-z0-9-]+$/.test(slug)) throw new HttpError(400, 'Bad slug.');
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview.');
+    const f = await readJson(`drafts/${slug}.json`, BASE);
+    if (!f) throw new HttpError(404, 'That shoot has no draft file.');
+    f.data.google = { ...f.data.google, posted_at: new Date().toISOString() };
+    await writeJson(`drafts/${slug}.json`, BASE, f.data, f.sha, `Google Business post done by hand: ${slug}`);
+    return { ok: true };
+  },
+
   async reject(body) {
     const slug = String(body.slug || '');
     if (!/^[a-z0-9-]+$/.test(slug)) throw new HttpError(400, 'Bad slug.');
@@ -178,7 +193,7 @@ const actions = {
   },
 };
 
-const POSTS = new Set(['draft', 'save', 'approve', 'reject', 'publishNow']);
+const POSTS = new Set(['draft', 'save', 'approve', 'reject', 'publishNow', 'googleDone']);
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

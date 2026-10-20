@@ -14,6 +14,7 @@ const css = `
     .sh-btn:disabled { opacity: 0.5; cursor: wait; }
     .sh-msg { font-size: 0.9rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
     .sh-err { color: #b00020; }
+    .sh-pre { white-space: pre-wrap; background: #faf8f3; border-radius: 8px; padding: 0.6rem 0.75rem; }
     .sh-draft h3 { margin: 0 0 0.25rem; font-size: 1.1rem; text-align: left; }
     .sh-note { background: #fff7e0; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; margin: 0.5rem 0; }
     .sh-chan { border-top: 1px solid #eee; padding-top: 0.75rem; margin-top: 0.75rem; }
@@ -211,6 +212,39 @@ function client() {
   const refresh = () => { editing = false; loadDrafts(true); };
   document.addEventListener('input', e => { if (e.target.closest && e.target.closest('.sh-draft')) editing = true; });
 
+  // An approved shoot: social posting status, plus the Google Business post to
+  // copy by hand until it is ticked off
+  function approvedCard(p) {
+    const status = [
+      p.status === 'approved' ? `Social posts go out ${new Date(p.post_at).toLocaleString()}.` : '',
+      Object.keys(p.posted || {}).length ? `Posted: ${Object.keys(p.posted).join(', ')}.` : '',
+    ].filter(Boolean).join(' ');
+    const kids = [el('h3', { text: `${p.address}, ${p.town}` }), status ? el('p', { class: 'sh-msg', text: status }) : null];
+    if (Object.keys(p.errors || {}).length) {
+      kids.push(el('p', { class: 'sh-msg sh-err', text: 'Problems: ' + Object.entries(p.errors).map(([k, v]) => `${k}: ${v}`).join('; ') }));
+    }
+    if (p.google && !p.google.posted_at) {
+      const msg = el('p', { class: 'sh-msg', role: 'status' });
+      const done = el('button', { class: 'sh-btn pink', type: 'button', text: 'I posted it on Google' });
+      done.addEventListener('click', async () => {
+        done.disabled = true;
+        try { await api('googleDone', { slug: p.slug }); refresh(); } catch (e) { msg.textContent = e.message; msg.classList.add('sh-err'); done.disabled = false; }
+      });
+      kids.push(el('div', { class: 'sh-chan' }, [
+        el('h4', { text: 'Google Business post (post it by hand)' }),
+        el('p', { class: 'sh-msg sh-pre', text: p.google.text }),
+        el('div', { class: 'sh-row' }, [
+          copyButton(() => p.google.text, 'Copy text'), copyButton(() => p.google.link, 'Copy button link'),
+          el('a', { class: 'sh-btn ghost', href: p.photoBase + p.google.photo, download: p.google.photo, target: '_blank', rel: 'noopener', text: 'Photo' }),
+          el('a', { class: 'sh-btn ghost', href: 'https://business.google.com/locations', target: '_blank', rel: 'noopener', text: 'Open Google profile' }),
+        ]),
+        el('p', { class: 'sh-msg', text: 'On the profile: Add update, paste the text, add the photo, button "Learn more" with the copied link. Then press the pink button so this goes away.' }),
+        el('div', { class: 'sh-row' }, [done]), msg,
+      ]));
+    }
+    return el('div', { class: 'sh-box sh-draft' }, kids);
+  }
+
   async function loadDrafts(force) {
     if (editing && !force) return;
     try {
@@ -220,12 +254,7 @@ function client() {
         el('a', { href: w.url, target: '_blank', rel: 'noopener', text: 'details' }),
       ])));
       $('sh-drafts').replaceChildren(...drafts.map(draftCard));
-      $('sh-pending').replaceChildren(...pending.map(p => el('div', { class: 'sh-box' }, [
-        el('strong', { text: `${p.address}, ${p.town}: ` }),
-        el('span', { text: p.status === 'approved' ? `approved, social posts go out ${new Date(p.post_at).toLocaleString()}. ` : '' }),
-        el('span', { text: Object.keys(p.posted || {}).length ? `Posted: ${Object.keys(p.posted).join(', ')}. ` : '' }),
-        Object.keys(p.errors || {}).length ? el('span', { class: 'sh-err', text: 'Problems: ' + Object.entries(p.errors).map(([k, v]) => `${k}: ${v}`).join('; ') }) : null,
-      ])));
+      $('sh-pending').replaceChildren(...pending.map(approvedCard));
     } catch (e) { $('sh-working').replaceChildren(el('p', { class: 'sh-msg sh-err', text: 'Loading drafts failed: ' + e.message })); }
   }
 
