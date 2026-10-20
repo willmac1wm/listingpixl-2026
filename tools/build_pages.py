@@ -577,7 +577,6 @@ def example_figures(examples):
 def service_page(sp):
     path = f"/services/{sp['slug']}.html"
     body = "\n".join(f"        <h2>{html.escape(h)}</h2>\n        <p>{p}</p>" for h, p in sp["body"])
-    prices = "\n".join(f'          <li>{n} <span class="alacarte-price">{p}</span></li>' for n, p in sp["prices"])
     others = "\n".join(f'          <li><a href="{o["slug"]}.html">{html.escape(o["name"])}</a></li>' for o in SERVICE_PAGES if o is not sp)
     towns = "\n".join(f'          <li><a href="../areas/{B.area_slug(t)}.html">{html.escape(t)}</a></li>' for t in B.AREA_TOWNS)
     schema = {"@context": "https://schema.org", "@type": "Service", "name": sp["name"],
@@ -606,11 +605,8 @@ def service_page(sp):
 
     <article class="section">
       <div class="wrap narrow">
-        <h2>Pricing</h2>
-        <ul class="price-list">
-{prices}
-        </ul>
-        <p>All of Cape May County is covered at these prices. Outside the county (Somers Point, Millville, Vineland, Buena and beyond) we quote travel case by case. <a href="../index.html#packages">Compare all packages</a>.</p>
+        <h2>Book this for your listing</h2>
+        <p>Tell us about the property and we will text you to confirm. <a href="../index.html#packages">See our packages</a>.</p>
         <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="tel:+16097807027">Call or text {B.PHONE}</a></p>
 
         <h2>Other services</h2>
