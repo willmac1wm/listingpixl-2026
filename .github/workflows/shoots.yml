@@ -1,0 +1,98 @@
+# Drafts and publishes shoots for the team dashboard (/staff).
+#
+# The dashboard (api/shoots.js) starts work by creating a short-lived branch:
+#   draft-request/<site id>-<time>  holds drafts/request.json (site id, notes, base branch).
+#       The draft job writes the post with tools/draft_shoot.py and pushes it to
+#       shoot/<slug>, which Vercel builds as a preview for review.
+#   publish-request/<base branch>   asks for approved posts on that branch to go out now.
+# Every 15 minutes the publish job also runs on main, for posts scheduled later.
+#
+# Secrets (GitHub > Settings > Secrets and variables > Actions):
+#   ANTHROPIC_API_KEY, HDPH_API_KEY, META_TOKEN
+name: Shoots
+
+on:
+  push:
+    branches: ['draft-request/**', 'publish-request/**']
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  draft:
+    if: startsWith(github.ref_name, 'draft-request/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read the request
+        id: req
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json
+          r = json.load(open("drafts/request.json"))
+          print(f"sid={int(r['sid'])}")
+          print(f"base={r.get('base', 'main')}")
+          EOF
+          python3 -c "import json; print(json.load(open('drafts/request.json')).get('notes', ''))" > "$RUNNER_TEMP/notes.txt"
+      - name: Start from the base branch
+        run: |
+          git fetch origin "${{ steps.req.outputs.base }}"
+          git checkout -B work "origin/${{ steps.req.outputs.base }}"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install Pillow anthropic
+      - name: Write the draft
+        id: draft
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HDPH_API_KEY: ${{ secrets.HDPH_API_KEY }}
+          SHOOT_BASE: ${{ steps.req.outputs.base }}
+        run: python3 tools/draft_shoot.py "${{ steps.req.outputs.sid }}" --notes "$(cat "$RUNNER_TEMP/notes.txt")" --work "$RUNNER_TEMP/shoot"
+      - name: Push the draft for review
+        run: |
+          git config user.name "Listing Pixl bot"
+          git config user.email "ListingPixl.Media@gmail.com"
+          git checkout -B "shoot/${{ steps.draft.outputs.slug }}"
+          git add -A
+          git commit -m "Draft post: ${{ steps.draft.outputs.slug }} (HD Photo Hub site ${{ steps.req.outputs.sid }})"
+          git -c http.postBuffer=1048576000 push -f origin "shoot/${{ steps.draft.outputs.slug }}"
+      - name: Remove the request branch
+        if: always()
+        run: git push origin --delete "${{ github.ref_name }}" || true
+
+  publish:
+    if: github.event_name != 'push' || startsWith(github.ref_name, 'publish-request/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency: publish-social
+    steps:
+      - name: Which branch
+        id: b
+        run: |
+          ref="${{ github.ref_name }}"
+          echo "base=${ref#publish-request/}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.b.outputs.base }}
+      - name: Post what is due
+        env:
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+        run: python3 tools/publish_social.py --branch "${{ steps.b.outputs.base }}" --wait 900
+      - name: Save what was posted
+        run: |
+          git config user.name "Listing Pixl bot"
+          git config user.email "ListingPixl.Media@gmail.com"
+          if [ -n "$(git status --porcelain drafts)" ]; then
+            git add drafts
+            git commit -m "Record social posts"
+            git pull --rebase origin "${{ steps.b.outputs.base }}"
+            git push origin "HEAD:${{ steps.b.outputs.base }}"
+          fi
+      - name: Remove the request branch
+        if: always() && startsWith(github.ref_name, 'publish-request/')
+        run: git push origin --delete "${{ github.ref_name }}" || true

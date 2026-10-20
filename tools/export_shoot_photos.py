@@ -49,6 +49,7 @@ def existing_hashes(slug):
 def main(picks_path, sheets_dir, zips_dir):
     picks = json.load(open(picks_path))
     meta = json.load(open(os.path.join(sheets_dir, "meta.json")))
+    exported = {}
     for key, shoot in picks.items():
         address, town = shoot["address"], shoot["town"]
         slug = slugify(f"{address} {town} nj")
@@ -85,6 +86,8 @@ def main(picks_path, sheets_dir, zips_dir):
               f" {len(skipped)} near-duplicates skipped {skipped if skipped else ''}")
         print(f"slug='{slug}',")
         print("photos=[" + ",\n        ".join(repr(p) for p in photos) + "],")
+        exported[key] = dict(slug=slug, photos=photos, skipped=skipped)
+    return exported
 
 if __name__ == "__main__":
     args = sys.argv[1:]
