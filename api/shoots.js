@@ -11,7 +11,9 @@
 const { authorized } = require('./_auth');
 
 const REPO = process.env.GITHUB_REPO || 'willmac1wm/listingpixl-2026';
-const BASE = process.env.PUBLISH_BRANCH || 'main';
+// Only the production deployment may publish to main. A preview with no
+// PUBLISH_BRANCH set must refuse to approve rather than fall back to main.
+const BASE = process.env.PUBLISH_BRANCH || (process.env.VERCEL_ENV === 'production' ? 'main' : null);
 const EDITABLE = ['facebook', 'instagram', 'google', 'channels'];
 
 class HttpError extends Error {
@@ -97,7 +99,7 @@ const actions = {
   async sites() {
     const [sites, blog, refs] = await Promise.all([
       hdphSites(),
-      gh(`/contents/blog?ref=${enc(BASE)}`),
+      gh(`/contents/blog?ref=${enc(BASE || 'main')}`),
       gh('/git/matching-refs/heads/shoot/'),
     ]);
     const posted = new Set(blog.map(f => f.name.replace(/\.html$/, '')));
@@ -114,9 +116,9 @@ const actions = {
       return f && { ...f.data, branch, preview, photoBase: `https://raw.githubusercontent.com/${REPO}/${branchPath(branch)}/images/` };
     }));
     // Approved posts still waiting to go out (or that failed) on the publish branch
-    const listing = (await gh(`/contents/drafts?ref=${enc(BASE)}`, { allow404: true })) || [];
+    const listing = (await gh(`/contents/drafts?ref=${enc(BASE || 'main')}`, { allow404: true })) || [];
     const pending = (await Promise.all(listing.filter(f => f.name.endsWith('.json') && f.name !== 'request.json')
-      .map(f => readJson(f.path, BASE)))).map(f => f && f.data)
+      .map(f => readJson(f.path, BASE || 'main')))).map(f => f && f.data)
       .filter(d => d && (d.status === 'approved' || Object.keys(d.errors || {}).length));
     const runs = await gh('/actions/runs?per_page=30&event=push'); // works before the workflow is on main
     const working = runs.workflow_runs
@@ -127,6 +129,7 @@ const actions = {
   },
 
   async draft(body) {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview.');
     const sid = String(body.sid || '').replace(/\D/g, '');
     if (!sid) throw new HttpError(400, 'Missing shoot id.');
     const notes = String(body.notes || '').slice(0, 2000);
@@ -148,6 +151,7 @@ const actions = {
   },
 
   async approve(body) {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview, so approving is switched off here.');
     const when = body.post_at ? new Date(body.post_at) : new Date();
     if (isNaN(when)) throw new HttpError(400, 'Bad posting time.');
     const { draft } = await actions.save(body, { status: 'approved', post_at: when.toISOString(), approved_at: new Date().toISOString() });
@@ -158,6 +162,7 @@ const actions = {
   },
 
   async publishNow() {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview.');
     const name = `publish-request/${BASE}`;
     if (await gh(`/git/ref/heads/${branchPath(name)}`, { allow404: true })) return { ok: true }; // one already running
     await gh('/git/refs', { method: 'POST', body: { ref: `refs/heads/${name}`, sha: await headSha(BASE) } });
