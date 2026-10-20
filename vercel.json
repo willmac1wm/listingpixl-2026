@@ -28,5 +28,15 @@
       "destination": "/blog/",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/staff",
+      "destination": "/api/staff"
+    },
+    {
+      "source": "/staff/",
+      "destination": "/api/staff"
+    }
   ]
 }

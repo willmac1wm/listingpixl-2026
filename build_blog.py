@@ -1139,7 +1139,7 @@ FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
       <p>Real estate photography across Cape May County &amp; South Jersey</p>
       <p class="footer-areas">Areas we serve: {area_links("../")}</p>
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a></p>
+      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a> &middot; <a href="/staff" rel="nofollow">Team login</a></p>
     </div>
   </footer>
 
