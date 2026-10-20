@@ -75,10 +75,10 @@ async function hdphSites() {
   return (await r.json()).map(s => ({
     sid: s.sid,
     created: new Date(when(s)).toISOString().slice(0, 10),
-    address: s.address, city: s.city,
+    address: s.address || '', city: s.city || '',
     agent: (s.user && s.user.name) || '',
     photos: s.media.filter(m => m.type === 'still' && !m.hidden).length,
-    slug: `${s.address} ${s.city} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    slug: `${s.address || ''} ${s.city || ''} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.created.localeCompare(a.created));
 }
 
