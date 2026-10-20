@@ -33,9 +33,10 @@ const html = `
       <div class="sh-box">
         <div class="sh-row">
           <select id="sh-site" aria-label="Shoot from HD Photo Hub"><option>Loading shoots from HD Photo Hub…</option></select>
-          <button class="sh-btn pink" id="sh-go" type="button">Write the posts</button>
+          <button class="sh-btn pink" id="sh-go" type="button" disabled>Write the posts</button>
         </div>
         <p class="sh-msg">Pick a shoot. In about 5 minutes the draft blog post and social posts appear below for you to check. Nothing is published until you press Approve.</p>
+        <p class="sh-msg sh-err" id="sh-load-err" role="alert"></p>
         <p class="sh-msg" id="sh-status" role="status"></p>
       </div>
       <div id="sh-working"></div>
@@ -83,11 +84,16 @@ function client() {
       })));
       const first = sites.find(s => !s.onBlog && !s.drafted);
       if (first) sel.value = first.sid;
-    } catch (e) { status(e.message, true); }
+      $('sh-go').disabled = false;
+    } catch (e) {
+      $('sh-site').replaceChildren(el('option', { text: 'Could not load shoots' }));
+      $('sh-load-err').textContent = 'Loading shoots failed: ' + e.message;
+    }
   }
 
   $('sh-go').addEventListener('click', async () => {
     const btn = $('sh-go');
+    if (!/^\d+$/.test($('sh-site').value)) return status('Pick a shoot first.', true);
     btn.disabled = true;
     try {
       await api('draft', { sid: $('sh-site').value });
@@ -220,7 +226,7 @@ function client() {
         el('span', { text: Object.keys(p.posted || {}).length ? `Posted: ${Object.keys(p.posted).join(', ')}. ` : '' }),
         Object.keys(p.errors || {}).length ? el('span', { class: 'sh-err', text: 'Problems: ' + Object.entries(p.errors).map(([k, v]) => `${k}: ${v}`).join('; ') }) : null,
       ])));
-    } catch (e) { status(e.message, true); }
+    } catch (e) { $('sh-working').replaceChildren(el('p', { class: 'sh-msg sh-err', text: 'Loading drafts failed: ' + e.message })); }
   }
 
   loadSites();

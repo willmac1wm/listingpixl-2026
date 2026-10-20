@@ -239,7 +239,9 @@ def main():
     os.makedirs(a.work, exist_ok=True)
 
     s = hdph.site(a.sid)
-    address, town = string.capwords(s["address"].strip()), string.capwords(s["city"].strip())
+    address, town = string.capwords(s["address"].strip()), string.capwords((s.get("city") or "").strip())
+    if not town:
+        raise SystemExit("This shoot has no town in HD Photo Hub; add it there first")
     key = slugify(address)
     zpath = os.path.join(a.work, key + ".zip")
     if not os.path.exists(zpath):

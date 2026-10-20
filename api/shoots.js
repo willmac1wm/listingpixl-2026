@@ -11,19 +11,24 @@
 const { authorized } = require('./_auth');
 
 const REPO = process.env.GITHUB_REPO || 'willmac1wm/listingpixl-2026';
-const BASE = process.env.PUBLISH_BRANCH || 'main';
+// Only the production deployment may publish to main. A preview with no
+// PUBLISH_BRANCH set must refuse to approve rather than fall back to main.
+const BASE = process.env.PUBLISH_BRANCH || (process.env.VERCEL_ENV === 'production' ? 'main' : null);
 const EDITABLE = ['facebook', 'instagram', 'google', 'channels'];
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
 
+// GITHUB_TOKEN1 is the name the key was saved under in Vercel for Preview
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN1;
+
 async function gh(path, opts = {}) {
-  if (!process.env.GITHUB_TOKEN) throw new HttpError(503, 'GITHUB_TOKEN is not set in Vercel.');
+  if (!GITHUB_TOKEN) throw new HttpError(503, 'GITHUB_TOKEN is not set in Vercel.');
   const r = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
     method: opts.method || 'GET',
     headers: {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
       ...(opts.body ? { 'Content-Type': 'application/json' } : {}),
@@ -75,15 +80,16 @@ async function hdphSites() {
   return (await r.json()).map(s => ({
     sid: s.sid,
     created: new Date(when(s)).toISOString().slice(0, 10),
-    address: s.address, city: s.city,
+    address: s.address || '', city: s.city || '',
     agent: (s.user && s.user.name) || '',
     photos: s.media.filter(m => m.type === 'still' && !m.hidden).length,
-    slug: `${s.address} ${s.city} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    slug: `${s.address || ''} ${s.city || ''} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.created.localeCompare(a.created));
 }
 
-async function previewUrl(branch) {
-  const deps = await gh(`/deployments?ref=${enc(branch)}&per_page=1`);
+async function previewUrl(sha) {
+  // Vercel files its GitHub deployments under the commit SHA, not the branch name
+  const deps = await gh(`/deployments?sha=${sha}&per_page=1`);
   if (!deps.length) return null;
   const st = await gh(`/deployments/${deps[0].id}/statuses?per_page=1`);
   return (st[0] && st[0].state === 'success' && st[0].environment_url) || null;
@@ -93,7 +99,7 @@ const actions = {
   async sites() {
     const [sites, blog, refs] = await Promise.all([
       hdphSites(),
-      gh(`/contents/blog?ref=${enc(BASE)}`),
+      gh(`/contents/blog?ref=${enc(BASE || 'main')}`),
       gh('/git/matching-refs/heads/shoot/'),
     ]);
     const posted = new Set(blog.map(f => f.name.replace(/\.html$/, '')));
@@ -106,13 +112,13 @@ const actions = {
     const drafts = await Promise.all(refs.map(async r => {
       const branch = r.ref.replace('refs/heads/', '');
       const slug = branch.slice('shoot/'.length);
-      const [f, preview] = await Promise.all([readJson(`drafts/${enc(slug)}.json`, branch), previewUrl(branch).catch(() => null)]);
+      const [f, preview] = await Promise.all([readJson(`drafts/${enc(slug)}.json`, branch), previewUrl(r.object.sha).catch(() => null)]);
       return f && { ...f.data, branch, preview, photoBase: `https://raw.githubusercontent.com/${REPO}/${branchPath(branch)}/images/` };
     }));
     // Approved posts still waiting to go out (or that failed) on the publish branch
-    const listing = (await gh(`/contents/drafts?ref=${enc(BASE)}`, { allow404: true })) || [];
+    const listing = (await gh(`/contents/drafts?ref=${enc(BASE || 'main')}`, { allow404: true })) || [];
     const pending = (await Promise.all(listing.filter(f => f.name.endsWith('.json') && f.name !== 'request.json')
-      .map(f => readJson(f.path, BASE)))).map(f => f && f.data)
+      .map(f => readJson(f.path, BASE || 'main')))).map(f => f && f.data)
       .filter(d => d && (d.status === 'approved' || Object.keys(d.errors || {}).length));
     const runs = await gh('/actions/runs?per_page=30&event=push'); // works before the workflow is on main
     const working = runs.workflow_runs
@@ -123,6 +129,7 @@ const actions = {
   },
 
   async draft(body) {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview.');
     const sid = String(body.sid || '').replace(/\D/g, '');
     if (!sid) throw new HttpError(400, 'Missing shoot id.');
     const notes = String(body.notes || '').slice(0, 2000);
@@ -144,6 +151,7 @@ const actions = {
   },
 
   async approve(body) {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview, so approving is switched off here.');
     const when = body.post_at ? new Date(body.post_at) : new Date();
     if (isNaN(when)) throw new HttpError(400, 'Bad posting time.');
     const { draft } = await actions.save(body, { status: 'approved', post_at: when.toISOString(), approved_at: new Date().toISOString() });
@@ -154,6 +162,7 @@ const actions = {
   },
 
   async publishNow() {
+    if (!BASE) throw new HttpError(503, 'PUBLISH_BRANCH is not set for this preview.');
     const name = `publish-request/${BASE}`;
     if (await gh(`/git/ref/heads/${branchPath(name)}`, { allow404: true })) return { ok: true }; // one already running
     await gh('/git/refs', { method: 'POST', body: { ref: `refs/heads/${name}`, sha: await headSha(BASE) } });

@@ -48,5 +48,10 @@
       "draft-request/**": false,
       "publish-request/**": false
     }
+  },
+  "functions": {
+    "api/shoots.js": {
+      "maxDuration": 60
+    }
   }
 }

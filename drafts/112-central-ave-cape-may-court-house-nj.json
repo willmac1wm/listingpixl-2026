@@ -7,7 +7,7 @@
  "shot": "June 2026",
  "agent": "Jason Ruffenach",
  "drafted": "2026-10-20T15:20:05+00:00",
- "status": "approved",
+ "status": "posted",
  "notes": "",
  "notes_for_review": "1) Lead photo: I used photo 0 (file 001-DSC09922-2), an edited copy of photo 1. The trash cans by the fence seem to have been edited out and the frame is tighter, so please confirm you're happy using the edited version. This shoot has no virtual twilight, so the lead is a daytime exterior. 2) Drone shots: I checked 2, 3, 4 and 5 at full size and saw no lot lines, arrows or pins. 3) Photo 46 (the playroom, with a hash file name) looks AI-processed and the view out the window differs from photo 45, so I left it out. Please check where it came from. 4) Photo 5 seems to show marsh and water on the horizon, and I described it as marshland. Please confirm that is accurate. 5) Photo 33 (the pergola fireplace) has a pile of loose lumber in it. Swap it for 34 or drop it if you'd rather. 6) I took the June 2026 date from the shoot facts; I didn't confirm it against the EXIF.",
  "left_out": "Photo 1 is the unedited original of the lead exterior (photo 0 is the edited copy). Photos 2 and 4 are extra drone angles, kept out so the gallery has only two aerials. Photo 19 is a second kitchen angle. Photos 7, 8, 10, 11 and 12 are near-duplicate living room views. Photo 14 is a near-duplicate of bath 13, and 23 is a near-duplicate of bath 24. Photos 15 and 16 show the kids' bunk room. Photos 20 and 21 show the storage/gym room, and 22 and 25 show the laundry. Photos 27 and 28 show the deck stairs, and 34 is a near-duplicate of the pergola shot. The shed and remaining yard and front angles are 30-32 and 35-44. Photos 45 and 46 show the playroom; 46 looks AI-processed (see notes).",
@@ -100,12 +100,25 @@
   "photo": "112-central-ave-cape-may-court-house-nj-google.jpg",
   "link": "https://www.listingpixl.com/blog/112-central-ave-cape-may-court-house-nj.html"
  },
- "post_at": "2026-10-20T22:30:00.000Z",
- "posted": {},
+ "post_at": "2026-10-20T16:38:15+00:00",
+ "posted": {
+  "facebook": {
+   "id": "100551446334473_1063292580005543",
+   "at": "2026-10-20T16:39:13+00:00"
+  },
+  "instagram": {
+   "id": "18099007826098202",
+   "at": "2026-10-20T16:40:28+00:00"
+  },
+  "story": {
+   "id": "18094046627675158",
+   "at": "2026-10-20T16:40:37+00:00"
+  }
+ },
  "channels": [
   "facebook",
   "instagram",
   "story"
  ],
- "approved_at": "2026-10-20T16:00:56.169Z"
+ "approved_at": "2026-10-20T16:10:57.975Z"
 }

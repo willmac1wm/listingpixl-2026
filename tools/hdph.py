@@ -59,6 +59,6 @@ if __name__ == "__main__":
         download(site(sys.argv[1]), sys.argv[2])
     elif len(sys.argv) == 1:
         for s in sites()[:15]:
-            print(s["sid"], created(s).date(), f"{len(photos(s)):>3} photos", s["address"], s["city"], "|", s["user"].get("name"))
+            print(s["sid"], created(s).date(), f"{len(photos(s)):>3} photos", s["address"], s.get("city", ""), "|", s["user"].get("name"))
     else:
         sys.exit(__doc__)
