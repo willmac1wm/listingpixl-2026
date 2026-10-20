@@ -422,15 +422,13 @@ SERVICE_PAGES = [
          desc="Drone films and walkthrough videos for South Jersey listings: a 60-second drone video with Showcase ($475), a 1-2 minute walkthrough with Premiere ($750).",
          body=[
              ("Why video", "Video is what buyers stop for on Facebook, Instagram and Zillow. A short film from the air shows what a photo gallery can only hint at: the drive up the street, how close the water is, what the neighborhood feels like at golden hour."),
-             ("What we film", "Showcase includes a 60-second exterior drone video: the home, the lot and the setting, edited and ready for social and the MLS. Premiere adds a 1&ndash;2 minute cinematic walkthrough that moves through the home as well. We fly at the right time of day for the location, like the sunset light over the Delaware Bay in the North Cape May film below."),
+             ("What we film", "Showcase includes a 60-second exterior drone video: the home, the lot and the setting, edited and ready for social and the MLS. Premiere adds a 1&ndash;2 minute cinematic walkthrough that moves through the home as well. We fly at the right time of day for the location, so the light flatters the home and the setting."),
              ("Delivered ready to post", "Films come edited, color-graded and sized for the MLS video link, Facebook and Instagram, through the same client site as your photos."),
          ],
          og_image="1622-jennings-ave-villas-nj-drone-front.jpg",
          examples_lede="Films from our shoots. Press play.",
          examples=[
-             dict(kind="embed", src="https://iframe.videodelivery.net/1db8e809d69b14521c1ea01ae9a1222a?autoplay=true&loop=true", poster="video/707-adriatic-ave-north-cape-may-nj-film-poster.jpg",
-                  caption="Drone film over North Cape May and the bay at sunset", slug="707-adriatic-ave-north-cape-may-nj"),
-             dict(kind="embed", src="https://iframe.videodelivery.net/b4ce3ae7c4e1b36ed27abaa9f4eb9c80?autoplay=true", poster="1622-jennings-ave-villas-nj-drone-front.jpg",
+             dict(kind="embed", src="https://iframe.videodelivery.net/b4ce3ae7c4e1b36ed27abaa9f4eb9c80?autoplay=true", poster="video/1622-jennings-ave-villas-nj-drone-poster.jpg",
                   caption="Drone flight over a Villas bungalow and its street", slug="1622-jennings-ave-villas-nj"),
              dict(kind="embed", src="https://iframe.videodelivery.net/bbb55ce5e67fdb6112c60c2302718f5f?autoplay=true", poster="video/320-oakdale-ave-villas-nj-drone-poster.jpg",
                   caption="Drone flight over Villas toward the bay", slug="320-oakdale-ave-villas-nj"),
