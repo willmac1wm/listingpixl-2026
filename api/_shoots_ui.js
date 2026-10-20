@@ -56,7 +56,7 @@ function client() {
     return n;
   };
   async function api(action, body) {
-    const r = await fetch('/staff/shoots?action=' + action, body ? {
+    const r = await fetch(location.origin + '/staff/shoots?action=' + action, body ? {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Staff': '1' }, body: JSON.stringify(body),
     } : {});
     const data = await r.json().catch(() => ({ error: r.statusText }));

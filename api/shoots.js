@@ -114,7 +114,7 @@ const actions = {
     const pending = (await Promise.all(listing.filter(f => f.name.endsWith('.json') && f.name !== 'request.json')
       .map(f => readJson(f.path, BASE)))).map(f => f && f.data)
       .filter(d => d && (d.status === 'approved' || Object.keys(d.errors || {}).length));
-    const runs = await gh('/actions/workflows/shoots.yml/runs?per_page=15&event=push');
+    const runs = await gh('/actions/runs?per_page=30&event=push'); // works before the workflow is on main
     const working = runs.workflow_runs
       .filter(w => w.head_branch.startsWith('draft-request/') && (w.status !== 'completed' || w.conclusion === 'failure')
         && Date.now() - Date.parse(w.created_at) < 2 * 86400e3)
