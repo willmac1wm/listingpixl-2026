@@ -560,7 +560,7 @@ a[href^="tel:"] { white-space: nowrap; }
 .landing-grid .blog-card h3 { font-size: 1.05rem; margin: 0; padding: 1rem 1.25rem 0; }
 .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .photo-grid figure { margin: 0; }
-.photo-grid img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); display: block; }
+.photo-grid img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); display: block; }
 .photo-grid figcaption { font-size: 0.88rem; color: var(--muted); margin-top: 0.4rem; }
 .photo-grid figcaption a { color: var(--accent); }
 .price-list { list-style: none; padding: 0; margin: 1rem 0; }
@@ -571,3 +571,5 @@ a[href^="tel:"] { white-space: nowrap; }
 .link-pills a { display: block; border: 1px solid var(--card-border); border-radius: 999px; padding: 0.4rem 1rem; text-decoration: none; font-size: 0.95rem; }
 .link-pills a:hover { background: #e6f4f6; }
 .landing-lede { color: var(--muted); font-size: 1.1rem; margin: 0; }
+/* Buttons inside posts and landing pages keep their own text color */
+article .wrap.narrow a.btn-pink, article .wrap.narrow a.btn-pink:hover, article .wrap.narrow a.btn-outline:hover { color: #fff; }
