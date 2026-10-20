@@ -3,5 +3,3 @@ build_blog.py
 tools/
 .gitignore
 claude-review-prompt.md
-CLAUDE.md
-.claude/
