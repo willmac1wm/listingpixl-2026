@@ -37,6 +37,16 @@
     {
       "source": "/staff/",
       "destination": "/api/staff"
+    },
+    {
+      "source": "/staff/shoots",
+      "destination": "/api/shoots"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "draft-request/**": false,
+      "publish-request/**": false
+    }
+  }
 }

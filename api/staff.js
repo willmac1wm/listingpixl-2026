@@ -9,7 +9,8 @@
 // locked for everyone.
 //
 // To add a link, add a line to SECTIONS below and push.
-const crypto = require('crypto');
+const { authorized } = require('./_auth');
+const shoots = require('./_shoots_ui');
 
 const SECTIONS = [
   {
@@ -45,38 +46,21 @@ const SECTIONS = [
 ];
 
 const HOW_TO = [
-  ['New shoot on the blog', 'Download the shoot\'s zip from HD Photo Hub into Downloads, then ask Claude Code: "add blog posts for these shoots." It picks the photos, writes the post, adds it to the homepage slider and the Google Business posts folder, and puts it live once you approve the preview.'],
-  ['Change photos, services or prices', 'Ask Claude Code with the listingpixl-2026 project open, for example "swap the first photo on the 14 Thistle Ln post" or "raise the Showcase package to $495." You approve the preview before anything goes live.'],
+  ['Start in the right place', 'In Claude Code, start a new session in the listingpixl-2026 folder (Documents > GitHub > listingpixl-2026). Any session there knows how the site works, because the instructions are saved in the project on GitHub. If that folder is ever missing, start a session anywhere and ask it to clone github.com/willmac1wm/listingpixl-2026 into Documents/GitHub.'],
+  ['New shoot on the blog, Google, Facebook and Instagram', 'Pick the shoot under New shoots at the top of this page. About 5 minutes later the draft blog post and social posts appear there: check the photos and wording, edit anything, then press Approve. The blog post goes live right away and Facebook, the Instagram post and the Instagram story go out at the time you pick. The Google post is ready to copy and paste.'],
+  ['Change photos, services or prices', 'Ask in that same folder, for example "swap the first photo on the 14 Thistle Ln post" or "raise the Showcase package to $495." You approve the preview before anything goes live.'],
   ['Google Business posts', 'Ready-to-post text and photos for every shoot are in Downloads > ListingPixl-Google-Business, with a posting date for each in SCHEDULE.txt.'],
 ];
 
 const NOT_SET_UP = [
   'Google review link to text agents after each shoot',
-  'Post scheduler for Google Business (Buffer or Hootsuite)',
+  'Automatic Google Business posts (waiting on Google API access)',
   'Online payments and invoices',
   'Shared calendar for shoots',
   'Bookkeeping',
 ];
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const digest = s => crypto.createHash('sha256').update(String(s)).digest();
-const same = (a, b) => crypto.timingSafeEqual(digest(a), digest(b));
-
-function authorized(req) {
-  const password = process.env.STAFF_PASSWORD;
-  if (!password) return false;
-  const user = process.env.STAFF_USER || 'team';
-  const m = /^Basic\s+(.+)$/i.exec(req.headers.authorization || '');
-  if (!m) return false;
-  const decoded = Buffer.from(m[1], 'base64').toString('utf8');
-  const i = decoded.indexOf(':');
-  if (i < 0) return false;
-  // Check both so the time taken doesn't reveal which one was wrong
-  const userOk = same(decoded.slice(0, i), user);
-  const passOk = same(decoded.slice(i + 1), password);
-  return userOk && passOk;
-}
-
 function page() {
   const sections = SECTIONS.map(s => `
       <section class="dash-section">
@@ -116,6 +100,7 @@ function page() {
     .dash-list strong { color: var(--ink, #1d1d1d); }
     .dash-todo { display: flex; flex-wrap: wrap; gap: 0.45rem; list-style: none; padding: 0; }
     .dash-todo li { border: 1px dashed var(--card-border, #ccc); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.88rem; color: var(--muted, #666); }
+${shoots.css}
     .dash-foot { margin-top: 3rem; font-size: 0.85rem; color: var(--muted, #666); }
   </style>
 </head>
@@ -125,6 +110,7 @@ function page() {
       <a href="/" aria-label="Listing Pixl home"><img src="/images/logo-horizontal-312.jpg" alt="Listing Pixl" width="156" height="66"></a>
       <h1>Team Dashboard</h1>
     </div>
+${shoots.html}
     ${sections}
     <section class="dash-section">
       <h2>How to update the website</h2>
@@ -136,6 +122,7 @@ function page() {
     </section>
     <p class="dash-foot">Links open in a new tab. Each service still asks for its own login. To sign out of this page, close the browser.</p>
   </main>
+  <script>${shoots.script}</script>
 </body>
 </html>`;
 }
