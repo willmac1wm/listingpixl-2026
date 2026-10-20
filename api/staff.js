@@ -45,8 +45,9 @@ const SECTIONS = [
 ];
 
 const HOW_TO = [
-  ['New shoot on the blog', 'Download the shoot\'s zip from HD Photo Hub into Downloads, then ask Claude Code: "add blog posts for these shoots." It picks the photos, writes the post, adds it to the homepage slider and the Google Business posts folder, and puts it live once you approve the preview.'],
-  ['Change photos, services or prices', 'Ask Claude Code with the listingpixl-2026 project open, for example "swap the first photo on the 14 Thistle Ln post" or "raise the Showcase package to $495." You approve the preview before anything goes live.'],
+  ['Start in the right place', 'In Claude Code, start a new session in the listingpixl-2026 folder (Documents > GitHub > listingpixl-2026). Any session there knows how the site works, because the instructions are saved in the project on GitHub. If that folder is ever missing, start a session anywhere and ask it to clone github.com/willmac1wm/listingpixl-2026 into Documents/GitHub.'],
+  ['New shoot on the blog', 'Download the shoot\'s zip from HD Photo Hub into Downloads, then type /add-shoots. It picks the photos, writes the post, adds it to the homepage slider and the Google Business posts folder, and puts it live once you approve the preview.'],
+  ['Change photos, services or prices', 'Ask in that same folder, for example "swap the first photo on the 14 Thistle Ln post" or "raise the Showcase package to $495." You approve the preview before anything goes live.'],
   ['Google Business posts', 'Ready-to-post text and photos for every shoot are in Downloads > ListingPixl-Google-Business, with a posting date for each in SCHEDULE.txt.'],
 ];
 
