@@ -140,6 +140,42 @@
     });
   }
 
+  // Service examples: run each card's animation, video or before/after sweep
+  // only while it is on screen; videos load the first time they are seen.
+  const svcMedia = document.querySelectorAll('.svc-media');
+  if (svcMedia.length) {
+    const setLive = (el, live) => {
+      el.classList.toggle('is-live', live && !reduceMotion);
+      const v = el.querySelector('video');
+      if (!v || reduceMotion) return;
+      if (live) {
+        if (!v.src) v.src = v.dataset.src;
+        v.play().catch(() => {});
+      } else if (v.src) v.pause();
+    };
+    if ('IntersectionObserver' in window) {
+      const svcIO = new IntersectionObserver(es => es.forEach(e => setLive(e.target, e.isIntersecting)), { threshold: 0.35 });
+      svcMedia.forEach(el => svcIO.observe(el));
+    } else svcMedia.forEach(el => setLive(el, true));
+
+    // Before/after: sweeps back and forth by itself until someone drags it
+    document.querySelectorAll('.svc-compare').forEach(box => {
+      const range = box.querySelector('.svc-range');
+      let auto = !reduceMotion, t0 = null;
+      const set = pct => box.style.setProperty('--pos', pct + '%');
+      const tick = now => {
+        if (!auto) return;
+        if (box.classList.contains('is-live')) {
+          t0 = t0 ?? now;
+          set((50 + 42 * Math.sin((now - t0) / 1100)).toFixed(1));
+        }
+        requestAnimationFrame(tick);
+      };
+      if (auto) requestAnimationFrame(tick);
+      range.addEventListener('input', () => { auto = false; set(range.value); });
+    });
+  }
+
   // Keep the mobile Call / Text / Book bar out of the way while typing
   const form = document.getElementById('booking-form');
   if (form) {

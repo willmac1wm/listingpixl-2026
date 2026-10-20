@@ -185,6 +185,116 @@ h2 { font-size: 2rem; text-align: center; }
 .service-card h3 { font-size: 1.1rem; color: var(--accent-dark); }
 .service-card p { margin: 0; color: var(--muted); }
 
+/* Service examples: a real shoot animated at the top of each card. Animations
+   only run while the card is on screen (site.js adds .is-live). */
+.service-card { overflow: hidden; }
+.svc-media {
+  position: relative; aspect-ratio: 16 / 10; margin: -1.5rem -1.5rem 1rem; overflow: hidden;
+  background: #e9eef0; isolation: isolate;
+}
+.svc-media img, .svc-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.svc-media:not(.is-live) *, .svc-media:not(.is-live)::after { animation-play-state: paused !important; }
+.svc-where {
+  position: absolute; left: 0.5rem; bottom: 0.5rem; z-index: 3; padding: 0.15rem 0.5rem; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 0.72rem; line-height: 1.5; letter-spacing: 0.01em;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); pointer-events: none;
+}
+
+/* HDR: slow cinematic push-in with a soft light sweep */
+.svc-kenburns img { transform-origin: 30% 40%; animation: svc-kb 16s ease-in-out infinite alternate; }
+.svc-kenburns::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
+  transform: translateX(-120%); animation: svc-sweep 8s ease-in-out infinite;
+}
+@keyframes svc-kb { from { transform: scale(1.02); } to { transform: scale(1.16) translate(-3%, 2%); } }
+@keyframes svc-sweep { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+
+/* Before / after: the slider position (--pos) is set by site.js */
+.svc-compare { --pos: 50%; cursor: ew-resize; touch-action: pan-y; }
+.svc-compare .svc-after { clip-path: inset(0 0 0 var(--pos)); }
+.svc-divider {
+  position: absolute; top: 0; bottom: 0; left: var(--pos); z-index: 2; width: 2px; margin-left: -1px; background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35); pointer-events: none;
+}
+.svc-divider::after {
+  content: "\2039\00a0\203A"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--accent-dark);
+  display: grid; place-items: center; font-size: 0.85rem; font-weight: 700; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.svc-label {
+  position: absolute; top: 0.5rem; z-index: 3; padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.68rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: rgba(0, 0, 0, 0.45); pointer-events: none;
+}
+.svc-label-l { left: 0.5rem; }
+.svc-label-r { right: 0.5rem; background: var(--accent-pink); }
+.svc-range { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+
+/* 3D: the three floors float apart and turn, like a dollhouse view */
+.svc-stack { background: radial-gradient(circle at 50% 40%, #ffffff, #dcecef); perspective: 900px; }
+.svc-stack-scene {
+  position: absolute; left: 50%; top: 56%; width: 50%; aspect-ratio: 700 / 1189; transform-style: preserve-3d;
+  transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-30deg); animation: svc-turn 14s linear infinite;
+}
+.svc-stack-scene img { object-fit: contain; filter: contrast(1.6) drop-shadow(0 6px 6px rgba(10, 110, 127, 0.25)); }
+.svc-stack-scene img:nth-child(1) { animation: svc-floor1 7s ease-in-out infinite alternate; }
+.svc-stack-scene img:nth-child(2) { animation: svc-floor2 7s ease-in-out infinite alternate; }
+.svc-stack-scene img:nth-child(3) { animation: svc-floor3 7s ease-in-out infinite alternate; }
+@keyframes svc-turn { from { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-30deg); } to { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(330deg); } }
+@keyframes svc-floor1 { from { transform: translateZ(0); } to { transform: translateZ(-38px); } }
+@keyframes svc-floor2 { from { transform: translateZ(0); } to { transform: translateZ(4px); } }
+@keyframes svc-floor3 { from { transform: translateZ(0); } to { transform: translateZ(46px); } }
+
+/* 2D: the plan draws itself in from left to right */
+.svc-plan { background: #fff; }
+.svc-plan img { object-fit: contain; padding: 0.6rem; clip-path: inset(0 100% 0 0); animation: svc-draw 7s ease-in-out -2.5s infinite; }
+.svc-scan {
+  position: absolute; top: 0; bottom: 0; left: 0; z-index: 2; width: 2px; background: var(--accent-pink);
+  box-shadow: 0 0 10px var(--accent-pink); animation: svc-scanline 7s ease-in-out -2.5s infinite;
+}
+@keyframes svc-draw { 0% { clip-path: inset(0 100% 0 0); opacity: 1; } 45%, 85% { clip-path: inset(0 0 0 0); opacity: 1; } 100% { clip-path: inset(0 0 0 0); opacity: 0; } }
+@keyframes svc-scanline { 0% { left: 0; opacity: 1; } 45% { left: 100%; opacity: 1; } 50%, 100% { left: 100%; opacity: 0; } }
+
+/* Property website: a little browser scrolling a listing page */
+.svc-site { background: linear-gradient(135deg, #0c7a8c, #0a6e7f); }
+.svc-browser {
+  position: absolute; inset: 9% 9% 0; border-radius: 8px 8px 0 0; background: #fff; overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+.svc-bar { display: flex; align-items: center; gap: 4px; height: 18px; padding: 0 7px; background: #eef0f1; }
+.svc-bar i { width: 6px; height: 6px; border-radius: 50%; background: #c8cdd0; }
+.svc-bar span { margin-left: 8px; padding: 0 8px; border-radius: 6px; background: #fff; color: #777; font-size: 0.58rem; line-height: 12px; }
+.svc-page { position: absolute; inset: 18px 0 0; overflow: hidden; }
+.svc-page-scroll { animation: svc-scroll 9s ease-in-out infinite; }
+.svc-page img { position: static; height: auto; }
+.svc-page-scroll > img { aspect-ratio: 16 / 9; }
+.svc-page b { display: block; padding: 6px 8px 0; font-size: 0.78rem; color: var(--ink); }
+.svc-page small { display: block; padding: 0 8px; font-size: 0.6rem; color: var(--muted); }
+.svc-nav { display: flex; gap: 4px; padding: 6px 8px; }
+.svc-nav em { font-style: normal; font-size: 0.55rem; padding: 1px 6px; border-radius: 999px; background: #e6f3f5; color: var(--accent-dark); }
+.svc-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 8px 8px; }
+.svc-thumbs img { aspect-ratio: 4 / 3; border-radius: 3px; }
+@keyframes svc-scroll { 0%, 18% { transform: translateY(0); } 50%, 68% { transform: translateY(-52%); } 100% { transform: translateY(0); } }
+
+/* Vacation rental: crossfading lifestyle slideshow */
+.svc-fade img { opacity: 0; animation: svc-fade 16s ease-in-out -2s infinite; }
+.svc-fade img:nth-of-type(2) { animation-delay: -14s; }
+.svc-fade img:nth-of-type(3) { animation-delay: -10s; }
+.svc-fade img:nth-of-type(4) { animation-delay: -6s; }
+@keyframes svc-fade { 0% { opacity: 0; transform: scale(1.08); } 6%, 25% { opacity: 1; } 31%, 100% { opacity: 0; transform: scale(1); } }
+
+/* 360 panorama: two copies side by side slide left forever, so it never shows a seam */
+.svc-pano-strip { position: absolute; top: 0; bottom: 0; left: 0; display: flex; width: max-content; animation: svc-pan 60s linear infinite; }
+.svc-pano-strip img { position: static; width: auto; height: 100%; flex: none; }
+@keyframes svc-pan { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-media *, .svc-kenburns::after { animation: none !important; }
+  .svc-plan img { clip-path: none; }
+  .svc-fade img:first-of-type { opacity: 1; }
+  .svc-scan { display: none; }
+}
+
 /* ---------- Packages ---------- */
 .packages-grid {
   display: grid;
@@ -523,6 +633,9 @@ a[href^="tel:"] { white-space: nowrap; }
   /* Two compact service cards per row so phones reach Packages sooner */
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
   .service-card { padding: 1rem; }
+  .svc-media { margin: -1rem -1rem 0.75rem; }
+  .svc-where { font-size: 0.6rem; left: 0.3rem; bottom: 0.3rem; max-width: calc(100% - 0.6rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .svc-label { font-size: 0.58rem; }
   .service-card h3 { font-size: 0.98rem; }
   .service-card p { font-size: 0.88rem; }
   /* Lighter hero photo on phones (~83 KB instead of ~290 KB) */

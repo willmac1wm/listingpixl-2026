@@ -45,6 +45,7 @@ GA_SNIPPET = """  <!-- Google tag (gtag.js) -->
 
 EMAIL = "ListingPixl.Media@gmail.com"
 FB = "https://www.facebook.com/listing.pixl.media/"
+IG = "https://www.instagram.com/listing_pixl/"
 
 # NOTE (2026-10-16, verified via Street View): every photo once attributed to
 # "301 E Pacific Ave, Villas NJ" actually shows 101 Pennsylvania Ave
@@ -1162,7 +1163,7 @@ FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
       <p>Real estate photography across Cape May County &amp; South Jersey</p>
       <p class="footer-areas">Areas we serve: {area_links("../")}</p>
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a> &middot; <a href="/staff" rel="nofollow">Team login</a></p>
+      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a> &middot; <a href="{IG}" target="_blank" rel="noopener">Find us on Instagram</a> &middot; <a href="/staff" rel="nofollow">Team login</a></p>
     </div>
   </footer>
 
