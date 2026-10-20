@@ -17,7 +17,7 @@ from PIL import Image, ImageOps
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 with contextlib.redirect_stdout(io.StringIO()):
-    import build_blog as B  # regenerates the blog as a side effect; output is identical
+    import build_blog as B  # SHOOTS and helpers only; run build_blog.py to rebuild the site
 
 OUT = os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else "~/Downloads/ListingPixl-Google-Business")
 # Suggested schedule: Mondays and Thursdays at 10 AM, starting with the next

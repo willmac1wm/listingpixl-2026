@@ -3,7 +3,7 @@
 
 Run from anywhere: output goes to blog/ next to this script.
 """
-import os, re, html, json, csv
+import os, re, sys, html, json, csv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLOG = os.path.join(HERE, "blog")
@@ -1097,6 +1097,17 @@ DEFAULT_SERVICES_NOTE = ("HDR listing photography with professional editing and 
                          "the lot, the setting, and the surrounding {town} neighborhood \u2014 the views "
                          "that make South Jersey listings stand out online.")
 
+# Town landing pages (tools/build_pages.py writes them to areas/): one per town
+# we have shoots in. Posts, the footer and the homepage town list link here.
+AREA_TOWNS = ['Villas', 'Cape May', 'North Cape May', 'Wildwood', 'North Wildwood', 'Cape May Court House',
+              'Ocean View', 'Millville', 'Vineland', 'Buena', 'Somers Point']
+
+def area_slug(town):
+    return re.sub(r"[^a-z0-9]+", "-", town.lower()).strip("-") + "-nj-real-estate-photographer"
+
+def area_links(prefix):
+    return " &middot; ".join(f'<a href="{prefix}areas/{area_slug(t)}.html">{html.escape(t)}</a>' for t in AREA_TOWNS)
+
 def a_an(word):
     return "an" if word[:1].lower() in "aeiou" else "a"
 
@@ -1126,6 +1137,7 @@ FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
     <div class="wrap">
       <p class="footer-contact">Call or text <a href="tel:+16097807027">{PHONE}</a> &middot; <a href="mailto:{EMAIL}">{EMAIL}</a></p>
       <p>Real estate photography across Cape May County &amp; South Jersey</p>
+      <p class="footer-areas">Areas we serve: {area_links("../")}</p>
       <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
       <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a></p>
     </div>
@@ -1226,6 +1238,7 @@ def post_page(s):
         town_section = f"""
         <h2>Real estate photography in {html.escape(s['town'])}, NJ</h2>
         <p>{html.escape(town_text)}</p>
+        <p>See packages, FAQs and every shoot in town on our <a href="../areas/{area_slug(s['town'])}.html">{html.escape(s['town'])}, NJ real estate photographer</a> page.</p>
 """
     related = [r for r in SHOOTS if r["slug"] != s["slug"] and r["town"] == s["town"]][:4]
     if len(related) < 4:
@@ -1387,24 +1400,41 @@ def update_homepage():
     start, end = "<!-- FEATURED:START -->", "<!-- FEATURED:END -->"
     a, b = page.index(start) + len(start), page.index(end)
     page = page[:a] + "\n" + slides + "\n            " + page[b:]
+    # Homepage town list: towns with a landing page link to it
+    towns = re.search(r'<ul class="town-list">.*?</ul>', page, re.S).group(0)
+    def _town(m):
+        t = html.unescape(re.sub(r"<[^>]+>", "", m.group(1)))
+        if t in AREA_TOWNS:
+            return f'<li><a href="areas/{area_slug(t)}.html">{html.escape(t)}</a></li>'
+        return f"<li>{html.escape(t)}</li>"
+    page = page.replace(towns, re.sub(r"<li>(.*?)</li>", _town, towns))
+    page = re.sub(r'<p class="footer-areas">.*?</p>', f'<p class="footer-areas">Areas we serve: {area_links("")}</p>', page)
     page = re.sub(r'<p class="fc-count"[^>]*>.*?</p>', f'<p class="fc-count" aria-live="polite"><span class="fc-now">1</span> / {n}</p>', page)
     open(path, "w", encoding="utf-8").write(page)
 
-for s in SHOOTS:
-    open(os.path.join(BLOG, s["slug"] + ".html"), "w", encoding="utf-8").write(post_page(s))
-update_homepage()
-open(os.path.join(BLOG, "index.html"), "w", encoding="utf-8").write(index_page())
-os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
-with open(os.path.join(HERE, "data", "jobs.json"), "w", encoding="utf-8") as fh:
-    json.dump(jobs_json(), fh, indent=1)
-urls = ["/", "/blog/", "/privacy.html"] + [f"/blog/{s['slug']}.html" for s in SHOOTS]
-with open(os.path.join(HERE, "sitemap.xml"), "w", encoding="utf-8") as fh:
-    fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-    fh.writelines(f"  <url>\n    <loc>{DOMAIN}{u}</loc>\n  </url>\n" for u in urls)
-    fh.write("</urlset>\n")
-# remove the deleted post if it exists
-stale = os.path.join(BLOG, "301-e-pacific-ave-villas-nj.html")
-if os.path.exists(stale):
-    os.remove(stale)
-    print("removed stale 301-e-pacific-ave post")
-print(f"Wrote {len(SHOOTS)} posts + index to {BLOG}")
+def main():
+    for s in SHOOTS:
+        open(os.path.join(BLOG, s["slug"] + ".html"), "w", encoding="utf-8").write(post_page(s))
+    update_homepage()
+    open(os.path.join(BLOG, "index.html"), "w", encoding="utf-8").write(index_page())
+    os.makedirs(os.path.join(HERE, "data"), exist_ok=True)
+    with open(os.path.join(HERE, "data", "jobs.json"), "w", encoding="utf-8") as fh:
+        json.dump(jobs_json(), fh, indent=1)
+    # Town and service landing pages
+    sys.path.insert(0, os.path.join(HERE, "tools"))
+    import build_pages
+    page_urls = build_pages.write_pages()
+    urls = ["/", "/blog/", "/privacy.html"] + page_urls + [f"/blog/{s['slug']}.html" for s in SHOOTS]
+    with open(os.path.join(HERE, "sitemap.xml"), "w", encoding="utf-8") as fh:
+        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+        fh.writelines(f"  <url>\n    <loc>{DOMAIN}{u}</loc>\n  </url>\n" for u in urls)
+        fh.write("</urlset>\n")
+    # remove the deleted post if it exists
+    stale = os.path.join(BLOG, "301-e-pacific-ave-villas-nj.html")
+    if os.path.exists(stale):
+        os.remove(stale)
+        print("removed stale 301-e-pacific-ave post")
+    print(f"Wrote {len(SHOOTS)} posts + index to {BLOG}, {len(page_urls)} landing pages")
+
+if __name__ == "__main__":
+    main()
