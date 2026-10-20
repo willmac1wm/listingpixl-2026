@@ -82,8 +82,9 @@ async function hdphSites() {
   })).sort((a, b) => b.created.localeCompare(a.created));
 }
 
-async function previewUrl(branch) {
-  const deps = await gh(`/deployments?ref=${enc(branch)}&per_page=1`);
+async function previewUrl(sha) {
+  // Vercel files its GitHub deployments under the commit SHA, not the branch name
+  const deps = await gh(`/deployments?sha=${sha}&per_page=1`);
   if (!deps.length) return null;
   const st = await gh(`/deployments/${deps[0].id}/statuses?per_page=1`);
   return (st[0] && st[0].state === 'success' && st[0].environment_url) || null;
@@ -106,7 +107,7 @@ const actions = {
     const drafts = await Promise.all(refs.map(async r => {
       const branch = r.ref.replace('refs/heads/', '');
       const slug = branch.slice('shoot/'.length);
-      const [f, preview] = await Promise.all([readJson(`drafts/${enc(slug)}.json`, branch), previewUrl(branch).catch(() => null)]);
+      const [f, preview] = await Promise.all([readJson(`drafts/${enc(slug)}.json`, branch), previewUrl(r.object.sha).catch(() => null)]);
       return f && { ...f.data, branch, preview, photoBase: `https://raw.githubusercontent.com/${REPO}/${branchPath(branch)}/images/` };
     }));
     // Approved posts still waiting to go out (or that failed) on the publish branch
