@@ -18,12 +18,15 @@ class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
 
+// GITHUB_TOKEN1 is the name the key was saved under in Vercel for Preview
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN1;
+
 async function gh(path, opts = {}) {
-  if (!process.env.GITHUB_TOKEN) throw new HttpError(503, 'GITHUB_TOKEN is not set in Vercel.');
+  if (!GITHUB_TOKEN) throw new HttpError(503, 'GITHUB_TOKEN is not set in Vercel.');
   const r = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
     method: opts.method || 'GET',
     headers: {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
       ...(opts.body ? { 'Content-Type': 'application/json' } : {}),
