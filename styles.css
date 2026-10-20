@@ -676,6 +676,24 @@ a[href^="tel:"] { white-space: nowrap; }
 .photo-grid img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius); display: block; }
 .photo-grid figcaption { font-size: 0.88rem; color: var(--muted); margin-top: 0.4rem; }
 .photo-grid figcaption a { color: var(--accent); }
+/* Service page examples: before/after sliders, floor plans, click-to-play films and 360s */
+.photo-grid .ex-wide { grid-column: 1 / -1; }
+.photo-grid .ex-frame { margin: 0; border-radius: var(--radius); aspect-ratio: 3 / 2; }
+.photo-grid .ex-frame img { aspect-ratio: auto; border-radius: 0; height: 100%; }
+.photo-grid .ex-plan img { object-fit: contain; background: #fff; border: 1px solid var(--card-border); }
+.photo-grid .ex-wide.ex-plan img { aspect-ratio: auto; max-height: 720px; }
+.ex-embed {
+  position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: 0; border-radius: var(--radius);
+  overflow: hidden; cursor: pointer; background: #111;
+}
+.ex-embed img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; border-radius: 0; transition: transform 0.4s ease; }
+.ex-embed:hover img, .ex-embed:focus-visible img { transform: scale(1.03); }
+.ex-play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); min-width: 64px; height: 64px; padding: 0 14px;
+  border-radius: 999px; background: var(--accent-pink); color: #fff; display: grid; place-items: center;
+  font-size: 1.3rem; font-weight: 700; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.ex-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .price-list { list-style: none; padding: 0; margin: 1rem 0; }
 .price-list li { padding: 0.6rem 0; border-bottom: 1px dashed var(--card-border); display: flow-root; }
 .price-list li:last-child { border-bottom: none; }

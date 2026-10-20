@@ -297,12 +297,25 @@ SERVICE_PAGES = [
              ("Why it works as a cover photo", "Most listing photos are taken in the middle of the day, so a search page is a grid of houses under similar skies. A twilight exterior stands out in that grid. It also helps homes whose daytime fronts look plain: a ranch with a flat midday sky, a townhome row, a new build without landscaping yet. Twilight flatters architecture with a lot of glass, like the mid-century modern home we shot on Dove Dr in Millville, and shore homes with stacked balconies, like the Rio Grande Ave house in Wildwood. We can also apply it to a drone photo for a twilight aerial of the street."),
              ("How we choose the shot", "We pick the exterior angle that shows the house best, usually the straight-on or slight-angle front view, and edit it as a twilight while keeping the daytime version for the gallery. Showcase and Premiere include two twilight edits, so you can use one as the cover and one later in the gallery or on social media."),
          ],
-         examples=[("218-rio-grande-ave-wildwood-nj", "riogrande_01_twilight.jpg"),
-                   ("601-dove-dr-millville-nj", "dovedr_01_twilight.jpg"),
-                   ("10-williams-way-ocean-view-nj", "williamsway_01_twilight.jpg"),
-                   ("116-w-wilde-ave-villas-nj", "116-w-wilde-ave-villas-nj-virtual-twilight.jpg"),
-                   ("205-st-andrews-dr-cape-may-court-house-nj", "standrews_02_twilight.jpg"),
-                   ("218-rio-grande-ave-wildwood-nj", "riogrande_02_drone_twilight.jpg")],
+         og_image="riogrande_01_twilight.jpg",
+         examples_lede="The same photo by day and as a virtual twilight. Drag the slider to compare.",
+         examples=[
+             dict(kind="compare", before="601-dove-dr-millville-nj-daytime-exterior.jpg", after="601-dove-dr-millville-nj-virtual-twilight-exterior.jpg",
+                  before_alt="Daytime exterior of a modern home in Millville NJ", after_alt="The same home as a virtual twilight",
+                  caption="Mid-century modern home with a wall of glass", labels=("Day", "Twilight"), slug="601-dove-dr-millville-nj"),
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-daytime-front.jpg", after="116-w-wilde-ave-villas-nj-twilight-front.jpg",
+                  before_alt="Daytime front of a new build in Villas NJ", after_alt="The same new build as a virtual twilight",
+                  caption="New construction with a two-story porch", labels=("Day", "Twilight"), slug="116-w-wilde-ave-villas-nj"),
+             dict(kind="compare", before="10-williams-way-ocean-view-nj-daytime-front.jpg", after="10-williams-way-ocean-view-nj-twilight-front.jpg",
+                  before_alt="Daytime front of a colonial in Ocean View NJ", after_alt="The same colonial as a virtual twilight",
+                  caption="Colonial with a long front lawn", labels=("Day", "Twilight"), slug="10-williams-way-ocean-view-nj"),
+             dict(kind="compare", before="124-w-new-york-ave-villas-nj-daytime-front.jpg", after="124-w-new-york-ave-villas-nj-twilight-front.jpg",
+                  before_alt="Daytime front of a blue cottage in Villas NJ", after_alt="The same cottage as a virtual twilight",
+                  caption="Cottage with a stone-path front garden", labels=("Day", "Twilight"), slug="124-w-new-york-ave-villas-nj"),
+             dict(kind="compare", before="15-n-11th-st-villas-nj-daytime-front.jpg", after="15-n-11th-st-villas-nj-twilight-front.jpg",
+                  before_alt="Daytime front of a green ranch in Villas NJ in winter", after_alt="The same ranch as a virtual twilight",
+                  caption="A winter ranch shot that needed warmth", labels=("Day", "Twilight"), slug="15-n-11th-st-villas-nj"),
+         ],
          prices=[("Showcase: two virtual twilight edits, drone video and a 2D floor plan", "$475"),
                  ("Premiere: two virtual twilight edits plus video and a 3D tour", "$750"),
                  ("Adding twilight edits to Essential", "Ask us")]),
@@ -315,26 +328,50 @@ SERVICE_PAGES = [
              ("What we stage", "We stage the rooms that matter most to buyers: the main living area, the primary bedroom, and any room whose use is not obvious when it is empty. On new construction like the 116 W Wilde Ave build in Villas and the W Bennett Ave townhomes in Wildwood, we photographed the empty rooms and staged a living room and a bedroom with furniture, rugs and decor that suit the house. Staged photos are a design aid, so we recommend noting virtual staging in the listing description."),
              ("Virtual decluttering", "If a room is furnished but busy, decluttering removes clutter and old furniture from the photo instead of adding new pieces. It is a good fit for estate sales, tenant-occupied homes and rooms that are mid-move."),
          ],
-         examples=[("116-w-wilde-ave-villas-nj", "116-w-wilde-ave-villas-nj-virtually-staged-living.jpg"),
-                   ("207-w-bennett-ave-wildwood-nj", "207-w-bennett-ave-wildwood-nj-virtually-staged-bedroom.jpg")],
+         og_image="116-w-wilde-ave-villas-nj-staged-living-area.jpg",
+         examples_lede="The same room empty and virtually staged. Drag the slider to compare.",
+         examples=[
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-empty-living-area.jpg", after="116-w-wilde-ave-villas-nj-staged-living-area.jpg",
+                  before_alt="Empty living area of a new build in Villas NJ", after_alt="The same living area virtually staged",
+                  caption="Open living area with sofa, chairs and rug", labels=("Empty", "Staged"), slug="116-w-wilde-ave-villas-nj"),
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-empty-back-room.jpg", after="116-w-wilde-ave-villas-nj-staged-back-living-room.jpg",
+                  before_alt="Empty back room of a new build in Villas NJ", after_alt="The back room virtually staged as a living room",
+                  caption="One empty room staged as a living room", labels=("Empty", "Living room"), slug="116-w-wilde-ave-villas-nj"),
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-empty-back-room-b.jpg", after="116-w-wilde-ave-villas-nj-staged-back-dining-room.jpg",
+                  before_alt="Empty back room of a new build in Villas NJ", after_alt="The same back room virtually staged as a dining room",
+                  caption="...and the same room staged as a dining room", labels=("Empty", "Dining room"), slug="116-w-wilde-ave-villas-nj"),
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-empty-front-room.jpg", after="116-w-wilde-ave-villas-nj-staged-dining-room.jpg",
+                  before_alt="Empty front room of a new build in Villas NJ", after_alt="The same front room virtually staged as a dining room",
+                  caption="Front room staged as a dining room", labels=("Empty", "Staged"), slug="116-w-wilde-ave-villas-nj"),
+             dict(kind="compare", before="207-w-bennett-ave-wildwood-nj-empty-living-room.jpg", after="207-w-bennett-ave-wildwood-nj-staged-living-room.jpg",
+                  before_alt="Empty living room of a new townhome in Wildwood NJ", after_alt="The same living room virtually staged",
+                  caption="Townhome living room with sofa and bar stools", labels=("Empty", "Staged"), slug="207-w-bennett-ave-wildwood-nj"),
+             dict(kind="compare", before="207-w-bennett-ave-wildwood-nj-empty-bedroom.jpg", after="207-w-bennett-ave-wildwood-nj-staged-bedroom.jpg",
+                  before_alt="Empty bedroom of a new townhome in Wildwood NJ", after_alt="The same bedroom virtually staged",
+                  caption="Bedroom with bed, rug and nightstands", labels=("Empty", "Staged"), slug="207-w-bennett-ave-wildwood-nj"),
+             dict(kind="compare", before="116-w-wilde-ave-villas-nj-front-with-sign.jpg", after="116-w-wilde-ave-villas-nj-front-cleaned-up.jpg",
+                  before_alt="New build with a yard sign out front in Villas NJ", after_alt="The same photo with the sign digitally removed",
+                  caption="Clean-up: a yard sign removed from the front photo", labels=("Before", "Cleaned up"), slug="116-w-wilde-ave-villas-nj"),
+         ],
          prices=[("Virtual staging: empty rooms digitally furnished", "$35 / photo"),
                  ("Virtual decluttering: clutter and old furniture removed", "$25 / photo")]),
-    dict(slug="floor-plans-3d-tours", name="Floor Plans & 3D Tours",
-         h1="Floor Plans and 3D Matterport Tours in Cape May County, NJ",
-         title="Floor Plans & 3D Matterport Tours in NJ | Listing Pixl",
-         desc="2D floor plans and Matterport 3D virtual tours for South Jersey listings. Floor plan included with Showcase ($475), 3D tour with Premiere ($750).",
+    dict(slug="floor-plans-3d-tours", name="3D Matterport Tours",
+         h1="3D Matterport Tours in Cape May County, NJ",
+         title="3D Matterport Virtual Tours in NJ | Listing Pixl",
+         desc="Matterport 3D virtual tours for South Jersey listings, included with the Premiere package ($750) with three months of hosting.",
          body=[
-             ("Why buyers want a floor plan", "Photos show what rooms look like; a floor plan shows how they fit together. Buyers use it to check whether the bedrooms are on the same floor, how the kitchen connects to the living space, and whether their furniture will fit. For out-of-town buyers, which is a lot of buyers at the shore, a floor plan and a tour can be the difference between booking a showing and scrolling past."),
-             ("2D floor plans", "A 2D floor plan is a measured, top-down drawing of the home's layout with labeled rooms. It comes with the Showcase package and sits alongside the photos in the MLS gallery, so buyers can flip from a room photo to the plan to see where it is."),
-             ("Matterport 3D tours", "A Matterport 3D tour is an interactive walkthrough buyers explore from their phone or computer, moving room to room and looking around at their own pace. It is included with Premiere, with three months of hosting, and works well for second-home and relocation buyers who cannot visit right away. The photos below are from open-plan homes we have shot, the kind of layouts a floor plan and tour make easy to understand."),
+             ("What a 3D tour is", "A Matterport 3D tour is an interactive walkthrough of the home. Buyers move room to room on their phone or computer, look around at their own pace, and switch to a dollhouse view that shows the whole floor at once. It works well for second-home and relocation buyers, which is a lot of buyers at the shore, because they can walk the house before they ever book a trip."),
+             ("How we make it", "We scan the home room by room with a Matterport camera. The same scan produces a measured floor plan, so a 3D tour and a 2D plan come out of one visit. The plan below came straight from one of our Matterport scans."),
+             ("Hosting", "Premiere includes three months of hosting, which covers most listings from going live to closing. Tours are archived when hosting ends, so the tours from our earlier listings are no longer online; ask us and we will set up a demo."),
          ],
-         examples=[("116-w-wilde-ave-villas-nj", "116-w-wilde-ave-villas-nj-open-living.jpg"),
-                   ("500-desoto-ave-villas-nj", "500-desoto-ave-villas-nj-open-living.jpg"),
-                   ("601-dove-dr-millville-nj", "601-dove-dr-millville-nj-kitchen-dining.jpg"),
-                   ("101-rutledge-ave-villas-nj", "101-rutledge-ave-villas-nj-dining-kitchen.jpg")],
-         prices=[("Showcase: 2D floor plan, drone video and two virtual twilights", "$475"),
-                 ("Premiere: Matterport 3D tour with 3 months hosting, plus everything in Showcase", "$750"),
-                 ("Floor plan or 3D tour on its own", "Ask us")]),
+         og_image="17-fawn-ln-sicklerville-nj-floor-plan.jpg",
+         examples_lede="A floor plan made from one of our Matterport scans.",
+         examples=[
+             dict(kind="image", img="17-fawn-ln-sicklerville-nj-floor-plan.jpg", plan=True, wide=True,
+                  caption="Two-floor plan generated from a Matterport scan", where="17 Fawn Ln, Sicklerville"),
+         ],
+         prices=[("Premiere: Matterport 3D tour with 3 months hosting, plus everything in Showcase", "$750"),
+                 ("3D tour on its own", "Ask us")]),
     dict(slug="hdr-real-estate-photography", name="HDR Listing Photography",
          h1="HDR Real Estate Photography in Cape May County, NJ",
          title="HDR Real Estate Photography in Cape May County, NJ | Listing Pixl",
@@ -353,17 +390,187 @@ SERVICE_PAGES = [
          prices=[("Essential: 40&ndash;50 HDR photos (30&ndash;35 ground + 10&ndash;15 drone), next-day delivery", "$295"),
                  ("Showcase: adds drone video, two virtual twilights and a 2D floor plan", "$475"),
                  ("Premiere: adds a cinematic walkthrough and a Matterport 3D tour", "$750")]),
+    dict(slug="2d-floor-plans", name="2D Floor Plans",
+         h1="2D Floor Plans for Real Estate Listings in Cape May County, NJ",
+         title="2D Floor Plans for NJ Real Estate Listings | Listing Pixl",
+         desc="Measured 2D floor plans with labeled rooms and dimensions for South Jersey listings. Included with the Showcase package ($475).",
+         body=[
+             ("Why buyers want a floor plan", "Photos show what rooms look like; a floor plan shows how they fit together. Buyers use it to check whether the bedrooms are on the same floor, how the kitchen connects to the living space, and whether their furniture will fit. At the shore, where many homes are stacked over three floors with a garage underneath, the plan answers the first question every buyer has: what is on which level."),
+             ("What you get", "A measured, top-down drawing of every floor with each room labeled and its dimensions noted, plus the total area. Multi-level homes get a plan per floor and one sheet showing all floors side by side, like the three-story townhome on Paradise Way below. We deliver plans in black and white or in color, sized to sit in the MLS gallery next to the photos."),
+             ("Homes and commercial spaces", "Plans are just as useful for commercial listings: a retail floor, a store room and a bathroom, or an office suite laid out room by room. Tenants and buyers see the usable space before they visit."),
+         ],
+         og_image="414-paradise-way-north-wildwood-nj-floor-plan-all-floors.jpg",
+         examples_lede="Floor plans we have delivered. Click a plan to see it full size.",
+         examples=[
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-floor-plan-all-floors.jpg", plan=True, wide=True,
+                  caption="All three floors of a bayside townhome on one sheet", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="501-n-wildwood-blvd-cape-may-court-house-nj-floor-plan.jpg", plan=True,
+                  caption="Color plan with room names and sizes", where="501 N Wildwood Blvd, Cape May Court House"),
+             dict(kind="image", img="17-fawn-ln-sicklerville-nj-floor-plan.jpg", plan=True,
+                  caption="Two-floor home on one sheet", where="17 Fawn Ln, Sicklerville"),
+             dict(kind="image", img="606-new-jersey-ave-north-wildwood-nj-floor-plan.jpg", plan=True,
+                  caption="Retail space with store room and bath", slug="606-new-jersey-ave-north-wildwood-nj"),
+             dict(kind="image", img="1200-georgia-ave-cape-may-court-house-nj-floor-plan.jpg", plan=True, wide=True,
+                  caption="Office suite, lower level, room by room", where="1200 Georgia Ave, Cape May Court House"),
+         ],
+         prices=[("Showcase: 2D floor plan, drone video and two virtual twilights", "$475"),
+                 ("Premiere: floor plan plus a Matterport 3D tour", "$750"),
+                 ("Floor plan on its own", "Ask us")]),
+    dict(slug="property-video", name="Property Video",
+         h1="Real Estate Video and Drone Films in Cape May County, NJ",
+         title="Real Estate Video & Drone Films in NJ | Listing Pixl",
+         desc="Drone films and walkthrough videos for South Jersey listings: a 60-second drone video with Showcase ($475), a 1-2 minute walkthrough with Premiere ($750).",
+         body=[
+             ("Why video", "Video is what buyers stop for on Facebook, Instagram and Zillow. A short film from the air shows what a photo gallery can only hint at: the drive up the street, how close the water is, what the neighborhood feels like at golden hour."),
+             ("What we film", "Showcase includes a 60-second exterior drone video: the home, the lot and the setting, edited and ready for social and the MLS. Premiere adds a 1&ndash;2 minute cinematic walkthrough that moves through the home as well. We fly at the right time of day for the location, like the sunset light over the Delaware Bay in the North Cape May film below."),
+             ("Delivered ready to post", "Films come edited, color-graded and sized for the MLS video link, Facebook and Instagram, through the same client site as your photos."),
+         ],
+         og_image="1622-jennings-ave-villas-nj-drone-front.jpg",
+         examples_lede="Films from our shoots. Press play.",
+         examples=[
+             dict(kind="embed", src="https://iframe.videodelivery.net/1db8e809d69b14521c1ea01ae9a1222a?autoplay=true&loop=true", poster="video/707-adriatic-ave-north-cape-may-nj-film-poster.jpg",
+                  caption="Drone film over North Cape May and the bay at sunset", slug="707-adriatic-ave-north-cape-may-nj"),
+             dict(kind="embed", src="https://iframe.videodelivery.net/b4ce3ae7c4e1b36ed27abaa9f4eb9c80?autoplay=true", poster="1622-jennings-ave-villas-nj-drone-front.jpg",
+                  caption="Drone flight over a Villas bungalow and its street", slug="1622-jennings-ave-villas-nj"),
+             dict(kind="embed", src="https://iframe.videodelivery.net/bbb55ce5e67fdb6112c60c2302718f5f?autoplay=true", poster="video/320-oakdale-ave-villas-nj-drone-poster.jpg",
+                  caption="Drone flight over Villas toward the bay", slug="320-oakdale-ave-villas-nj"),
+         ],
+         prices=[("Showcase: 60-second exterior drone video, plus twilights and a floor plan", "$475"),
+                 ("Premiere: 1&ndash;2 minute cinematic walkthrough and a 3D tour", "$750"),
+                 ("Video on its own", "Ask us")]),
+    dict(slug="360-drone-panoramas", name="360&deg; Drone Panoramas",
+         h1="360&deg; Drone Panoramas in Cape May County, NJ",
+         title="360 Degree Drone Panoramas for NJ Listings | Listing Pixl",
+         desc="Interactive 360-degree drone panoramas buyers can spin around: the beach, the bay and the neighborhood from above. $95, add-on to any shoot.",
+         body=[
+             ("What a 360 panorama is", "We fly the drone above the property and capture a full sphere of photos, then stitch them into one interactive panorama. Buyers drag to look in any direction: down at the lot, out to the beach, across to the bay or down the street. It answers the questions a single aerial cannot, all in one link."),
+             ("Where it helps most", "Anywhere the location sells the home. In North Cape May and Villas it shows how close the Delaware Bay beach is; in Wildwood and North Wildwood it shows the ocean, the bay and the boardwalk; on bigger lots in Cape May and Cape May Court House it shows the land and the woods around it. Try the panoramas below: press one, then drag."),
+             ("How you share it", "Each panorama has its own link and embed code for the MLS virtual tour field, your listing page and social posts. It works on phones, computers and VR headsets."),
+         ],
+         og_image="228-spruce-ave-delaware-bay-360-drone-panorama.jpg",
+         examples_lede="Live panoramas from our shoots. Press one, then drag to look around.",
+         examples=[
+             dict(kind="embed", src="https://kuula.co/share/collection/7K8xp?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1&autop=8", poster="228-spruce-ave-delaware-bay-360-drone-panorama.jpg",
+                  caption="Above the Delaware Bay beach", where="228 Spruce Ave, North Cape May", play="360&deg;"),
+             dict(kind="embed", src="https://kuula.co/share/collection/7DnJs?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1", poster="320-oakdale-ave-villas-nj-aerial-bay.jpg",
+                  caption="Villas neighborhood toward the bay", slug="320-oakdale-ave-villas-nj", play="360&deg;"),
+             dict(kind="embed", src="https://kuula.co/share/collection/7DqCq?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1", poster="606-new-jersey-ave-north-wildwood-nj-street-aerial.jpg",
+                  caption="North Wildwood between the ocean and the bay", slug="606-new-jersey-ave-north-wildwood-nj", play="360&deg;"),
+             dict(kind="embed", src="https://kuula.co/share/collection/7HwBn?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1", poster="116-w-wilde-ave-villas-nj-drone-aerial.jpg",
+                  caption="New build in Villas with the bay behind", slug="116-w-wilde-ave-villas-nj", play="360&deg;"),
+             dict(kind="embed", src="https://kuula.co/share/collection/7DcFl?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1", poster="26-lomurno-ln-cape-may-court-house-nj-top-down-drone.jpg",
+                  caption="Wooded lot in Cape May Court House", slug="26-lomurno-ln-cape-may-court-house-nj", play="360&deg;"),
+         ],
+         prices=[("360&deg; drone panorama, add-on to any shoot", "$95")]),
+    dict(slug="vacation-rental-photography", name="Vacation Rental Photography",
+         h1="Vacation Rental Photography for Airbnb and VRBO in Cape May County, NJ",
+         title="Vacation Rental Photography for Airbnb & VRBO, NJ | Listing Pixl",
+         desc="Two-session vacation rental shoots: the house plus a styled lifestyle session with the details guests book for. $800 in Cape May County.",
+         body=[
+             ("A listing guests can picture themselves in", "A rental listing competes on a phone screen against every other place in town for the same week. Clean room photos tell a guest the house is nice; lifestyle photos tell them what their stay will feel like. That is what earns the click, the wish-list save and the booking, and it is why our rental shoot has two sessions."),
+             ("Session one: the house", "Every room, the views and the outdoor spaces, shot and edited like a listing: bright, true to color and in the order a guest walks through. Bedrooms and bunk rooms are shot so guests can count the beds, and drone aerials show how close the beach or the bay is, marked with an arrow when it helps."),
+             ("Session two: the lifestyle shoot", "Then we style and shoot the details that make your place yours. Wine or prosecco and two glasses on the balcony at sunset. The guest book with your rental's name and logo. The decor you chose, down to the cutting board and the throw pillows. Rolled towels and toiletries on the bed. The bikes, kayak and beach gear waiting in the garage. These are the photos that end up as the cover of your Airbnb and VRBO listing and in your own social posts, and they give your rental a brand guests remember and book again."),
+             ("Shot for The Bay Stay", "The photos below are from The Bay Stay, a bayside townhome rental on Paradise Way in North Wildwood: the guest book with its logo, prosecco at sunset over the bay, the New Jersey cutting board, the bunk room and the garage full of beach gear."),
+         ],
+         og_image="414-paradise-way-north-wildwood-nj-prosecco-balcony.jpg",
+         examples_lede="From our lifestyle and house sessions at The Bay Stay in North Wildwood.",
+         examples=[
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-prosecco-balcony.jpg", caption="Prosecco and two glasses on the balcony at sunset", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-guest-book.jpg", caption="The guest book with the rental's own logo", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-sunset-chairs.jpg", caption="Adirondack chairs facing the sunset over the bay", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-nj-cutting-board.jpg", caption="Decor details: the New Jersey cutting board", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-towels.jpg", caption="Rolled towels and toiletries ready for guests", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-beach-gear.jpg", caption="Bikes, kayak and beach gear in the garage", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-bunk-room.jpg", caption="Bunk room for the kids", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-wine-bar.jpg", caption="Stocked wine and bar shelves", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-arrow-bay.jpg", caption="Aerial with an arrow marking the rental on the bay", slug="414-paradise-way-north-wildwood-nj"),
+         ],
+         prices=[("Vacation rental shoot: house session plus lifestyle session", "$800"),
+                 ("360&deg; drone panorama, add-on", "$95")]),
+    dict(slug="neighborhood-highlights", name="Neighborhood Highlights",
+         h1="Neighborhood Highlight Photos and Video in Cape May County, NJ",
+         title="Neighborhood Highlight Aerials & Video in NJ | Listing Pixl",
+         desc="Sell the town, not just the house: aerials with the route to the beach drawn in, local landmarks, lot lines and neighborhood films for South Jersey listings.",
+         body=[
+             ("Why location needs its own photos", "At the shore, location is often the reason a buyer calls. Is it walking distance to the beach? Can you see the bay? What is the town like? A gallery of rooms cannot answer that, and buyers from out of the area cannot drive by. Neighborhood highlights put the answer right in the listing."),
+             ("Distance to the beach, drawn in", "We fly the drone high enough to show the home and the water together, then mark the house and draw the route to the beach or the bay in red. Buyers see in one glance that it is three blocks to the sand, without reading a word. Slide the examples below to see the route appear."),
+             ("Landmarks and the lot", "We also photograph what the town is known for, like the Welcome to North Wildwood water tower, so the listing feels local. And for land and larger lots, we outline the property line from above so buyers can see exactly what is included. Drawn-in routes and lot lines are approximate, so we deliver them alongside the regular gallery, not in place of it."),
+             ("Neighborhood films", "For listings and agents who want to sell the area too, we cut a short film flying over the neighborhood: the streets, the parks, the water. Agents use them on social media and on their own websites to market a town, not just one house."),
+         ],
+         og_image="228-spruce-ave-north-cape-may-nj-beach-route.jpg",
+         examples_lede="From our shoots in North Cape May, North Wildwood and Villas. Drag the sliders to reveal the routes.",
+         examples=[
+             dict(kind="compare", before="228-spruce-ave-north-cape-may-nj-beach-plain.jpg", after="228-spruce-ave-north-cape-may-nj-beach-route.jpg",
+                  before_alt="Aerial of a North Cape May street near the beach", after_alt="The walk to the beach drawn in red",
+                  caption="A short walk to the Delaware Bay beach", labels=("Aerial", "Route"), where="228 Spruce Ave, North Cape May"),
+             dict(kind="compare", before="222-oakdale-ave-north-cape-may-nj-bay-plain.jpg", after="222-oakdale-ave-north-cape-may-nj-bay-route.jpg",
+                  before_alt="Aerial up Oakdale Ave toward the bay", after_alt="The route to the bay drawn in red",
+                  caption="Straight up the street to the bay", labels=("Aerial", "Route"), where="222 Oakdale Ave, North Cape May"),
+             dict(kind="compare", before="602-eldridge-ave-north-cape-may-nj-beach-plain.jpg", after="602-eldridge-ave-north-cape-may-nj-beach-route.jpg",
+                  before_alt="Aerial of a North Cape May neighborhood", after_alt="The route to the beach drawn in red",
+                  caption="Around the corner and down to the beach", labels=("Aerial", "Route"), where="602 Eldridge Ave, North Cape May"),
+             dict(kind="compare", before="228-spruce-ave-north-cape-may-nj-top-down-plain.jpg", after="228-spruce-ave-north-cape-may-nj-top-down-route.jpg",
+                  before_alt="Top-down aerial of a street ending at the beach", after_alt="The path to the beach drawn in",
+                  caption="From straight above: the street ends at the sand", labels=("Aerial", "Route"), where="228 Spruce Ave, North Cape May"),
+             dict(kind="image", img="606-new-jersey-ave-north-wildwood-nj-water-tower.jpg", caption="The Welcome to North Wildwood water tower over the town", slug="606-new-jersey-ave-north-wildwood-nj"),
+             dict(kind="image", img="414-paradise-way-north-wildwood-nj-arrow-marsh.jpg", caption="An arrow marks the home between the marsh and the bay", slug="414-paradise-way-north-wildwood-nj"),
+             dict(kind="compare", before="124-w-new-york-ave-villas-nj-lot-plain.jpg", after="124-w-new-york-ave-villas-nj-lot-line.jpg",
+                  before_alt="Top-down drone view of a lot in Villas NJ", after_alt="The same lot with its property line outlined",
+                  caption="The lot outlined from above", labels=("Aerial", "Lot line"), slug="124-w-new-york-ave-villas-nj"),
+             dict(kind="embed", src="https://iframe.videodelivery.net/e94b1d91d5c82bb07a12ab5885d972e4?autoplay=true", poster="video/north-cape-may-nj-neighborhood-poster.jpg",
+                  caption="Neighborhood film over North Cape May", where="North Cape May"),
+         ],
+         prices=[("Neighborhood aerials with routes, landmarks or lot lines", "Ask us"),
+                 ("Neighborhood highlight film", "Ask us")]),
 ]
 
+def _img(fname, alt, cls="", sizes="(max-width: 720px) 100vw, 560px", lazy=True):
+    c = f' class="{cls}"' if cls else ""
+    if "/" in fname:  # e.g. a video poster in video/
+        return f'<img{c} src="../{fname}" alt="{html.escape(alt)}" loading="lazy" decoding="async">'
+    return (f'<img{c} src="../images/{fname}"{B.srcset(fname, sizes=sizes)} alt="{html.escape(alt)}"'
+            f'{" loading=\"lazy\"" if lazy else ""} decoding="async"{B.img_size(fname)}>')
+
+def _where(ex):
+    """Caption tail: link to the blog post when the shoot has one, else just the place."""
+    if ex.get("slug"):
+        s = {x["slug"]: x for x in B.SHOOTS}[ex["slug"]]
+        return f' &middot; <a href="../blog/{ex["slug"]}.html">{html.escape(s["address"])}, {html.escape(s["town"])}</a>'
+    return f' &middot; {html.escape(ex["where"])}' if ex.get("where") else ""
+
 def example_figures(examples):
+    """Each example shows the deliverable itself. Kinds:
+    (post slug, photo)                       a photo from a blog post
+    dict(kind="compare", before, after, ...) before/after slider (same frame)
+    dict(kind="image", img, caption, ...)    any image, e.g. a floor plan (plan=True: show it whole)
+    dict(kind="embed", src, poster, ...)     a 360 tour or film, loaded when clicked"""
     by_slug = {s["slug"]: s for s in B.SHOOTS}
     figs = []
-    for slug, photo in examples:
-        s = by_slug[slug]
-        alt = dict(s["photos"])[photo]  # KeyError here means the photo left the post
-        figs.append(f"""          <figure>
+    for i, ex in enumerate(examples):
+        if isinstance(ex, tuple):
+            slug, photo = ex
+            s = by_slug[slug]
+            alt = dict(s["photos"])[photo]  # KeyError here means the photo left the post
+            figs.append(f"""          <figure>
             <a href="../blog/{slug}.html"><img src="../images/{photo}"{B.srcset(photo, sizes="(max-width: 720px) 100vw, 360px")} alt="{html.escape(alt)}" loading="lazy"{B.img_size(photo)}></a>
             <figcaption>{html.escape(alt)} &middot; <a href="../blog/{slug}.html">{html.escape(s['address'])}, {html.escape(s['town'])}</a></figcaption>
+          </figure>""")
+        elif ex["kind"] == "compare":
+            l, r = ex.get("labels", ("Before", "After"))
+            figs.append(f"""          <figure{' class="ex-wide"' if ex.get("wide", i == 0) else ""}>
+            <div class="svc-media svc-compare ex-frame">{_img(ex["before"], ex["before_alt"])}{_img(ex["after"], ex["after_alt"], "svc-after")}<span class="svc-divider" aria-hidden="true"></span><span class="svc-label svc-label-l">{html.escape(l)}</span><span class="svc-label svc-label-r">{html.escape(r)}</span><input class="svc-range" type="range" min="0" max="100" value="50" aria-label="Slide to compare {html.escape(l.lower())} and {html.escape(r.lower())}"></div>
+            <figcaption>{html.escape(ex["caption"])}{_where(ex)}</figcaption>
+          </figure>""")
+        elif ex["kind"] == "image":
+            cls = "ex-plan" if ex.get("plan") else ""
+            figs.append(f"""          <figure class="{'ex-wide ' if ex.get('wide') else ''}{cls}">
+            <a href="../images/{ex['img']}">{_img(ex["img"], ex["caption"])}</a>
+            <figcaption>{html.escape(ex["caption"])}{_where(ex)}</figcaption>
+          </figure>""")
+        elif ex["kind"] == "embed":
+            figs.append(f"""          <figure class="ex-wide">
+            <button class="ex-embed" type="button" data-src="{html.escape(ex['src'])}" aria-label="Play: {html.escape(ex['caption'])}">{_img(ex["poster"], "")}<span class="ex-play" aria-hidden="true">{ex.get("play", "&#9654;")}</span></button>
+            <figcaption>{html.escape(ex["caption"])}{_where(ex)}</figcaption>
           </figure>""")
     return "\n".join(figs)
 
@@ -377,7 +584,7 @@ def service_page(sp):
               "serviceType": sp["name"], "description": sp["desc"], "url": f"{B.DOMAIN}{path}",
               "provider": dict(BUSINESS, **{"@id": f"{B.DOMAIN}/#business"}),
               "areaServed": [{"@type": "City", "name": f"{t}, NJ"} for t in B.AREA_TOWNS]}
-    return head(sp["title"], sp["desc"], path, sp["examples"][0][1], [schema, crumbs(sp["name"], path)]) + f"""
+    return head(sp["title"], sp["desc"], path, sp.get("og_image") or sp["examples"][0][1], [schema, crumbs(sp["name"], path)]) + f"""
   <main>
     <article class="section">
       <div class="wrap narrow">
@@ -390,7 +597,7 @@ def service_page(sp):
     <section class="section section-alt" aria-labelledby="examples-heading">
       <div class="wrap">
         <h2 id="examples-heading">From our shoots</h2>
-        <p class="section-lede">Real listings we have photographed. Click a photo for the full shoot.</p>
+        <p class="section-lede">{sp.get("examples_lede", "Real listings we have photographed. Click a photo for the full shoot.")}</p>
         <div class="photo-grid">
 {example_figures(sp['examples'])}
         </div>

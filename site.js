@@ -176,6 +176,17 @@
     });
   }
 
+  // Films and 360 panoramas on service pages load only when pressed
+  document.querySelectorAll('.ex-embed').forEach(btn => btn.addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = btn.dataset.src;
+    f.title = btn.getAttribute('aria-label') || 'Video';
+    f.allow = 'autoplay; fullscreen; picture-in-picture; xr-spatial-tracking; gyroscope; accelerometer';
+    f.allowFullscreen = true;
+    btn.replaceChildren(f);
+    btn.removeAttribute('aria-label');
+  }, { once: true }));
+
   // Keep the mobile Call / Text / Book bar out of the way while typing
   const form = document.getElementById('booking-form');
   if (form) {
