@@ -1,0 +1,24 @@
+# Posts one Instagram reel an hour from tools/reels_queue.json (videos in the reels-v2 release).
+# Secret: META_TOKEN. Delete this file once the queue is finished.
+name: Reels
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+concurrency: reels
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Post the next reel
+        env:
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+        run: python3 tools/post_reels.py
