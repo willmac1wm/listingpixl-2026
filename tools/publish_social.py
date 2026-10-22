@@ -21,7 +21,7 @@ import argparse, datetime, glob, json, os, sys, time, urllib.error, urllib.parse
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRAPH = f"https://graph.facebook.com/{os.environ.get('GRAPH_VERSION', 'v23.0')}/"
-FB_PAGE_ID = os.environ.get("FB_PAGE_ID", "100551446334473")
+FB_PAGE_ID = os.environ.get("FB_PAGE_ID", "103175895120804")
 IG_USER_ID = os.environ.get("IG_USER_ID", "17841458579099573")
 CHANNELS = ("facebook", "instagram", "story")
 MAX_TRIES = 3
