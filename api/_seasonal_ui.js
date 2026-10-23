@@ -2,7 +2,7 @@ const html = `
     <section class="dash-section" id="seasonal">
       <h2>Holiday decoration</h2>
       <div class="sh-box">
-        <label class="seasonal-switch"><input id="seasonal-enabled" type="checkbox" role="switch" disabled> <strong>Decorative layer on</strong></label>
+        <label class="seasonal-switch"><input id="seasonal-enabled" type="checkbox" role="switch" aria-describedby="seasonal-state seasonal-scope" disabled> <strong>Automatic holiday decoration</strong></label>
         <p class="sh-msg">On follows the holiday calendar automatically. Off restores the original page. Photos, prices, content and booking buttons stay the same.</p>
         <p class="sh-msg" id="seasonal-state" role="status">Checking the saved setting…</p>
         <p class="sh-msg" id="seasonal-scope"></p>

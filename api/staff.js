@@ -103,6 +103,14 @@ function page() {
     .dash-list strong { color: var(--ink, #1d1d1d); }
     .dash-todo { display: flex; flex-wrap: wrap; gap: 0.45rem; list-style: none; padding: 0; }
     .dash-todo li { border: 1px dashed var(--card-border, #ccc); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.88rem; color: var(--muted, #666); }
+    .seasonal-switch { display:flex; align-items:center; gap:12px; cursor:pointer; }
+    .seasonal-switch input { appearance:none; position:relative; display:block; flex:0 0 46px; width:46px; height:26px; margin:0; border:1px solid #697d84; border-radius:99px; background:#748086; cursor:pointer; }
+    .seasonal-switch input::before { content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:white; transition:transform .15s; }
+    .seasonal-switch input:checked { background:var(--accent, #0c7a8c); border-color:var(--accent, #0c7a8c); }
+    .seasonal-switch input:checked::before { transform:translateX(20px); }
+    .seasonal-switch input:focus-visible { outline:3px solid var(--accent-pink, #d71266); outline-offset:3px; }
+    .seasonal-switch input:disabled { opacity:.5; cursor:wait; }
+    @media(prefers-reduced-motion:reduce) { .seasonal-switch input::before { transition:none; } }
 ${shoots.css}
     .dash-foot { margin-top: 3rem; font-size: 0.85rem; color: var(--muted, #666); }
   </style>
@@ -113,9 +121,9 @@ ${shoots.css}
       <a href="/" aria-label="Listing Pixl home"><img src="/images/logo-horizontal-312.jpg" alt="Listing Pixl" width="156" height="66"></a>
       <h1>Team Dashboard</h1><a href="/staff/logout">Sign out</a>
     </div>
-${shoots.html}
 ${seasonal.html}
     <script>document.getElementById('seasonal-scope').textContent = ${JSON.stringify(process.env.VERCEL_ENV === 'production' ? 'This switch controls the live website. No deployment is needed to change it.' : 'This switch controls this preview only. It cannot change the live website.')};</script>
+${shoots.html}
     ${sections}
     <section class="dash-section">
       <h2>How to update the website</h2>
