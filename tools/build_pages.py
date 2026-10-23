@@ -19,7 +19,9 @@ BUSINESS = {"@type": "ProfessionalService", "name": "Listing Pixl", "telephone":
             "email": B.EMAIL, "url": B.DOMAIN, "image": f"{B.DOMAIN}/images/riogrande_01_twilight.jpg",
             "address": {"@type": "PostalAddress", "addressLocality": "Dennisville", "addressRegion": "NJ",
                         "postalCode": "08210", "addressCountry": "US"},
-            "priceRange": "$295–$750"}
+            "logo": f"{B.DOMAIN}/listing-pixl-logo-official.png",
+            "sameAs": [B.FB, B.IG, 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454'],
+            "hasMap": 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454'}
 OUT_OF_COUNTY = {"Millville", "Vineland", "Buena", "Somers Point"}
 
 # Per-town copy. "homes" and "photos" are unique write-ups; the pricing
@@ -30,13 +32,13 @@ TOWN_COPY = {
         homes2="Inside, Villas homes vary more than the street view suggests. Our photos here include a coral living room with a blue sectional and a bathroom with bold blue wave tile on W New York Ave, a garage converted into a game room and bar on Rutledge Ave, butcher block counters and a farmhouse sink on Jennings Ave, a sunroom family room with coastal decor on Walnut Ave, and a renovated cottage on Alexander Ave with a quartz kitchen and a finished upstairs bonus room.",
         photos="Two things sell a Villas listing online: the yard and the bay. Buyers want to see the deck, the fire pit, the outdoor shower and how much lawn comes with the house, so we shoot the backyard as carefully as the kitchen and add a top-down drone view of the lot. Then the drone goes up and faces the water. On many Villas streets the Delaware Bay is a short walk away, and an aerial that shows the bay past the rooftops answers the first question most buyers ask. Inside, Villas cottages are often compact, so HDR matters: blended exposures keep the windows from blowing out and let a small living room read bright and open without stretching it. For a ranch with a plain daytime front, a virtual twilight edit gives the listing a cover photo that stands out in a feed of gray-sky shots, like the ones we made for 15 N 11th St, 116 W Wilde Ave and 10 E Atlantic Ave.",
         pricing="Because we are based in Dennisville, Villas is a local shoot for us.",
-        faq=("Do you photograph vacation rentals in Villas?", "Yes. Our vacation rental shoot is $800 for two sessions, a lifestyle shoot and a house shoot, and works well for bay-block rentals and second homes.")),
+        faq=("Do you photograph vacation rentals in Villas?", 'Yes. We plan house and lifestyle photography for bay-block rentals and second homes. Contact us to confirm coverage and current pricing.')),
     "Cape May": dict(
         homes="Cape May is known for its Victorian district and its beaches at the southern tip of New Jersey, but plenty of homes with a Cape May address sit outside the historic streets, in wooded neighborhoods of ranches and Cape Cods on larger lots. That is where our Cape May shoots have been: a Cape Cod with knotty pine interiors on a big tree-lined lot on Iselin Rd, a red-shingle ranch with a cast iron wood stove, raised garden beds and a barn-style shed on Blueberry Ln S, and a ranch on Thistle Ln with a white kitchen, a vaulted living room, a shaded back deck and a covered front porch with rocking chairs.",
         homes2="The interiors in these homes have character worth showing. At Iselin Rd we photographed a knotty pine living room with a big picture window, a wood-paneled kitchen and an updated bathroom with a glass shower. Blueberry Ln S had a living room with a pressed-tin style ceiling and a wood stove on a tile hearth. At Thistle Ln, the white kitchen with recessed lighting, a dining area with French doors and a Japanese maple out front each got their own frame.",
         photos="In these neighborhoods the lot is a selling point, and it is hard to show from the ground. Trees hide where the property ends, and a wide lawn just looks like grass in a phone photo. Drone aerials fix that: a top-down view shows the shape of the lot, the driveway and the outbuildings, and a wider shot over the treetops shows the quiet, wooded setting buyers come here for. Inside, wood-paneled and knotty pine rooms are tricky because they soak up light and can turn orange on camera; bracketed HDR exposures and careful color correction keep the wood warm and true while the windows stay clear. We also give the details that make a home feel like Cape May their own frames: porches, wood stoves, gardens and sheds. For second homes and rentals, our vacation rental shoot pairs a lifestyle session with the house shoot.",
         pricing="Cape May is at the far end of our home county, and every package price applies there as listed.",
-        faq=("Do you photograph vacation rentals in Cape May?", "Yes. Our vacation rental shoot is $800 for two sessions: a lifestyle shoot and a house shoot.")),
+        faq=("Do you photograph vacation rentals in Cape May?", 'Yes. We offer house and lifestyle photography for vacation rentals. Contact us to confirm the scope and current pricing.')),
     "North Cape May": dict(
         homes="North Cape May is the part of Lower Township between Cape May and the Delaware Bay, near the Cape May-Lewes Ferry terminal. Its streets are mostly one-story ranches and cottages on regular lots, many with fenced yards, back decks and sheds, and the bay beaches are close by. Our North Cape May shoots fit that picture: a gray ranch with dark shutters on a corner lot on Scott Ave with an enclosed sunroom and a detached garage, a ranch on Adriatic Ave with red shutters, a fenced yard and a red barn-style shed, and a ranch on Harmony Ln with green shutters, an updated bathroom, a back deck and a fenced brick patio.",
         homes2="Each of these homes had something buyers notice in person and deserve to see online. At Scott Ave it was the enclosed sunroom with windows on three sides and new stainless appliances in the oak kitchen. At Adriatic Ave it was the bright living room, the open dining area beside the kitchen and the large backyard behind the deck. At Harmony Ln it was the rattan pendant lights in the living room, a kids' room with white bunk beds and a brick patio with a picnic table.",
@@ -48,7 +50,7 @@ TOWN_COPY = {
         homes2="Inside, these homes are set up for groups. At Rio Grande Ave we photographed a living room with a teal accent wall, a kitchen island with bar seating, a dining area with sliding doors to the balcony and a bunk room with a twin-over-full bunk bed. W Pine Ave had an open living room with a gas fireplace and a tiled walk-in shower. E Garfield Ave had a dining room beside a brick fireplace and a back patio with colorful chairs under a shade tree.",
         photos="Wildwood buyers often shop from out of town, and many are thinking about rental income as much as living space, which changes what the photos need to show. Balconies, porches, pools and decks get dedicated shots because they are what a renter books. Bunk rooms and extra bedrooms get photographed so the sleeping space is easy to picture. And the drone does the most important job: an aerial down the street toward the beach and ocean shows the walk to the sand in one image, like the one we flew down Rio Grande Ave. A virtual twilight is especially effective on shore homes with lots of windows and balconies, where the house glows against a dusk sky. For new construction that is still empty, virtual staging can furnish a room, like the staged bedroom at the W Bennett Ave townhomes.",
         pricing="Wildwood is in Cape May County, so the package prices apply as listed.",
-        faq=("Do you photograph vacation rentals in Wildwood?", "Yes. Our vacation rental shoot is $800 for two sessions: a lifestyle shoot and a house shoot, built for listings that will also go on Airbnb or VRBO.")),
+        faq=("Do you photograph vacation rentals in Wildwood?", 'Yes. We offer house and lifestyle photography for Airbnb and VRBO listings. Contact us to confirm the scope and current pricing.')),
     "North Wildwood": dict(
         homes="North Wildwood takes up the north end of Five Mile Beach, with ocean blocks on one side, the back bay and marshes on the other, and the Hereford Inlet Lighthouse near the tip. Homes run from bayfront townhomes and condos to classic shore houses, and New Jersey Ave is lined with shops and businesses. Our North Wildwood work shows both sides of town: a bayfront townhome on Paradise Way with a waterfront patio, balconies facing the marsh and a primary bedroom that opens onto a bay-view deck, and a retail space on New Jersey Ave, where we photographed the sales floor and a wood-lined back room and flew aerials showing the Welcome to North Wildwood water tower and the surrounding blocks.",
         homes2="The Paradise Way townhome shows what a full waterfront shoot covers: a living room with a gas fireplace and coastal decor, a dining room with a chandelier and farmhouse table, a white kitchen with a marble island, a primary bathroom with a glass shower and double vanity, and a covered balcony with rocking chairs facing the bay. Every room with a window toward the water was shot so the view stays part of the picture, not an afterthought.",
@@ -60,7 +62,7 @@ TOWN_COPY = {
         homes2="Inside, Court House homes tend to be roomy. At St Andrews Dr we photographed a white kitchen with a breakfast bar, a dining room with two-tone walls and a primary bathroom with a soaking tub. Lomurno Ln had a bright great room with a vaulted ceiling and an arched window, a maple kitchen with granite counters and a living room with a fireplace and wood mantel. Cedar Mill Ln had a family room with big windows and a primary bedroom with a sitting area.",
         photos="Space is the story in Court House, so drone aerials are the core of the shoot. A top-down view shows the house, the pool and the garage at a glance, and a wider aerial over the woods and fields shows the privacy buyers move inland for. On the ground, pools and patios get several angles, including the view from the back door, so buyers see how the outdoor space connects to the house. Townhome communities need a different approach: one unit can look like the next, so we focus on what stands out inside, such as tall windows, fireplaces and balconies, and use an aerial to show the community around it. Big great rooms with vaulted ceilings are where HDR earns its keep, holding detail in tall windows while the room stays evenly lit. The St Andrews Dr listing also got virtual twilight exteriors, with the townhome row glowing at dusk.",
         pricing="Court House is in the middle of our home county, so the package prices apply as listed.",
-        faq=("Can you add virtual staging to a Cape May Court House listing?", "Yes. Virtual staging is $35 per photo and decluttering is $25 per photo, on top of any package or on their own.")),
+        faq=("Can you add virtual staging to a Cape May Court House listing?", 'Yes. Virtual staging is available per room in HDPhotoHub. For decluttering or other custom edits, ask us to confirm the scope and price.')),
     "Ocean View": dict(
         homes="Ocean View is part of Dennis Township, the wooded stretch of the county just inland from Sea Isle City and a short drive from Ocean City. It is also home turf for us: Listing Pixl is based in Dennisville, in the same township. Homes here are mostly ranches and colonials on bigger lots than you find at the shore, many with decks, pools and large backyards edged by trees. Our Ocean View shoots include a brick-front ranch on White Oak Dr with a fireplace, a family room with French doors, a back deck with a gazebo and a big lawn, and a two-story colonial on Williams Way with a butcher block kitchen island, a multi-level deck, an above-ground pool, a pergola and fire pit area and a backyard play set.",
         homes2="The interiors had plenty to show as well. At White Oak Dr we photographed a gray-cabinet kitchen with a granite island, a family room with teal walls and a wood accent wall, and a dining room with a farmhouse table on hardwood floors. At Williams Way the family room has a built-in entertainment wall, the bathroom has a wood vanity with black fixtures, and the backyard has a pergola, fire pit and grill area alongside the deck and pool.",
@@ -72,19 +74,19 @@ TOWN_COPY = {
         homes2="Both homes had rooms that needed more than one angle to explain. At Dove Dr the open kitchen and dining area has sliding doors to the deck, the primary bathroom has a double vanity and a glass shower, and the back of the house opens onto a deck and lawn. At W Harrison Ave the family room is wood-paneled with sliding doors to the yard, an upstairs bedroom has skylights and a sloped ceiling, and the back deck holds an outdoor dining table beside the pool.",
         photos="Rooms with lots of glass, like sunrooms and great rooms with tall windows, are the hardest rooms to photograph well. Expose for the room and the windows go white; expose for the windows and the room goes dark. Our HDR process blends several exposures so you see both the room and the trees outside. Two-story spaces like a living room with a loft balcony get shot from the angle that shows their height instead of cropping it off. Drone aerials show what a ground shot cannot: at Dove Dr, the view over the treetops toward the lake, and at W Harrison Ave, a top-down shot of the house and pool together. Mid-century and architectural homes are a natural fit for a virtual twilight, where interior light glowing through the glass makes the design read at a glance; Dove Dr's cover photo is one.",
         pricing="",
-        faq=("Can you add a virtual twilight to a Millville listing?", "Yes. Showcase ($475) and Premiere ($750) each include two virtual twilight edits, like the twilight exterior we delivered for 601 Dove Dr.")),
+        faq=("Can you add a virtual twilight to a Millville listing?", 'Yes. Marketing includes two virtual twilights, Luxury three and Signature four. Twilight edits are also available as add-ons, like the exterior we delivered for 601 Dove Dr.')),
     "Vineland": dict(
         homes="Vineland, in Cumberland County, covers more ground than any other city in New Jersey, and its neighborhoods reflect that: colonials and ranches on generous lots, with room for driveways, garages and fenced yards. Our Vineland shoot on Pixwhey Ct is a good example of what buyers look for here: a two-story colonial with a two-car garage and a wraparound porch, a two-story living room with an arched window, a dining room with big windows, a finished basement family room, a primary bedroom with a vaulted ceiling and a paver patio leading to a large fenced backyard.",
         homes2="Each space in the Pixwhey Ct home got its own frame. The dining room with a chandelier and big windows sits next to the oak kitchen with its pantry. The finished basement family room has recessed lighting, which helps a basement photograph as warm living space rather than storage. Upstairs, the primary bedroom has a vaulted ceiling and the primary bathroom has a double vanity and a corner tub. Out front, the covered porch with Adirondack chairs gave the listing a welcoming second exterior shot.",
         photos="Family buyers in Vineland look closely at space: how many rooms, how big the yard, whether there is a finished basement. Good photos answer those questions in order. We shoot the exterior from angles that show the porch and garage together, cover every main living space, and give finished basements extra light so they look as inviting as the main floor. The backyard gets photographed from the patio so buyers see the fence line and the lawn. Then the drone takes three views: the house, driveway and yard together; a top-down of the whole lot; and a wide aerial of the neighborhood. A two-story living room with an arched window makes a great photo only if the window does not blow out, and HDR blending keeps the arch and the view through it intact. Oak kitchens and pantries get careful color correction so the wood looks the way it does in person.",
         pricing="",
-        faq=("Can you add virtual staging to a Vineland listing?", "Yes. Virtual staging is $35 per photo and decluttering is $25 per photo, on top of any package or on their own.")),
+        faq=("Can you add virtual staging to a Vineland listing?", 'Yes. Virtual staging is available per room in HDPhotoHub. For decluttering or other custom edits, ask us to confirm the scope and price.')),
     "Buena": dict(
         homes="Buena is a small borough in Atlantic County, surrounded by the farmland and woods of Buena Vista Township, between Vineland and Hammonton. Homes sit on roomy lots, and outdoor space such as decks, yards, garages and gardens is a big part of why people buy here. Our Buena shoot on Catherine Ave is typical of the area: a two-story home with a two-car garage, a living room with a dark accent wall, a kitchen with sage green cabinets, a dining room with a farmhouse table, a bedroom with big windows, and out back a deck overlooking a large yard with picnic tables and a pergola.",
         homes2="The Catherine Ave shoot covered ten photos, and each answered a different question a buyer might have. The front exterior shows the two-car garage. The aerial shows the home in its yard, and the top-down shows the full lot. Inside, the living room with recliners, the kitchen with stainless appliances and the farmhouse dining table show the main floor, while the bedroom with a ceiling fan and the bathroom with a wood vanity cover the private rooms. The deck and the pergola show where summers happen.",
-        photos="When the backyard is the selling point, it needs more than one photo. At Catherine Ave we shot the back deck, the picnic area and the pergola from the ground, then flew the drone for an aerial of the home and yard and a top-down view that shows the whole lot at once. That top-down shot is the one buyers zoom into, because it shows where the yard ends and how much room there is. Inside, color matters. Painted cabinets and accent walls only help a listing if they look the way they do in person, so we color-correct every frame instead of letting a filter shift the greens and grays. Bedrooms with big windows and bathrooms with patterned wallpaper get balanced HDR exposures so they look bright without washing out. If an empty room needs help, virtual staging furnishes it for $35 a photo.",
+        photos="When the backyard is the selling point, it needs more than one photo. At Catherine Ave we shot the back deck, the picnic area and the pergola from the ground, then flew the drone for an aerial of the home and yard and a top-down view that shows the whole lot at once. That top-down shot is the one buyers zoom into, because it shows where the yard ends and how much room there is. Inside, color matters. Painted cabinets and accent walls only help a listing if they look the way they do in person, so we color-correct every frame instead of letting a filter shift the greens and grays. Bedrooms with big windows and bathrooms with patterned wallpaper get balanced HDR exposures so they look bright without washing out. If an empty room needs help, virtual staging can show a furnished version. See current add-on pricing on our Packages page.",
         pricing="",
-        faq=("Do you include drone photos on Buena shoots?", "Yes. Every package includes 10-15 drone photos, and on large lots we always include a top-down view of the whole property.")),
+        faq=("Do you include drone photos on Buena shoots?", 'Standard, Marketing, Luxury and Signature include aerials; drone photography is also an add-on for Essential. On larger lots, we plan views that show the property and setting when flight conditions allow.')),
     "Somers Point": dict(
         homes="Somers Point sits on Great Egg Harbor Bay in Atlantic County, just across the bridge from Ocean City. It mixes waterfront neighborhoods along the bay with classic suburban streets of two-story homes, capes and ranches. Our Somers Point shoot on Euclid Ave was an exterior and aerial job: a two-story home with a garage and lawn, photographed from the front and from the air so the listing had a strong cover photo and a clear view of the property.",
         homes2="An exterior-and-aerial set is also a good first step for agents who want something live while the house is still being prepared. The front exterior can lead the listing on day one, the aerial shows the property from above, and the interiors can follow once the rooms are ready. When we come back for the inside, the edits are matched to the first set so the gallery looks like a single shoot. Exterior-only and partial shoots are quoted per job.",
@@ -94,32 +96,28 @@ TOWN_COPY = {
 }
 
 def price_para(town):
-    t = html.escape(town)
-    if town in OUT_OF_COUNTY:
-        lead = (f"{t} is outside Cape May County, so we quote travel case by case: send the address and we will "
-                f"get back to you with a price. Our packages start at $295.")
-    else:
-        lead = f"Packages start at $295. {html.escape(TOWN_COPY[town]['pricing'])}"
-    return (f"{lead} Essential ($295) is 40&ndash;50 HDR photos, 30&ndash;35 ground and 10&ndash;15 drone, "
-            f"professionally edited, sized for the MLS and delivered the next day. Showcase ($475) adds a 60-second "
-            f"exterior drone video, two virtual twilight edits and a 2D floor plan. Premiere ($750) adds a 1&ndash;2 "
-            f"minute cinematic walkthrough and a Matterport 3D tour with three months of hosting. Virtual staging is "
-            f"$35 a photo and decluttering is $25 a photo.")
+    lead = ("Outside Cape May County, travel is quoted for the property address. "
+            if town in OUT_OF_COUNTY else "No travel fee within Cape May County. ")
+    return (lead + "Essential covers 25&ndash;30 HDR photos for smaller listings. Standard adds aerials, "
+            "with 35&ndash;40 HDR photos. Marketing includes 40&ndash;50 HDR photos, aerials, two virtual "
+            "twilights, a 2D floor plan and a property website. Luxury adds a cinematic walkthrough, "
+            "a social reel and three virtual twilights. Signature adds Matterport 3D, four virtual "
+            "twilights and the marketing kit. "
+            '<a href="../index.html#packages">Compare current package prices and property sizes</a>, '
+            'then <a href="https://listingpixl.hd.pics/order">order through HDPhotoHub</a>. '
+            "HDPhotoHub calculates the final price for your property and selected services.")
 
 def town_faq(town):
-    t = town
-    if town in OUT_OF_COUNTY:
-        cost = (f"Packages start at $295 for Essential, $475 for Showcase and $750 for Premiere. {t} is outside "
-                f"Cape May County, so we add a travel quote for each address. Send the address and we will reply with a price.")
-    else:
-        cost = (f"Packages start at $295 for Essential (40-50 HDR photos including drone), $475 for Showcase and "
-                f"$750 for Premiere. {t} is in Cape May County, so those prices apply with no travel quote.")
+    travel = ("Travel outside Cape May County is quoted for the address."
+              if town in OUT_OF_COUNTY else "There is no travel fee within Cape May County.")
+    cost = ("Choose from Essential, Standard, Marketing, Luxury and Signature. Compare current "
+            "prices on our Packages page; the HDPhotoHub order form calculates the final total. " + travel)
     return [
-        (f"How much does a real estate photographer cost in {t}, NJ?", cost),
-        (f"How fast will I get my {t} listing photos?",
-         "Essential is delivered the next day. Showcase takes 2 days and Premiere 3 days, because they include video editing. Everything arrives edited and MLS-ready through your private client site."),
-        (f"Do your {t} shoots include drone photos?",
-         "Yes. Every package includes 10-15 drone photos. Showcase adds a 60-second exterior drone video, and a 360° drone panorama is a $95 add-on."),
+        (f"How much does a real estate photographer cost in {town}, NJ?", cost),
+        (f"How fast will I get my {town} listing photos?",
+         "Essential, Standard and Marketing include next-day delivery. Confirm timing for video and larger packages when booking. Edited, MLS-ready media is delivered through your private client portal."),
+        (f"Do your {town} shoots include drone photos?",
+         "Standard, Marketing, Luxury and Signature include drone photos. Aerial photography can also be added to Essential. Flights depend on weather, airspace and conditions at the property."),
         TOWN_COPY[town]["faq"],
     ]
 
@@ -188,7 +186,7 @@ def town_page(town):
     t = html.escape(town)
     title = f"Real Estate Photographer in {town}, NJ | Listing Pixl"
     desc = (f"Real estate photographer in {town}, NJ: HDR listing photos, drone aerials and virtual twilights. "
-            f"See {len(shoots)} {town} shoot{'s' if len(shoots) != 1 else ''}. Packages from $295.")
+            f"See {len(shoots)} {town} shoot{'s' if len(shoots) != 1 else ''}. View local shoots and current packages.")
     if len(desc) > 158:
         desc = desc[:155].rsplit(" ", 1)[0] + "..."
     faqs = town_faq(town)
@@ -222,7 +220,7 @@ def town_page(town):
 
         <h2>{t} real estate photography packages</h2>
         <p>{price_para(town)}</p>
-        <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="tel:+16097807027">Call or text {B.PHONE}</a></p>
+        <p class="post-cta"><a class="btn btn-pink" href="https://listingpixl.hd.pics/order">Lock In Your Shoot</a> <a class="btn btn-outline" href="tel:+16097807027">Call or text {B.PHONE}</a></p>
       </div>
     </article>
 
@@ -252,8 +250,8 @@ def town_page(town):
         </ul>
 
         <h2>Book {a_an_town(town)} photographer</h2>
-        <p>Pick a package and a day, and we will text you to confirm the shoot time. Call or text <a href="tel:+16097807027">{B.PHONE}</a> or email <a href="mailto:{B.EMAIL}">{B.EMAIL}</a>.</p>
-        <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="../blog/index.html">See all shoots</a></p>
+        <p>Choose a package and submit your property through HDPhotoHub. You can skip the calendar if the date is not decided; we will confirm the details with you. Call or text <a href="tel:+16097807027">{B.PHONE}</a> or email <a href="mailto:{B.EMAIL}">{B.EMAIL}</a>.</p>
+        <p class="post-cta"><a class="btn btn-pink" href="https://listingpixl.hd.pics/order">Lock In Your Shoot</a> <a class="btn btn-outline" href="../blog/index.html">See all shoots</a></p>
       </div>
     </article>
   </main>
@@ -272,10 +270,10 @@ SERVICE_PAGES = [
     dict(slug="drone-real-estate-photography", name="Drone Photography",
          h1="Drone Real Estate Photography in Cape May County, NJ",
          title="Drone Real Estate Photography in Cape May County, NJ | Listing Pixl",
-         desc="Drone aerial photos and video for South Jersey listings: top-down lot views, aerials toward the bay and beach. Included in every package from $295.",
+         desc='Drone real estate photography in Cape May County and South Jersey. Aerial lot, neighborhood, beach and bay views. Included with Standard and above.',
          body=[
              ("Why listings need aerials", "A ground photo shows a house. A drone photo shows the property: where the lot ends, how big the yard is, what sits behind the house and what is around it. In Cape May County that last part often matters most. Buyers want to know how far the beach or the bay is, whether the lot backs up to woods, and what the street looks like. An aerial answers all of that in one image."),
-             ("What we fly on every shoot", "Every package includes 10&ndash;15 drone photos, and we plan them as a set rather than a few random angles. A front view from above shows the house, driveway and yard together. A top-down view shows the whole lot, the roofline and the outbuildings, which is the shot buyers zoom into. A wide aerial shows the neighborhood, and when there is water in reach we point the camera at it: toward the Delaware Bay from Villas and North Cape May, down the street toward the beach in Wildwood, over the treetops toward the lake in Millville. Showcase adds a 60-second exterior drone video, and Premiere adds a 1&ndash;2 minute cinematic walkthrough."),
+             ('Aerial coverage for the property', 'Standard, Marketing, Luxury and Signature include aerial photos; drone photography can also be added to Essential. We plan views that show the home, driveway, yard and surroundings. A top-down view shows the lot and roofline; wider aerials show nearby water or neighborhood context. Flights depend on suitable weather, airspace and conditions at the property.'),
              ("Edited like the rest of the shoot", "Aerials go through the same editing as the interiors: color correction, straightened horizons and skies that match the ground shots, so the drone photos sit naturally in the MLS gallery."),
          ],
          examples=[("125-e-atlantic-ave-villas-nj", "125-e-atlantic-ave-villas-nj-drone-aerial.jpg"),
@@ -284,18 +282,15 @@ SERVICE_PAGES = [
                    ("218-rio-grande-ave-wildwood-nj", "218-rio-grande-ave-wildwood-nj-aerial-ocean.jpg"),
                    ("601-dove-dr-millville-nj", "dovedr_04_aerial_lake.jpg"),
                    ("101-rutledge-ave-villas-nj", "101-rutledge-ave-villas-nj-drone-sunset.jpg")],
-         prices=[("Essential: 40&ndash;50 HDR photos including 10&ndash;15 drone photos", "$295"),
-                 ("Showcase: adds a 60-second exterior drone video", "$475"),
-                 ("Premiere: adds a 1&ndash;2 minute cinematic walkthrough video", "$750"),
-                 ("360&deg; drone panorama, add-on to any shoot", "$95")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="virtual-twilight-photos", name="Virtual Twilight",
          h1="Virtual Twilight Real Estate Photos in South Jersey",
          title="Virtual Twilight Real Estate Photos in NJ | Listing Pixl",
-         desc="Virtual twilight edits turn a daytime exterior into a glowing dusk cover photo. Two are included with Showcase ($475) and Premiere ($750).",
+         desc='Virtual twilight photography for Cape May County and South Jersey listings. Daytime exteriors edited into dusk images; included with Marketing and above.',
          body=[
              ("What a virtual twilight is", "A virtual twilight starts with a daytime exterior photo. In editing we replace the sky with a dusk sky, warm up the light, and make the windows glow as if the lights are on inside. The result looks like a photo taken at sunset, without scheduling a second trip to the property for a narrow window of evening light."),
              ("Why it works as a cover photo", "Most listing photos are taken in the middle of the day, so a search page is a grid of houses under similar skies. A twilight exterior stands out in that grid. It also helps homes whose daytime fronts look plain: a ranch with a flat midday sky, a townhome row, a new build without landscaping yet. Twilight flatters architecture with a lot of glass, like the mid-century modern home we shot on Dove Dr in Millville, and shore homes with stacked balconies, like the Rio Grande Ave house in Wildwood. We can also apply it to a drone photo for a twilight aerial of the street."),
-             ("How we choose the shot", "We pick the exterior angle that shows the house best, usually the straight-on or slight-angle front view, and edit it as a twilight while keeping the daytime version for the gallery. Showcase and Premiere include two twilight edits, so you can use one as the cover and one later in the gallery or on social media."),
+             ("How we choose the shot", 'We choose exterior angles that show the house well and keep the daytime version available for the gallery. Marketing includes two virtual twilight edits, Luxury three and Signature four. One-image and three-image twilight add-ons are available through HDPhotoHub.'),
          ],
          og_image="riogrande_01_twilight.jpg",
          examples_lede="The same photo by day and as a virtual twilight. Drag the slider to compare.",
@@ -316,17 +311,15 @@ SERVICE_PAGES = [
                   before_alt="Daytime front of a green ranch in Villas NJ in winter", after_alt="The same ranch as a virtual twilight",
                   caption="A winter ranch shot that needed warmth", labels=("Day", "Twilight"), slug="15-n-11th-st-villas-nj"),
          ],
-         prices=[("Showcase: two virtual twilight edits, drone video and a 2D floor plan", "$475"),
-                 ("Premiere: two virtual twilight edits plus video and a 3D tour", "$750"),
-                 ("Adding twilight edits to Essential", "Ask us")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="virtual-staging", name="Virtual Staging",
          h1="Virtual Staging for Real Estate Listings in NJ",
          title="Virtual Staging for NJ Real Estate Listings | Listing Pixl",
-         desc="Virtual staging furnishes empty rooms in your listing photos for $35 per photo. Virtual decluttering is $25 per photo. Add to any package.",
+         desc='Virtual staging for Cape May County and South Jersey real estate photos. Empty rooms digitally furnished, with before-and-after examples. Order per room.',
          body=[
              ("Why empty rooms need help", "Empty rooms photograph smaller than they are. Without furniture there is nothing to give a sense of scale, and buyers have a hard time telling a living room from a bedroom or picturing where a bed would go. Physical staging solves that but costs time and money. Virtual staging adds furniture in editing, so the room in the photo shows how it can be used."),
              ("What we stage", "We stage the rooms that matter most to buyers: the main living area, the primary bedroom, and any room whose use is not obvious when it is empty. On new construction like the 116 W Wilde Ave build in Villas and the W Bennett Ave townhomes in Wildwood, we photographed the empty rooms and staged a living room and a bedroom with furniture, rugs and decor that suit the house. Staged photos are a design aid, so we recommend noting virtual staging in the listing description."),
-             ("Virtual decluttering", "If a room is furnished but busy, decluttering removes clutter and old furniture from the photo instead of adding new pieces. It is a good fit for estate sales, tenant-occupied homes and rooms that are mid-move."),
+             ('Custom photo edits', 'Need decluttering, object removal or another custom edit? Send us the image so we can confirm the work and quote it. Keep the original photo available and identify digitally altered images when publishing your listing.'),
          ],
          og_image="116-w-wilde-ave-villas-nj-staged-living-area.jpg",
          examples_lede="The same room empty and virtually staged. Drag the slider to compare.",
@@ -353,16 +346,15 @@ SERVICE_PAGES = [
                   before_alt="New build with a yard sign out front in Villas NJ", after_alt="The same photo with the sign digitally removed",
                   caption="Clean-up: a yard sign removed from the front photo", labels=("Before", "Cleaned up"), slug="116-w-wilde-ave-villas-nj"),
          ],
-         prices=[("Virtual staging: empty rooms digitally furnished", "$35 / photo"),
-                 ("Virtual decluttering: clutter and old furniture removed", "$25 / photo")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="floor-plans-3d-tours", name="3D Matterport Tours",
          h1="3D Matterport Tours in Cape May County, NJ",
          title="3D Matterport Virtual Tours in NJ | Listing Pixl",
-         desc="Matterport 3D virtual tours for South Jersey listings, included with the Premiere package ($750) with three months of hosting.",
+         desc='Matterport 3D tours for Cape May County and South Jersey real estate listings. Included with Signature and available as an add-on through HDPhotoHub.',
          body=[
              ("What a 3D tour is", "A Matterport 3D tour is an interactive walkthrough of the home. Buyers move room to room on their phone or computer, look around at their own pace, and switch to a dollhouse view that shows the whole floor at once. It works well for second-home and relocation buyers, which is a lot of buyers at the shore, because they can walk the house before they ever book a trip."),
              ("How we make it", "We scan the home room by room with a Matterport camera. The same scan produces a measured floor plan, so a 3D tour and a 2D plan come out of one visit. The plan below came straight from one of our Matterport scans."),
-             ("Hosting", "Premiere includes three months of hosting, which covers most listings from going live to closing. Tours are archived when hosting ends, so the tours from our earlier listings are no longer online; ask us and we will set up a demo."),
+             ('Ordering and hosting', 'Signature includes a Matterport 3D tour. It is also available as an add-on through HDPhotoHub. Confirm scan coverage, hosting duration and any renewal needs before ordering. Earlier tours may be archived; contact us for a current demo.'),
          ],
          og_image="17-fawn-ln-sicklerville-nj-floor-plan.jpg",
          examples_lede="A floor plan made from one of our Matterport scans.",
@@ -370,16 +362,15 @@ SERVICE_PAGES = [
              dict(kind="image", img="17-fawn-ln-sicklerville-nj-floor-plan.jpg", plan=True, wide=True,
                   caption="Two-floor plan generated from a Matterport scan", where="17 Fawn Ln, Sicklerville"),
          ],
-         prices=[("Premiere: Matterport 3D tour with 3 months hosting, plus everything in Showcase", "$750"),
-                 ("3D tour on its own", "Ask us")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="hdr-real-estate-photography", name="HDR Listing Photography",
          h1="HDR Real Estate Photography in Cape May County, NJ",
          title="HDR Real Estate Photography in Cape May County, NJ | Listing Pixl",
-         desc="Bright, true-color HDR listing photos for South Jersey agents: 40-50 photos including drone, edited and delivered next day. From $295.",
+         desc='HDR real estate photography for Cape May County and South Jersey agents. Bright, true-color interiors and exteriors, edited and sized for the MLS.',
          body=[
              ("What HDR means for a listing", "A camera cannot see a bright window and a shaded room at the same time the way your eyes can. Shoot for the room and the windows go white; shoot for the windows and the room goes dark. HDR (high dynamic range) photography solves that by taking several exposures of each angle and blending them, so the room is bright, the colors are true and the view out the window is still there."),
-             ("How we shoot a house", "We work through the home in the order a buyer would walk it: exterior, main living spaces, kitchen, bedrooms, baths, then the outdoor spaces. Each room gets the angle that shows its size and how it connects to the next room, with verticals kept straight so walls do not lean. Kitchens get a wide shot and a detail shot; decks, patios and pools get photographed as their own scenes. Every package includes drone photos, so the yard and setting are covered too."),
-             ("Edited and delivered next day", "Every photo is professionally edited and color-corrected, so painted cabinets, wood floors and accent walls look the way they do in person. Essential photos are delivered the next day, sized for the MLS, through your private client site."),
+             ("How we shoot a house", 'We work through the home in the order a buyer would walk it: exterior, living spaces, kitchen, bedrooms, baths and outdoor areas. Straight verticals and careful composition show how the rooms connect. Essential includes 25&ndash;30 HDR photos, Standard 35&ndash;40, Marketing 40&ndash;50, Luxury 50&ndash;65 and Signature 65&ndash;80+. Standard and above also include drone aerials.'),
+             ('Edited and delivered MLS-ready', 'Every photo is professionally edited and color-corrected to keep finishes and colors true to the home. Essential, Standard and Marketing include next-day delivery. Confirm delivery timing for video and larger packages when booking. Your media is delivered through your private HDPhotoHub client portal.'),
          ],
          examples=[("125-e-atlantic-ave-villas-nj", "125-e-atlantic-ave-villas-nj-great-room.jpg"),
                    ("601-dove-dr-millville-nj", "601-dove-dr-millville-nj-sunroom.jpg"),
@@ -387,13 +378,11 @@ SERVICE_PAGES = [
                    ("205-st-andrews-dr-cape-may-court-house-nj", "205-st-andrews-dr-cape-may-court-house-nj-living-room.jpg"),
                    ("1140-pixwhey-ct-vineland-nj", "1140-pixwhey-ct-vineland-nj-living-room.jpg"),
                    ("10-williams-way-ocean-view-nj", "10-williams-way-ocean-view-nj-kitchen.jpg")],
-         prices=[("Essential: 40&ndash;50 HDR photos (30&ndash;35 ground + 10&ndash;15 drone), next-day delivery", "$295"),
-                 ("Showcase: adds drone video, two virtual twilights and a 2D floor plan", "$475"),
-                 ("Premiere: adds a cinematic walkthrough and a Matterport 3D tour", "$750")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="2d-floor-plans", name="2D Floor Plans",
          h1="2D Floor Plans for Real Estate Listings in Cape May County, NJ",
          title="2D Floor Plans for NJ Real Estate Listings | Listing Pixl",
-         desc="Measured 2D floor plans with labeled rooms and dimensions for South Jersey listings. Included with the Showcase package ($475).",
+         desc='2D floor plans for Cape May County and South Jersey real estate listings. Included with Marketing, Luxury and Signature; also available as an add-on.',
          body=[
              ("Why buyers want a floor plan", "Photos show what rooms look like; a floor plan shows how they fit together. Buyers use it to check whether the bedrooms are on the same floor, how the kitchen connects to the living space, and whether their furniture will fit. At the shore, where many homes are stacked over three floors with a garage underneath, the plan answers the first question every buyer has: what is on which level."),
              ("What you get", "A measured, top-down drawing of every floor with each room labeled and its dimensions noted, plus the total area. Multi-level homes get a plan per floor and one sheet showing all floors side by side, like the three-story townhome on Paradise Way below. We deliver plans in black and white or in color, sized to sit in the MLS gallery next to the photos."),
@@ -413,16 +402,14 @@ SERVICE_PAGES = [
              dict(kind="image", img="1200-georgia-ave-cape-may-court-house-nj-floor-plan.jpg", plan=True, wide=True,
                   caption="Office suite, lower level, room by room", where="1200 Georgia Ave, Cape May Court House"),
          ],
-         prices=[("Showcase: 2D floor plan, drone video and two virtual twilights", "$475"),
-                 ("Premiere: floor plan plus a Matterport 3D tour", "$750"),
-                 ("Floor plan on its own", "Ask us")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="property-video", name="Property Video",
          h1="Real Estate Video and Drone Films in Cape May County, NJ",
          title="Real Estate Video & Drone Films in NJ | Listing Pixl",
-         desc="Drone films and walkthrough videos for South Jersey listings: a 60-second drone video with Showcase ($475), a 1-2 minute walkthrough with Premiere ($750).",
+         desc='Cinematic real estate walkthrough videos and social reels for Cape May County and South Jersey listings. Included with Luxury and Signature packages.',
          body=[
              ("Why video", "Video is what buyers stop for on Facebook, Instagram and Zillow. A short film from the air shows what a photo gallery can only hint at: the drive up the street, how close the water is, what the neighborhood feels like at golden hour."),
-             ("What we film", "Showcase includes a 60-second exterior drone video: the home, the lot and the setting, edited and ready for social and the MLS. Premiere adds a 1&ndash;2 minute cinematic walkthrough that moves through the home as well. We fly at the right time of day for the location, so the light flatters the home and the setting."),
+             ("What we film", 'Luxury and Signature include a cinematic walkthrough and social reel. Walkthrough video is also available as an add-on through HDPhotoHub. We plan the coverage around the home and confirm any aerial filming needs, format and delivery timing before the shoot.'),
              ("Delivered ready to post", "Films come edited, color-graded and sized for the MLS video link, Facebook and Instagram, through the same client site as your photos."),
          ],
          og_image="1622-jennings-ave-villas-nj-drone-front.jpg",
@@ -433,13 +420,11 @@ SERVICE_PAGES = [
              dict(kind="embed", src="https://iframe.videodelivery.net/bbb55ce5e67fdb6112c60c2302718f5f?autoplay=true", poster="video/320-oakdale-ave-villas-nj-drone-poster.jpg",
                   caption="Drone flight over Villas toward the bay", slug="320-oakdale-ave-villas-nj"),
          ],
-         prices=[("Showcase: 60-second exterior drone video, plus twilights and a floor plan", "$475"),
-                 ("Premiere: 1&ndash;2 minute cinematic walkthrough and a 3D tour", "$750"),
-                 ("Video on its own", "Ask us")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="360-drone-panoramas", name="360&deg; Drone Panoramas",
          h1="360&deg; Drone Panoramas in Cape May County, NJ",
          title="360 Degree Drone Panoramas for NJ Listings | Listing Pixl",
-         desc="Interactive 360-degree drone panoramas buyers can spin around: the beach, the bay and the neighborhood from above. $95, add-on to any shoot.",
+         desc='Interactive aerial panoramas for South Jersey property marketing. Explore examples from our shoots, then ask us about availability and a custom quote.',
          body=[
              ("What a 360 panorama is", "We fly the drone above the property and capture a full sphere of photos, then stitch them into one interactive panorama. Buyers drag to look in any direction: down at the lot, out to the beach, across to the bay or down the street. It answers the questions a single aerial cannot, all in one link."),
              ("Where it helps most", "Anywhere the location sells the home. In North Cape May and Villas it shows how close the Delaware Bay beach is; in Wildwood and North Wildwood it shows the ocean, the bay and the boardwalk; on bigger lots in Cape May and Cape May Court House it shows the land and the woods around it. Try the panoramas below: press one, then drag."),
@@ -459,11 +444,11 @@ SERVICE_PAGES = [
              dict(kind="embed", src="https://kuula.co/share/collection/7DcFl?logo=0&info=0&fs=1&vr=1&autorotate=0.2&thumbs=1", poster="26-lomurno-ln-cape-may-court-house-nj-top-down-drone.jpg",
                   caption="Wooded lot in Cape May Court House", slug="26-lomurno-ln-cape-may-court-house-nj", play="360&deg;"),
          ],
-         prices=[("360&deg; drone panorama, add-on to any shoot", "$95")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="vacation-rental-photography", name="Vacation Rental Photography",
          h1="Vacation Rental Photography for Airbnb and VRBO in Cape May County, NJ",
          title="Vacation Rental Photography for Airbnb & VRBO, NJ | Listing Pixl",
-         desc="Two-session vacation rental shoots: the house plus a styled lifestyle session with the details guests book for. $800 in Cape May County.",
+         desc='Vacation rental photography for Airbnb and VRBO in Cape May County and South Jersey. House and lifestyle images that show the spaces and details guests book.',
          body=[
              ("A listing guests can picture themselves in", "A rental listing competes on a phone screen against every other place in town for the same week. Clean room photos tell a guest the house is nice; lifestyle photos tell them what their stay will feel like. That is what earns the click, the wish-list save and the booking, and it is why our rental shoot has two sessions."),
              ("Session one: the house", "Every room, the views and the outdoor spaces, shot and edited like a listing: bright, true to color and in the order a guest walks through. Bedrooms and bunk rooms are shot so guests can count the beds, and drone aerials show how close the beach or the bay is, marked with an arrow when it helps."),
@@ -483,8 +468,7 @@ SERVICE_PAGES = [
              dict(kind="image", img="414-paradise-way-north-wildwood-nj-wine-bar.jpg", caption="Stocked wine and bar shelves", slug="414-paradise-way-north-wildwood-nj"),
              dict(kind="image", img="414-paradise-way-north-wildwood-nj-arrow-bay.jpg", caption="Aerial with an arrow marking the rental on the bay", slug="414-paradise-way-north-wildwood-nj"),
          ],
-         prices=[("Vacation rental shoot: house session plus lifestyle session", "$800"),
-                 ("360&deg; drone panorama, add-on", "$95")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
     dict(slug="neighborhood-highlights", name="Neighborhood Highlights",
          h1="Neighborhood Highlight Photos and Video in Cape May County, NJ",
          title="Neighborhood Highlight Aerials & Video in NJ | Listing Pixl",
@@ -518,8 +502,7 @@ SERVICE_PAGES = [
              dict(kind="embed", src="https://iframe.videodelivery.net/e94b1d91d5c82bb07a12ab5885d972e4?autoplay=true", poster="video/north-cape-may-nj-neighborhood-poster.jpg",
                   caption="Neighborhood film over North Cape May", where="North Cape May"),
          ],
-         prices=[("Neighborhood aerials with routes, landmarks or lot lines", "Ask us"),
-                 ("Neighborhood highlight film", "Ask us")]),
+         prices=[("Current packages and add-ons", "See HDPhotoHub checkout")]),
 ]
 
 def _img(fname, alt, cls="", sizes="(max-width: 720px) 100vw, 560px", lazy=True):
@@ -574,6 +557,15 @@ def example_figures(examples):
 
 def service_page(sp):
     path = f"/services/{sp['slug']}.html"
+    package = {'drone-real-estate-photography': 'standard', 'virtual-twilight-photos': 'marketing',
+               'floor-plans-3d-tours': 'signature', 'hdr-real-estate-photography': 'essential',
+               '2d-floor-plans': 'marketing', 'property-video': 'luxury'}.get(sp['slug'])
+    custom_quote = sp['slug'] in {'360-drone-panoramas', 'vacation-rental-photography', 'neighborhood-highlights'}
+    booking_url = ("../index.html#contact" if custom_quote else
+                   "https://listingpixl.hd.pics/order" + (f"?package={package}" if package else ""))
+    booking_label = "Ask about this service" if custom_quote else f"Book {package.title()}" if package else "Add staging at checkout"
+    booking_text = ("Tell us about the property so we can confirm availability, coverage and a custom quote."
+                    if custom_quote else "Choose services in HDPhotoHub and submit your property. You can leave the shoot date undecided and confirm it with us later.")
     body = "\n".join(f"        <h2>{html.escape(h)}</h2>\n        <p>{p}</p>" for h, p in sp["body"])
     others = "\n".join(f'          <li><a href="{o["slug"]}.html">{html.escape(o["name"])}</a></li>' for o in SERVICE_PAGES if o is not sp)
     towns = "\n".join(f'          <li><a href="../areas/{B.area_slug(t)}.html">{html.escape(t)}</a></li>' for t in B.AREA_TOWNS)
@@ -604,8 +596,8 @@ def service_page(sp):
     <article class="section">
       <div class="wrap narrow">
         <h2>Book this for your listing</h2>
-        <p>Tell us about the property and we will text you to confirm. <a href="../index.html#packages">See our packages</a>.</p>
-        <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="tel:+16097807027">Call or text {B.PHONE}</a></p>
+        <p>{booking_text} <a href="../index.html#packages">See our packages</a>.</p>
+        <p class="post-cta"><a class="btn btn-pink" href="{booking_url}">{booking_label}</a> <a class="btn btn-outline" href="tel:+16097807027">Call or text {B.PHONE}</a></p>
 
         <h2>Other services</h2>
         <ul class="link-pills">
@@ -644,3 +636,4 @@ def write_pages():
 
 if __name__ == "__main__":
     B.main()
+

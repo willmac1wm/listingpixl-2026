@@ -17,20 +17,20 @@ const SECTIONS = [
     title: 'Run the business',
     links: [
       ['HD Photo Hub admin', 'https://listingpixl.hd.pics/admin', 'Orders, uploads, deliveries and client galleries'],
-      ['Client site (HD Photo Hub)', 'https://listingpixl.hd.pics/', 'What agents see when they log in'],
+      ['Client site (HD Photo Hub)', 'https://listingpixl.hd.pics/Dashboard/', 'What agents see when they log in'],
       ['AI phone receptionist (Smith.ai)', 'https://app.smith.ai/', 'Call log, messages, greeting and call forwarding'],
-      ['Business email', 'https://mail.google.com/', 'ListingPixl.Media@gmail.com, where website booking requests arrive'],
+      ['Business email', 'https://mail.google.com/', 'ListingPixl.Media@gmail.com, where website questions arrive'],
     ],
   },
   {
     title: 'Get found online',
     links: [
       ['Google Business Profile', 'https://business.google.com/locations', 'Posts, photos, hours, reviews and messages'],
-      ['See our Google listing', 'https://www.google.com/maps/search/Listing+Pixl', 'How the profile looks to customers on Maps'],
+      ['See our Google listing', 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454', 'How the profile looks to customers on Maps'],
       ['Facebook page', 'https://www.facebook.com/listing.pixl.media/', 'The public page'],
       ['Meta Business Suite', 'https://business.facebook.com/', 'Facebook and Instagram posts, reels, messages and ads'],
       ['Google Search Console', 'https://search.google.com/search-console', 'What people search to find the site; submit the sitemap'],
-      ['Google Analytics', 'https://analytics.google.com/', 'Website visitors and booking-form leads'],
+      ['Google Analytics', 'https://analytics.google.com/', 'Website visitors and contact-form leads'],
     ],
   },
   {
@@ -48,15 +48,15 @@ const SECTIONS = [
 const HOW_TO = [
   ['Start in the right place', 'In Claude Code, start a new session in the listingpixl-2026 folder (Documents > GitHub > listingpixl-2026). Any session there knows how the site works, because the instructions are saved in the project on GitHub. If that folder is ever missing, start a session anywhere and ask it to clone github.com/willmac1wm/listingpixl-2026 into Documents/GitHub.'],
   ['New shoot on the blog, Google, Facebook and Instagram', 'Pick the shoot under New shoots at the top of this page. About 5 minutes later the draft blog post and social posts appear there: check the photos and wording, edit anything, then press Approve. The blog post goes live right away and Facebook, the Instagram post and the Instagram story go out at the time you pick. The Google post is ready to copy and paste.'],
-  ['Change photos, services or prices', 'Ask in that same folder, for example "swap the first photo on the 14 Thistle Ln post" or "raise the Showcase package to $495." You approve the preview before anything goes live.'],
+  ['Change photos, services or prices', 'Ask in that same folder, for example "swap the first photo on the 14 Thistle Ln post." Public website prices sync from HDPhotoHub; update package prices there. You approve the preview before anything goes live.'],
   ['Google Business posts', 'Ready-to-post text and photos for every shoot are in Downloads > ListingPixl-Google-Business, with a posting date for each in SCHEDULE.txt.'],
 ];
 
 const NOT_SET_UP = [
-  'Google review link to text agents after each shoot',
+  'Resolve the duplicate Google Business Profile: established profile uses (609) 780-7027; older duplicate shows (609) 602-4314',
   'Automatic Google Business posts (waiting on Google API access)',
   'Online payments and invoices',
-  'Shared calendar for shoots',
+  'Two-way SMS reply routing (HDPhotoHub feedback email: 12 hours; review text: 1 day after delivery)',
   'Bookkeeping',
 ];
 
@@ -144,3 +144,4 @@ module.exports = (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.end(page());
 };
+

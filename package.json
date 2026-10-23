@@ -1,7 +1,7 @@
 {
   "name": "listingpixl-site",
   "private": true,
-  "description": "Static site; api/book.js emails booking requests through Gmail.",
+  "description": "Static website; HDPhotoHub booking and price sync; api/book.js emails contact inquiries.",
   "dependencies": {
     "nodemailer": "10.0.14"
   }

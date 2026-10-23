@@ -39,7 +39,7 @@
     const targets = document.querySelectorAll(
       '.section h2, .section-lede, .service-card, .package-card, .alacarte, .feature-carousel, .work-tile, ' +
       '.work-trust, .work-cta, .area-map, .map-key, .town-list, .about-text, .faq, .contact-details, ' +
-      '#booking-form, .blog-card, .blog-photo, article .wrap.narrow > p, .post-cta');
+      '#contact-form, .blog-card, .blog-photo, article .wrap.narrow > p, .post-cta');
     const io = new IntersectionObserver(entries => entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
     }), { rootMargin: '0px 0px -8% 0px' });
@@ -187,10 +187,56 @@
     btn.removeAttribute('aria-label');
   }, { once: true }));
 
+  // The contact form asks questions; bookings go directly to HDPhotoHub.
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    const loadedAt = Date.now();
+    const status = document.getElementById('form-status');
+    const submit = contactForm.querySelector('button[type="submit"]');
+    contactForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (submit.disabled || !contactForm.reportValidity()) return;
+      const fields = Object.fromEntries(new FormData(contactForm));
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      submit.disabled = true;
+      submit.textContent = 'Sending…';
+      status.hidden = true;
+      document.getElementById('form-fallback').hidden = true;
+      try {
+        const response = await fetch('/api/book', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...fields, elapsed: Date.now() - loadedAt }),
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error('send-failed');
+        status.className = 'form-status is-sent';
+        status.textContent = 'Thanks, ' + fields.name.trim().split(/\s+/)[0] + '! Your message has been sent. We’ll reply to your email.';
+        contactForm.reset();
+        if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Contact inquiry' });
+        if (window.gtag) window.gtag('event', 'generate_lead', { method: 'contact_form' });
+      } catch (error) {
+        status.className = 'form-status is-error';
+        status.textContent = 'We couldn’t send your message from here. ';
+        const email = document.createElement('a');
+        email.textContent = 'Open an email with your question';
+        const body = 'Name: ' + fields.name + '\r\nEmail: ' + fields.email + '\r\nPhone: ' + (fields.phone || 'Not given') + '\r\n\r\n' + fields.message;
+        email.href = 'mailto:ListingPixl.Media@gmail.com?subject=' + encodeURIComponent('Question for Listing Pixl') + '&body=' + encodeURIComponent(body);
+        status.append(email, ', or call/text (609) 780-7027.');
+      } finally {
+        clearTimeout(timeout);
+        submit.disabled = false;
+        submit.textContent = 'Send Message';
+        status.hidden = false;
+      }
+    });
+  }
+
   // Keep the mobile Call / Text / Book bar out of the way while typing
-  const form = document.getElementById('booking-form');
+  const form = document.getElementById('contact-form');
   if (form) {
     form.addEventListener('focusin', () => document.body.classList.add('is-typing'));
     form.addEventListener('focusout', () => document.body.classList.remove('is-typing'));
   }
 })();
+

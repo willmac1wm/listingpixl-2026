@@ -52,6 +52,9 @@
   "functions": {
     "api/shoots.js": {
       "maxDuration": 60
+    },
+    "api/prices.js": {
+      "maxDuration": 20
     }
   }
 }
