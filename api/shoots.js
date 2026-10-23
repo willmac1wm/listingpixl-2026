@@ -199,7 +199,7 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   const send = (status, data) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(data)); };
-  if (!authorized(req)) {
+  if (!await authorized(req, res)) {
     res.setHeader('WWW-Authenticate', 'Basic realm="Listing Pixl team", charset="UTF-8"');
     return send(401, { error: 'Team login required.' });
   }
@@ -217,3 +217,4 @@ module.exports = async (req, res) => {
     send(e.status || 500, { error: e.message });
   }
 };
+

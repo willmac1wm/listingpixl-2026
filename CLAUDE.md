@@ -29,8 +29,10 @@ Most pages are generated. Edit the generator, then rebuild; don't hand-edit the 
 - Google Maps/review links live in `config/business-links.json`. After a profile
   merge, update that file and run `python3 build_blog.py --sync-google-links` to
   rebuild those references without touching the photo HTML.
-- `api/staff.js`: team dashboard at `/staff` (links to every service the business uses). Login is
-  username `team` plus the `STAFF_PASSWORD` Vercel env var; with no password set it stays locked.
+- `api/staff.js`: team dashboard at `/staff` (links to every service the business uses). Sign in
+  at `/staff/login` with username `team` plus the existing `STAFF_PASSWORD` Vercel env var.
+  `api/staff-auth.js` uses a four-hour encrypted cookie and protected login/logout forms.
+  With no password set it stays locked. Basic API access remains supported.
   To add a dashboard link, add a line to `SECTIONS` in that file.
 - `tools/jobs.csv`: every property ever shot (map pins). Add new addresses there too.
 - Needs Python 3 with Pillow (`pip3 install Pillow`).

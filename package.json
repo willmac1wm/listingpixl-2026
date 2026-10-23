@@ -4,6 +4,7 @@
   "description": "Listing Pixl website with HDPhotoHub pricing and private inquiry recovery.",
   "dependencies": {
     "@vercel/blob": "2.8.2",
+    "iron-session": "9.0.1",
     "nodemailer": "10.0.14",
     "twilio": "6.2.0"
   },

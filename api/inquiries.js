@@ -1,5 +1,5 @@
 const { createHmac, timingSafeEqual } = require('node:crypto');
-const { authorized } = require('./_auth');
+const { requireStaff } = require('./_auth');
 const store = require('../lib/private-store');
 const inquiries = require('../lib/inquiries');
 
@@ -32,13 +32,13 @@ function card(record) {
 function page(records, cursor, message = '') {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Inquiry inbox | Listing Pixl</title><link rel="icon" href="/favicon.svg"><style>
   *{box-sizing:border-box}body{margin:0;background:#080e1a;color:#edf6ff;font:16px/1.6 Arial,sans-serif}main{max-width:940px;margin:auto;padding:32px 20px 70px}a{color:#58e6f2}header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}h1{font-size:30px;margin:15px 0 8px}h2{font-size:21px;margin:0}.intro,.meta{color:#b4c5d5}.meta{font-size:13px;overflow-wrap:anywhere}.lead{background:#101e30;border:1px solid #29475c;border-radius:14px;margin:20px 0;padding:22px}.lead-top{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.badge{border-radius:20px;padding:2px 12px;font-size:13px;text-transform:capitalize}.sent{color:#83f3d6;background:#123e3d}.pending{color:#ffd7e7;background:#58253c}.message{white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #2b4356;padding-top:16px}.notice{background:#30243a;border-left:3px solid #ef4b9a;padding:12px}.check{display:block;margin:14px 0}button,.button{border:0;border-radius:6px;background:#08d5e8;color:#06232b;padding:11px 16px;font:700 15px Arial,sans-serif;cursor:pointer;margin:5px 8px 5px 0}.secondary{background:#293f56;color:white}input[type=checkbox]{width:18px;height:18px;vertical-align:middle}.banner{padding:16px;border:1px solid #09b9cb;border-radius:8px}button:focus-visible,a:focus-visible{outline:3px solid #f655a1;outline-offset:3px}form{margin-top:14px}@media(max-width:500px){main{padding:20px 12px}.lead{padding:17px}button{width:100%}}
-  </style></head><body><main><header><strong>LISTING <span style="color:#ed4091">PIXL</span></strong><a href="/staff">Team dashboard</a></header><h1>Inquiry inbox</h1><p class="intro">Every website inquiry is saved here before email delivery. Saved copies remain private. Pending emails can be recovered below.</p>${message ? '<p class="banner" role="status">' + esc(message) + '</p>' : ''}${records.length ? records.map(card).join('') : '<p>No inquiries in this view.</p>'}${cursor ? '<a class="button" href="/staff/inquiries?cursor=' + encodeURIComponent(cursor) + '">Next 50 saved inquiries</a>' : ''}</main></body></html>`;
+  </style></head><body><main><header><strong>LISTING <span style="color:#ed4091">PIXL</span></strong><nav aria-label="Team navigation"><a href="/staff">Team dashboard</a> · <a href="/staff/logout">Sign out</a></nav></header><h1>Inquiry inbox</h1><p class="intro">Every website inquiry is saved here before email delivery. Saved copies remain private. Pending emails can be recovered below.</p>${message ? '<p class="banner" role="status">' + esc(message) + '</p>' : ''}${records.length ? records.map(card).join('') : '<p>No inquiries in this view.</p>'}${cursor ? '<a class="button" href="/staff/inquiries?cursor=' + encodeURIComponent(cursor) + '">Next 50 saved inquiries</a>' : ''}</main></body></html>`;
 }
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'private, no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-  if (!authorized(req)) { res.setHeader('WWW-Authenticate', 'Basic realm="Listing Pixl team", charset="UTF-8"'); return res.status(401).end('Team login required.'); }
+  if (!await requireStaff(req, res, '/staff/inquiries' + (req.query?.cursor ? '?cursor=' + encodeURIComponent(req.query.cursor) : ''))) return;
   if (!['GET', 'POST'].includes(req.method)) { res.setHeader('Allow', 'GET, POST'); return res.status(405).end(); }
   try {
     if (req.method === 'POST') {

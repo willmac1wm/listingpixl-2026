@@ -20,6 +20,14 @@
       "dest": "/api/home"
     },
     {
+      "src": "/staff/login/?",
+      "dest": "/api/staff-auth"
+    },
+    {
+      "src": "/staff/logout/?",
+      "dest": "/api/staff-auth?mode=logout"
+    },
+    {
       "src": "/staff/?",
       "dest": "/api/staff"
     },
@@ -53,6 +61,9 @@
       "includeFiles": "index.html"
     },
     "api/book.js": {
+      "maxDuration": 30
+    },
+    "api/staff-auth.js": {
       "maxDuration": 30
     },
     "api/inquiries.js": {

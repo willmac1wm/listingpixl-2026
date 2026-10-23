@@ -143,10 +143,9 @@ test('unknown number gets no review request; STOP suppresses subsequent replies'
 });
 test('staff inbox rejects anonymous access and escapes visitor HTML', async () => {
   const inbox = require('../api/inquiries');
-  let status;
-  const res = { setHeader() {}, status(code) { status = code; return this; }, end() {} };
+  const res = { statusCode: 200, setHeader() {}, status(code) { this.statusCode = code; return this; }, end() {} };
   await inbox({ method: 'GET', headers: {} }, res);
-  assert.equal(status, 401);
+  assert.equal(res.statusCode, 401);
   const html = inbox.page([{ id: inquiries.newId(), createdAt: new Date().toISOString(), status: 'queued', fields: { ...sample(), message: '<script>alert(1)</script>' } }]);
   assert.ok(!html.includes('<script>alert'));
   assert.ok(html.includes('&lt;script&gt;'));

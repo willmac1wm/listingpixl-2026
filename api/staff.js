@@ -1,15 +1,16 @@
 // Team dashboard at /staff: one page linking every service Listing Pixl runs on.
 //
 // The page is built here, not stored as a public file, so nobody sees it
-// without the team password. Login is the browser's own username/password
-// box (HTTP Basic auth over HTTPS).
+// without the team password. Browser sign-in uses an encrypted, expiring cookie;
+// existing authenticated API access remains supported.
 //
 // Needs one Vercel environment variable: STAFF_PASSWORD. STAFF_USER is
 // optional (default "team"). Until STAFF_PASSWORD is set the page stays
 // locked for everyone.
 //
 // To add a link, add a line to SECTIONS below and push.
-const { authorized } = require('./_auth');
+const { requireStaff } = require('./_auth');
+const businessLinks = require('../config/business-links.json');
 const shoots = require('./_shoots_ui');
 
 const SECTIONS = [
@@ -27,7 +28,7 @@ const SECTIONS = [
     title: 'Get found online',
     links: [
       ['Google Business Profile', 'https://business.google.com/locations', 'Posts, photos, hours, reviews and messages'],
-      ['See our Google listing', 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454', 'How the profile looks to customers on Maps'],
+      ['See our Google listing', businessLinks.googleMaps, 'How the profile looks to customers on Maps'],
       ['Facebook page', 'https://www.facebook.com/listing.pixl.media/', 'The public page'],
       ['Meta Business Suite', 'https://business.facebook.com/', 'Facebook and Instagram posts, reels, messages and ads'],
       ['Google Search Console', 'https://search.google.com/search-console', 'What people search to find the site; submit the sitemap'],
@@ -109,7 +110,7 @@ ${shoots.css}
   <main class="dash">
     <div class="dash-head">
       <a href="/" aria-label="Listing Pixl home"><img src="/images/logo-horizontal-312.jpg" alt="Listing Pixl" width="156" height="66"></a>
-      <h1>Team Dashboard</h1>
+      <h1>Team Dashboard</h1><a href="/staff/logout">Sign out</a>
     </div>
 ${shoots.html}
     ${sections}
@@ -121,14 +122,14 @@ ${shoots.html}
       <h2>Not set up yet</h2>
       <ul class="dash-todo">${todo}</ul>
     </section>
-    <p class="dash-foot">Links open in a new tab. Each service still asks for its own login. To sign out of this page, close the browser.</p>
+    <p class="dash-foot">Links open in a new tab. Each service still asks for its own login. Team sessions expire after four hours.</p>
   </main>
   <script>${shoots.script}</script>
 </body>
 </html>`;
 }
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   if (!process.env.STAFF_PASSWORD) {
@@ -136,12 +137,7 @@ module.exports = (req, res) => {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     return res.end('The team dashboard is not set up yet: add STAFF_PASSWORD in Vercel > Settings > Environment Variables, then redeploy.');
   }
-  if (!authorized(req)) {
-    res.statusCode = 401;
-    res.setHeader('WWW-Authenticate', 'Basic realm="Listing Pixl team", charset="UTF-8"');
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.end('Team login required.');
-  }
+  if (!await requireStaff(req, res, '/staff')) return;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.end(page());
 };

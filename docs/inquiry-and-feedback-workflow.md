@@ -19,7 +19,17 @@ to Production and Preview using OIDC (`BLOB_STORE_ID`); no token belongs in
 browser JavaScript. Production, preview branches and local development use
 separate prefixes. No inquiry is stored in the public GitHub repository.
 
-`/staff/inquiries` uses the existing team login. It shows saved questions,
+`/staff/inquiries` uses the existing team login at `/staff/login`. Browser
+sign-in creates a four-hour, encrypted iron-session cookie with Secure,
+HttpOnly and SameSite=Strict attributes. A random server-only session key lives
+in the private store, with a key derived from it and the current team credential;
+public pre-login cookies do not expose a password-derived signing oracle.
+No password is stored in page HTML or
+browser storage. Login/logout forms require a same-origin request and a CSRF
+token; sign-in attempts are limited through private shared storage. Password
+changes invalidate existing sessions. Basic authentication remains available
+for existing authenticated API clients. Use `/staff/logout` to end the browser
+session. The inbox shows saved questions,
 delivery status, and protected retry / already-received actions. Pending records
 are shown before delivered records. The inbox and API use `no-store` and
 `noindex`; private Blob objects are not publicly downloadable.
@@ -94,7 +104,10 @@ after a profile merge to rebuild references without changing photo markup.
 An internal inquiry on October 23, 2026 at 1:49 PM Eastern was saved privately,
 delivered to ListingPixl.Media@gmail.com, and verified in the business Gmail
 inbox. The saved record reports `sent`, one attempt, and no delivery error.
-The signed-in `/staff/inquiries` view still needs the existing team login.
+The new sign-in-to-inbox-to-sign-out flow is covered by local integration tests
+with fictional credentials and saved inquiries. The deployed signed-in
+`/staff/inquiries` view still needs the existing team login; its actual private
+save and business Gmail receipt were already checked independently.
 
 ## Native HDPhotoHub checkout
 
