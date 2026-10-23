@@ -51,7 +51,7 @@ photos, writing posts and publishing.
 - Take the shoot month from the photos' EXIF date (tools/shoot_sheets.py prints it).
 - Twilight exteriors are virtual twilights. Say "virtual twilight".
 - Pricing is managed in HDPhotoHub. Current packages are Essential, Standard, Marketing, Luxury and Signature; do not copy numeric prices into other pages or schemas. The homepage renders public checkout prices on the server and refreshes through `/api/prices`. Link town/service pages to current packages. No travel fee in Cape May County. Luxury covers up to 5,000 sq ft; Signature is the next option for 5,001–6,500 sq ft; confirm scope above 6,500 sq ft.
-- Client photo delivery: HD Photo Hub at listingpixl.hd.pics (admin: listingpixl.hd.pics/admin).
+- Client photo delivery: HD Photo Hub at listingpixl.hd.pics (admin: listingpixl.hd.pics/ux/studio/Dashboard).
 - Phone (609) 780-7027. AI receptionist: Smith.ai. Email ListingPixl.Media@gmail.com.
 
 ## Rules

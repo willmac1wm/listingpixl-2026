@@ -118,3 +118,9 @@ old meeting and extra square-footage questions are scoped to the inactive staff
 land product and hidden from the order form. The native square-footage field and
 conditional lockbox/other instructions remain. Signature copy now explains the
 5,001–6,500 sq ft range and asks for scope confirmation above 6,500 sq ft.
+
+The deployed sign-in page was browser-checked on October 23, 2026: it renders
+the branded form, preserves the inbox destination, and rejects a fictional
+incorrect password with an inline error. Session keys are saved privately.
+The staff HDPhotoHub link opens the verified Studio dashboard directly; the
+legacy `/admin` URL rendered a blank page. No customer notifications were sent.
