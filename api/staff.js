@@ -54,10 +54,10 @@ const HOW_TO = [
 ];
 
 const NOT_SET_UP = [
-  'Google is reviewing the duplicate-profile report; both public profiles now use (609) 780-7027',
+  'Google now shows one verified profile and one duplicate; corrected active-profile details are under review',
   'Automatic Google Business posts (waiting on Google API access)',
   'Online payments and invoices',
-  'Two-way SMS reply routing (HDPhotoHub feedback email: 12 hours; review text: 1 day after delivery)',
+  'Two-way SMS reply routing (HDPhotoHub review email: 12 hours; review text: 1 day after purchasing delivery)',
   'Bookkeeping',
 ];
 

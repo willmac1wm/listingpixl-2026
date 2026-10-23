@@ -38,8 +38,12 @@ error logs, so a Gmail outage does not also suppress the alert.
 
 ## Two-way text feedback: prepared, activation blocked
 
-HDPhotoHub's current review email is 12 hours after delivery and its review text
-is one day after delivery. Its text template is locked, its API has no custom
+HDPhotoHub's current review email is set to 12 hours and its review text to one
+day. These timers start when Delivery Only or the Marketing Kit is purchased,
+according to its [review notification documentation](https://support.hdphotohub.com/hc/en-us/articles/48738460561428-Leave-a-Review-Email).
+They do not prove that the delivery email has already been sent. Keep delivery
+purchases and actual media notification together, especially when scheduling a
+notification for later. Its text template is locked, its API has no custom
 SMS send endpoint, and the available webhook events do not include incoming SMS.
 Do not disable those working messages until a replacement is connected and tested.
 
@@ -75,6 +79,22 @@ The browser skips a redundant refresh on arrival, retains verified prices throug
 a brief feed outage, and replaces prices older than ten minutes with checkout links.
 The public price feed is crawlable. Private and operational APIs remain blocked.
 No numeric prices are manually maintained in page copy or structured data.
+
+## Google profile references
+
+On October 23, 2026, Google's manager showed one verified Listing Pixl profile
+and one duplicate. The verified profile has CID `1932492767557170654`.
+`config/business-links.json` contains its Maps link and the review URL copied
+from that profile's Ask for reviews screen. The website generators and optional
+SMS adapter use those shared values. Run `python3 build_blog.py --sync-google-links`
+after a profile merge to rebuild references without changing photo markup.
+
+## Live validation
+
+An internal inquiry on October 23, 2026 at 1:49 PM Eastern was saved privately,
+delivered to ListingPixl.Media@gmail.com, and verified in the business Gmail
+inbox. The saved record reports `sent`, one attempt, and no delivery error.
+The signed-in `/staff/inquiries` view still needs the existing team login.
 
 ## Native HDPhotoHub checkout
 

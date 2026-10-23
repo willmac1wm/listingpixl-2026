@@ -26,6 +26,9 @@ Most pages are generated. Edit the generator, then rebuild; don't hand-edit the 
   connected to HDPhotoHub's existing scheduled review texts. Read
   `docs/inquiry-and-feedback-workflow.md` before changing messaging or delivery triggers.
 - Run `npm test` for pricing, inquiry recovery, access-control and feedback tests.
+- Google Maps/review links live in `config/business-links.json`. After a profile
+  merge, update that file and run `python3 build_blog.py --sync-google-links` to
+  rebuild those references without touching the photo HTML.
 - `api/staff.js`: team dashboard at `/staff` (links to every service the business uses). Login is
   username `team` plus the `STAFF_PASSWORD` Vercel env var; with no password set it stays locked.
   To add a dashboard link, add a line to `SECTIONS` in that file.

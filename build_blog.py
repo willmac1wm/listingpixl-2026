@@ -12,6 +12,10 @@ os.makedirs(BLOG, exist_ok=True)
 
 PHONE = "(609) 780-7027"
 DOMAIN = "https://www.listingpixl.com"
+with open(os.path.join(HERE, "config", "business-links.json"), encoding="utf-8") as _links:
+    BUSINESS_LINKS = json.load(_links)
+GOOGLE_MAP_URL = BUSINESS_LINKS["googleMaps"]
+GOOGLE_REVIEW_URL = BUSINESS_LINKS["googleReview"]
 PIXEL_ID = "1900535534248768"
 PIXEL_SNIPPET = """  <!-- Meta Pixel Code -->
   <script>
@@ -1173,7 +1177,7 @@ FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
         <a href="https://listingpixl.hd.pics/order">Book a shoot</a>
         <a href="../index.html#contact">Ask a question</a>
         <a href="../index.html#areas">Service area</a>
-        <a href="https://g.page/r/CVSEya8zBj9wEBM/review" target="_blank" rel="noopener">Google review</a>
+        <a href="{GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Google review</a>
         <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Facebook</a>
         <a href="https://www.instagram.com/listing_pixl/" target="_blank" rel="noopener">Instagram</a>
       </nav>
@@ -1452,6 +1456,27 @@ def update_homepage():
     page = re.sub(r'<p class="fc-count"[^>]*>.*?</p>', f'<p class="fc-count" aria-live="polite"><span class="fc-now">1</span> / {n}</p>', page)
     open(path, "w", encoding="utf-8").write(page)
 
+def sync_google_links():
+    """Rebuild only Google references, preserving existing photo HTML and layout.
+
+    Useful after a Business Profile merge, including in a text-only checkout
+    without the repository's large image collection.
+    """
+    from pathlib import Path
+    root = Path(HERE)
+    pages = list(root.glob("*.html"))
+    for folder in ("blog", "areas", "services"):
+        pages.extend((root / folder).glob("*.html"))
+    changed = 0
+    for path in pages:
+        original = path.read_text(encoding="utf-8")
+        updated = re.sub(r"https://g\.page/r/[A-Za-z0-9_-]+/review\b", GOOGLE_REVIEW_URL, original)
+        updated = re.sub(r"https://www\.google\.com/maps/place/Listing\+Pixl/data=!4m2!3m1!1s0x0:0x[0-9a-f]+", GOOGLE_MAP_URL, updated)
+        if updated != original:
+            path.write_text(updated, encoding="utf-8")
+            changed += 1
+    print(f"Updated Google references in {changed} pages")
+
 def main():
     for s in SHOOTS:
         open(os.path.join(BLOG, s["slug"] + ".html"), "w", encoding="utf-8").write(post_page(s))
@@ -1474,8 +1499,12 @@ def main():
     if os.path.exists(stale):
         os.remove(stale)
         print("removed stale 301-e-pacific-ave post")
+    sync_google_links()
     print(f"Wrote {len(SHOOTS)} posts + index to {BLOG}, {len(page_urls)} landing pages")
 
 if __name__ == "__main__":
-    main()
+    if "--sync-google-links" in sys.argv[1:]:
+        sync_google_links()
+    else:
+        main()
 
