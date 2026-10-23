@@ -16,6 +16,7 @@ const SECTIONS = [
   {
     title: 'Run the business',
     links: [
+      ['Website inquiry inbox', '/staff/inquiries', 'Private saved copies, delivery status and recovery for website questions'],
       ['HD Photo Hub admin', 'https://listingpixl.hd.pics/admin', 'Orders, uploads, deliveries and client galleries'],
       ['Client site (HD Photo Hub)', 'https://listingpixl.hd.pics/Dashboard/', 'What agents see when they log in'],
       ['AI phone receptionist (Smith.ai)', 'https://app.smith.ai/', 'Call log, messages, greeting and call forwarding'],
@@ -53,7 +54,7 @@ const HOW_TO = [
 ];
 
 const NOT_SET_UP = [
-  'Resolve the duplicate Google Business Profile: established profile uses (609) 780-7027; older duplicate shows (609) 602-4314',
+  'Google is reviewing the duplicate-profile report; both public profiles now use (609) 780-7027',
   'Automatic Google Business posts (waiting on Google API access)',
   'Online payments and invoices',
   'Two-way SMS reply routing (HDPhotoHub feedback email: 12 hours; review text: 1 day after delivery)',
@@ -144,4 +145,5 @@ module.exports = (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.end(page());
 };
+
 

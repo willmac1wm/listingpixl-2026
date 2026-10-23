@@ -31,6 +31,14 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/api/home"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/api/home"
+    },
+    {
       "source": "/staff",
       "destination": "/api/staff"
     },
@@ -41,6 +49,14 @@
     {
       "source": "/staff/shoots",
       "destination": "/api/shoots"
+    },
+    {
+      "source": "/staff/inquiries",
+      "destination": "/api/inquiries"
+    },
+    {
+      "source": "/staff/inquiries/",
+      "destination": "/api/inquiries"
     }
   ],
   "git": {
@@ -55,6 +71,16 @@
     },
     "api/prices.js": {
       "maxDuration": 20
+    },
+    "api/home.js": {
+      "maxDuration": 15,
+      "includeFiles": "index.html"
+    },
+    "api/book.js": {
+      "maxDuration": 30
+    },
+    "api/inquiries.js": {
+      "maxDuration": 30
     }
   }
 }

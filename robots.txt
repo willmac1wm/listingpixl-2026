@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /staff
 Disallow: /api/
+Allow: /api/prices
 
 Sitemap: https://www.listingpixl.com/sitemap.xml
+

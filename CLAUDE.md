@@ -16,7 +16,16 @@ Most pages are generated. Edit the generator, then rebuild; don't hand-edit the 
 | `python3 tools/build_gbp.py ~/Downloads/ListingPixl-Google-Business` | Google Business Profile posts: text, photos and a Monday/Thursday schedule per shoot. Delete only the numbered folders before rerunning; keep README.txt |
 
 - Shoot data lives in `SHOOTS` in build_blog.py, newest shoot first. Town copy is in `TOWNS`.
-- `api/book.js`: Ask a Question contact form, emails through Gmail (env `GMAIL_APP_PASSWORD`).
+- `api/book.js`: Ask a Question contact form. Saves to private Vercel Blob before Gmail
+  delivery (`BLOB_STORE_ID` via OIDC and `GMAIL_APP_PASSWORD`). Saved inquiries and
+  protected retry actions are at `/staff/inquiries`, using the existing team login.
+- `api/home.js` renders public HDPhotoHub prices directly in the homepage HTML;
+  `/api/prices` supports the client refresh. Both cache for five minutes without
+  copying prices into source files. Keep `index.html` bundled with the homepage function.
+- `api/sms-reply.js` is an optional, disabled two-way provider adapter. It is not
+  connected to HDPhotoHub's existing scheduled review texts. Read
+  `docs/inquiry-and-feedback-workflow.md` before changing messaging or delivery triggers.
+- Run `npm test` for pricing, inquiry recovery, access-control and feedback tests.
 - `api/staff.js`: team dashboard at `/staff` (links to every service the business uses). Login is
   username `team` plus the `STAFF_PASSWORD` Vercel env var; with no password set it stays locked.
   To add a dashboard link, add a line to `SECTIONS` in that file.
@@ -36,7 +45,7 @@ photos, writing posts and publishing.
   leave the brokerage blank when it isn't known. Leave the agent off if only a first name is known.
 - Take the shoot month from the photos' EXIF date (tools/shoot_sheets.py prints it).
 - Twilight exteriors are virtual twilights. Say "virtual twilight".
-- Pricing is managed in HDPhotoHub. Current packages are Essential, Standard, Marketing, Luxury and Signature; do not copy numeric prices into other pages or schemas. The homepage reads public checkout prices through `/api/prices`. Link town/service pages to current packages. No travel fee in Cape May County.
+- Pricing is managed in HDPhotoHub. Current packages are Essential, Standard, Marketing, Luxury and Signature; do not copy numeric prices into other pages or schemas. The homepage renders public checkout prices on the server and refreshes through `/api/prices`. Link town/service pages to current packages. No travel fee in Cape May County. Luxury covers up to 5,000 sq ft; Signature is the next option for 5,001–6,500 sq ft; confirm scope above 6,500 sq ft.
 - Client photo delivery: HD Photo Hub at listingpixl.hd.pics (admin: listingpixl.hd.pics/admin).
 - Phone (609) 780-7027. AI receptionist: Smith.ai. Email ListingPixl.Media@gmail.com.
 
@@ -59,4 +68,5 @@ photos, writing posts and publishing.
   site updated, wait for the production deployment (Vercel deployments list, target production)
   or poll the live URL, not just the commit status.
 - Preview URLs sit behind Vercel's own login, so curl gets a 302 there. Check them in a browser.
+
 

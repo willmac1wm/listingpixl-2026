@@ -1,8 +1,16 @@
 {
   "name": "listingpixl-site",
   "private": true,
-  "description": "Static website; HDPhotoHub booking and price sync; api/book.js emails contact inquiries.",
+  "description": "Listing Pixl website with HDPhotoHub pricing and private inquiry recovery.",
   "dependencies": {
-    "nodemailer": "10.0.14"
+    "@vercel/blob": "2.8.2",
+    "nodemailer": "10.0.14",
+    "twilio": "6.2.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
