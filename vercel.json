@@ -11,8 +11,18 @@
       "continue": true
     },
     {
+      "src": "/card\\.vcf",
+      "headers": {
+        "Content-Type": "text/vcard; charset=utf-8",
+        "Content-Disposition": "inline; filename=\"listing-pixl.vcf\""
+      },
+      "continue": true
+    },
+    {
       "src": "/blog/507-adriatic-ave-north-cape-may-nj\\.html",
-      "headers": { "Location": "/blog/" },
+      "headers": {
+        "Location": "/blog/"
+      },
       "status": 308
     },
     {
