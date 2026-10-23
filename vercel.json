@@ -1,62 +1,38 @@
 {
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=()"
-        }
-      ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/blog/507-adriatic-ave-north-cape-may-nj.html",
-      "destination": "/blog/",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/api/home"
+      "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()"
+      },
+      "continue": true
     },
     {
-      "source": "/index.html",
-      "destination": "/api/home"
+      "src": "/blog/507-adriatic-ave-north-cape-may-nj\\.html",
+      "headers": { "Location": "/blog/" },
+      "status": 308
     },
     {
-      "source": "/staff",
-      "destination": "/api/staff"
+      "src": "/(?:index\\.html)?",
+      "dest": "/api/home"
     },
     {
-      "source": "/staff/",
-      "destination": "/api/staff"
+      "src": "/staff/?",
+      "dest": "/api/staff"
     },
     {
-      "source": "/staff/shoots",
-      "destination": "/api/shoots"
+      "src": "/staff/shoots",
+      "dest": "/api/shoots"
     },
     {
-      "source": "/staff/inquiries",
-      "destination": "/api/inquiries"
+      "src": "/staff/inquiries/?",
+      "dest": "/api/inquiries"
     },
     {
-      "source": "/staff/inquiries/",
-      "destination": "/api/inquiries"
+      "handle": "filesystem"
     }
   ],
   "git": {
