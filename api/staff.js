@@ -18,7 +18,7 @@ const SECTIONS = [
     title: 'Run the business',
     links: [
       ['Website inquiry inbox', '/staff/inquiries', 'Private saved copies, delivery status and recovery for website questions'],
-      ['HD Photo Hub admin', 'https://listingpixl.hd.pics/admin', 'Orders, uploads, deliveries and client galleries'],
+      ['HD Photo Hub admin', 'https://listingpixl.hd.pics/ux/studio/Dashboard', 'Orders, uploads, deliveries and client galleries'],
       ['Client site (HD Photo Hub)', 'https://listingpixl.hd.pics/Dashboard/', 'What agents see when they log in'],
       ['AI phone receptionist (Smith.ai)', 'https://app.smith.ai/', 'Call log, messages, greeting and call forwarding'],
       ['Business email', 'https://mail.google.com/', 'ListingPixl.Media@gmail.com, where website questions arrive'],

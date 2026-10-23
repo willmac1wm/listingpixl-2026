@@ -9,7 +9,7 @@
     "twilio": "6.2.0"
   },
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --no-experimental-require-module --test tests/*.test.js"
   },
   "engines": {
     "node": "24.x"

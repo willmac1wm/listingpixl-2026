@@ -1,7 +1,6 @@
 // The existing team credentials protect browser sessions and Basic API access.
 // No password is copied into HTML or client-side storage.
 const crypto = require('node:crypto');
-const { getIronSession } = require('iron-session');
 const store = require('../lib/private-store');
 
 const SESSION_SECONDS = 4 * 60 * 60;
@@ -45,7 +44,9 @@ async function sessionOptions() {
     cookieOptions: { secure: true, httpOnly: true, sameSite: 'strict', path: '/', maxAge: SESSION_SECONDS },
   };
 }
-const session = async (req, res) => getIronSession(req, res, await sessionOptions());
+// Vercel's function loader requires dynamic import for ESM-only packages even
+// on Node 24. Loading it lazily also leaves anonymous/API checks independent.
+const session = async (req, res) => (await import('iron-session')).getIronSession(req, res, await sessionOptions());
 
 async function authorized(req, res) {
   if (!process.env.STAFF_PASSWORD) return false;
