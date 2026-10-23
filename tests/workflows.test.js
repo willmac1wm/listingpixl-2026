@@ -1,6 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const vm = require('node:vm');
 const prices = require('../lib/public-prices');
 const inquiries = require('../lib/inquiries');
 const feedback = require('../lib/sms-feedback');
@@ -35,10 +36,23 @@ test('public prices reject missing, duplicate and personalized markup', () => {
   assert.throws(() => prices.parsePrices(html.replace('hd-price="100"', 'hd-price="99"')), /Non-public/);
 });
 test('prices render in the initial HTML with the staging unit', () => {
-  const html = prices.renderPrices(fs.readFileSync('index.html', 'utf8'), { prices: prices.parsePrices(fixture()) });
+  const html = prices.renderPrices(fs.readFileSync('index.html', 'utf8'), { checkedAt: new Date().toISOString(), prices: prices.parsePrices(fixture()) });
   assert.equal((html.match(/See checkout/g) || []).length, 0);
   assert.match(html, /\$111 \/ room/);
   assert.equal((html.match(/data-hd-price=/g) || []).length, 13);
+});
+test('a refresh outage keeps recently verified HTML prices, then expires them', async () => {
+  let now = Date.now(); let refresh; let requests = 0;
+  const field = { dataset: { hdPrice: '449299', priceCheckedAt: new Date(now).toISOString() }, textContent: '$123', replaceChildren(link) { this.textContent = link.textContent; } };
+  const doc = { hidden: false, querySelectorAll: () => [field], createElement: () => ({}), addEventListener: () => {} };
+  class Clock extends Date { static now() { return now; } }
+  vm.runInNewContext(fs.readFileSync('pricing.js', 'utf8'), { document: doc, Date: Clock, Intl, AbortSignal, fetch: async () => { requests++; throw Error('Temporarily offline'); }, setInterval: callback => { refresh = callback; } });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(requests, 0); assert.equal(field.textContent, '$123');
+  now += 360000; refresh(); await new Promise(resolve => setImmediate(resolve));
+  assert.equal(requests, 1); assert.equal(field.textContent, '$123');
+  now += 300000; refresh(); await new Promise(resolve => setImmediate(resolve));
+  assert.equal(field.textContent, 'See checkout');
 });
 test('save failure cannot become a successful acknowledgement', async () => {
   const storage = new MemoryStore();
