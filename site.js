@@ -193,12 +193,19 @@
     const loadedAt = Date.now();
     const status = document.getElementById('form-status');
     const submit = contactForm.querySelector('button[type="submit"]');
+    let pendingId = null;
+    let pendingFields = '';
     contactForm.addEventListener('submit', async event => {
       event.preventDefault();
       if (submit.disabled || !contactForm.reportValidity()) return;
       const fields = Object.fromEntries(new FormData(contactForm));
+      const fingerprint = JSON.stringify(fields);
+      if (!pendingId || pendingFields !== fingerprint) {
+        pendingId = Date.now() + '-' + crypto.randomUUID();
+        pendingFields = fingerprint;
+      }
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 12000);
+      const timeout = setTimeout(() => controller.abort(), 25000);
       submit.disabled = true;
       submit.textContent = 'Sending…';
       status.hidden = true;
@@ -206,13 +213,18 @@
       try {
         const response = await fetch('/api/book', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...fields, elapsed: Date.now() - loadedAt }),
+          body: JSON.stringify({ ...fields, requestId: pendingId, elapsed: Date.now() - loadedAt }),
           signal: controller.signal,
         });
         if (!response.ok) throw new Error('send-failed');
+        const result = await response.json();
         status.className = 'form-status is-sent';
-        status.textContent = 'Thanks, ' + fields.name.trim().split(/\s+/)[0] + '! Your message has been sent. We’ll reply to your email.';
+        status.textContent = 'Thanks, ' + fields.name.trim().split(/\s+/)[0] + (result.delivery === 'saved'
+          ? '! Your message is safely saved. Email notification is delayed, and we’ll follow up using your contact details.'
+          : '! Your message has been sent. We’ll reply to your email.');
         contactForm.reset();
+        pendingId = null;
+        pendingFields = '';
         if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Contact inquiry' });
         if (window.gtag) window.gtag('event', 'generate_lead', { method: 'contact_form' });
       } catch (error) {
@@ -239,4 +251,5 @@
     form.addEventListener('focusout', () => document.body.classList.remove('is-typing'));
   }
 })();
+
 

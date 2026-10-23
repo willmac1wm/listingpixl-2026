@@ -1,59 +1,56 @@
 {
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=()"
-        }
-      ]
+      "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()"
+      },
+      "continue": true
     },
     {
-      "source": "/card.vcf",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/vcard; charset=utf-8"
-        },
-        {
-          "key": "Content-Disposition",
-          "value": "inline; filename=\"listing-pixl.vcf\""
-        }
-      ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/blog/507-adriatic-ave-north-cape-may-nj.html",
-      "destination": "/blog/",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/staff",
-      "destination": "/api/staff"
+      "src": "/card\\.vcf",
+      "headers": {
+        "Content-Type": "text/vcard; charset=utf-8",
+        "Content-Disposition": "inline; filename=\"listing-pixl.vcf\""
+      },
+      "continue": true
     },
     {
-      "source": "/staff/",
-      "destination": "/api/staff"
+      "src": "/blog/507-adriatic-ave-north-cape-may-nj\\.html",
+      "headers": {
+        "Location": "/blog/"
+      },
+      "status": 308
     },
     {
-      "source": "/staff/shoots",
-      "destination": "/api/shoots"
+      "src": "/(?:index\\.html)?",
+      "dest": "/api/home"
+    },
+    {
+      "src": "/staff/login/?",
+      "dest": "/api/staff-auth"
+    },
+    {
+      "src": "/staff/logout/?",
+      "dest": "/api/staff-auth?mode=logout"
+    },
+    {
+      "src": "/staff/?",
+      "dest": "/api/staff"
+    },
+    {
+      "src": "/staff/shoots",
+      "dest": "/api/shoots"
+    },
+    {
+      "src": "/staff/inquiries/?",
+      "dest": "/api/inquiries"
+    },
+    {
+      "handle": "filesystem"
     }
   ],
   "git": {
@@ -68,6 +65,19 @@
     },
     "api/prices.js": {
       "maxDuration": 20
+    },
+    "api/home.js": {
+      "maxDuration": 15,
+      "includeFiles": "index.html"
+    },
+    "api/book.js": {
+      "maxDuration": 30
+    },
+    "api/staff-auth.js": {
+      "maxDuration": 30
+    },
+    "api/inquiries.js": {
+      "maxDuration": 30
     }
   }
 }

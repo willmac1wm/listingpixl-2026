@@ -20,8 +20,8 @@ BUSINESS = {"@type": "ProfessionalService", "name": "Listing Pixl", "telephone":
             "address": {"@type": "PostalAddress", "addressLocality": "Dennisville", "addressRegion": "NJ",
                         "postalCode": "08210", "addressCountry": "US"},
             "logo": f"{B.DOMAIN}/listing-pixl-logo-official.png",
-            "sameAs": [B.FB, B.IG, 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454'],
-            "hasMap": 'https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454'}
+            "sameAs": [B.FB, B.IG, B.GOOGLE_MAP_URL],
+            "hasMap": B.GOOGLE_MAP_URL}
 OUT_OF_COUNTY = {"Millville", "Vineland", "Buena", "Somers Point"}
 
 # Per-town copy. "homes" and "photos" are unique write-ups; the pricing
