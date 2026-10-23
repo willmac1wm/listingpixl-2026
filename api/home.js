@@ -15,6 +15,8 @@ module.exports = async (req, res) => {
     // The original checkout links and client refresh remain usable during an outage.
     res.setHeader('Cache-Control', 'no-store');
   }
+  // Layout and source page stay untouched; the loader defaults to no decoration.
+  html = html.replace('</body>', '  <script src="/seasonal-loader.js" defer></script>\n</body>');
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   return res.status(200).end(req.method === 'HEAD' ? '' : html);
 };
