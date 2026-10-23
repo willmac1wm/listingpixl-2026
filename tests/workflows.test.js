@@ -2,6 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
+const { BlobPreconditionFailedError } = require('@vercel/blob');
 const prices = require('../lib/public-prices');
 const inquiries = require('../lib/inquiries');
 const feedback = require('../lib/sms-feedback');
@@ -11,7 +12,7 @@ class MemoryStore {
   async read(path) { return structuredClone(this.items.get(path) || null); }
   async write(path, value, etag) {
     const old = this.items.get(path);
-    if (etag ? old?.etag !== etag : Boolean(old)) { const error = Error('Conflict'); error.name = 'BlobPreconditionFailedError'; throw error; }
+    if (etag ? old?.etag !== etag : Boolean(old)) throw new BlobPreconditionFailedError();
     const saved = { value: structuredClone(value), etag: String(++this.version) };
     this.items.set(path, saved);
     return structuredClone(saved);
