@@ -18,19 +18,151 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "Listing Pixl",
-    "description": "Real estate photographer in Cape May County & South Jersey NJ. HDR photos, drone aerials, virtual twilights, 3D tours, floor plans.",
-    "telephone": "+1-609-780-7027",
-    "email": "ListingPixl.Media@gmail.com",
-    "url": "https://www.listingpixl.com",
-    "image": "https://www.listingpixl.com/images/riogrande_01_twilight.jpg",
-    "logo": "https://www.listingpixl.com/listing-pixl-logo-official.png",
-    "address": {"@type": "PostalAddress", "addressLocality": "Dennisville", "addressRegion": "NJ", "postalCode": "08210", "addressCountry": "US"},
-    "sameAs": ["https://www.facebook.com/listing.pixl.media/", "https://www.instagram.com/listing_pixl/"],
-    "areaServed": ["Cape May", "Wildwood", "North Wildwood", "Ocean City", "Stone Harbor", "Avalon", "Sea Isle City", "Villas", "Somers Point", "Millville", "Buena", "Lower Township", "Middle Township", "Dennis Township", "Ocean View", "Cape May Court House", "North Cape May", "Vineland"]
-  }
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "name": "Listing Pixl",
+      "description": "Real estate photographer in Cape May County & South Jersey NJ. HDR photos, drone aerials, virtual twilights, 3D tours, floor plans.",
+      "telephone": "+1-609-780-7027",
+      "email": "ListingPixl.Media@gmail.com",
+      "url": "https://www.listingpixl.com/",
+      "image": "https://www.listingpixl.com/images/riogrande_01_twilight.jpg",
+      "logo": "https://www.listingpixl.com/listing-pixl-logo-official.png",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Dennisville",
+        "addressRegion": "NJ",
+        "postalCode": "08210",
+        "addressCountry": "US"
+      },
+      "sameAs": [
+        "https://www.facebook.com/listing.pixl.media/",
+        "https://www.instagram.com/listing_pixl/",
+        "https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454"
+      ],
+      "areaServed": [
+        "Cape May",
+        "Wildwood",
+        "North Wildwood",
+        "Ocean City",
+        "Stone Harbor",
+        "Avalon",
+        "Sea Isle City",
+        "Villas",
+        "Somers Point",
+        "Millville",
+        "Buena",
+        "Lower Township",
+        "Middle Township",
+        "Dennis Township",
+        "Ocean View",
+        "Cape May Court House",
+        "North Cape May",
+        "Vineland"
+      ],
+      "@id": "https://www.listingpixl.com/#business",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Real estate photography services",
+        "url": "https://www.listingpixl.com/#services"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+1-609-780-7027",
+        "email": "ListingPixl.Media@gmail.com",
+        "contactType": "customer service",
+        "availableLanguage": "English"
+      },
+      "subjectOf": {
+        "@type": "WebPage",
+        "name": "Book a Listing Pixl shoot",
+        "url": "https://listingpixl.hd.pics/order"
+      },
+      "hasMap": "https://www.google.com/maps/place/Listing+Pixl/data=!4m2!3m1!1s0x0:0x703f0633afc98454"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.listingpixl.com/#website",
+      "url": "https://www.listingpixl.com/",
+      "name": "Listing Pixl",
+      "publisher": {
+        "@id": "https://www.listingpixl.com/#business"
+      },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.listingpixl.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What areas do you cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All of Cape May County at the package prices above, from Ocean City and Tuckahoe down to Cape May Point. Outside the county (Somers Point, Millville, Vineland, Buena and beyond) we quote case by case. Send the address and we’ll get back to you."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How fast do I get my photos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Essential, Standard and Marketing include next-day delivery. Confirm delivery timing for video and larger packages when booking. Photos arrive edited and MLS-ready."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are photos delivered?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Through your own private client site on our HD Photo Hub, ready to download for the MLS, Zillow and social. Use Client Login at the top of this page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you shoot drone photos and video?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Standard, Marketing, Luxury and Signature include drone photos. Luxury and Signature also include a cinematic walkthrough video. Drone photos can be added to Essential."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you do twilight photos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, as virtual twilights: a daytime exterior edited into a glowing dusk shot. Marketing includes two, Luxury three and Signature four."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer 3D tours and floor plans?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 2D floor plan comes with Marketing, Luxury and Signature. Signature also includes a Matterport 3D tour. Both are available as add-ons."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you shoot Airbnb and vacation rentals?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We offer vacation-rental photography. Contact us to plan the property and lifestyle coverage your rental needs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I book?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Choose your package in the HDPhotoHub order form. You can skip the calendar if the date is not decided yet. You can also call or text (609) 780-7027, or email ListingPixl.Media@gmail.com. We’ll confirm your shoot details with you."
+          }
+        }
+      ]
+    }
+  ]
+}
   </script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pricing.css">
@@ -47,7 +179,7 @@
   fbq('init', '1900535534248768');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img alt="" height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=1900535534248768&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
@@ -72,8 +204,8 @@
         <li><a href="#portfolio">Portfolio</a></li>
         <li><a href="#areas">Service Area</a></li>
         <li><a href="blog/index.html">Blog</a></li>
-        <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
-        <li><a href="#contact" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
+        <li><a href="https://listingpixl.hd.pics/Dashboard/" target="_blank" rel="noopener">Client Login</a></li>
+        <li><a href="https://listingpixl.hd.pics/order" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
       </ul>
     </nav>
   </header>
@@ -88,7 +220,7 @@
         <h1>Real Estate Photography That Sells the Listing</h1>
         <p class="hero-sub">HDR photos, drone aerials, twilights, 3D tours &amp; more — Cape May County &amp; South Jersey</p>
         <div class="hero-ctas">
-          <a href="#contact" class="btn btn-pink">Lock In Your Shoot</a>
+          <a href="https://listingpixl.hd.pics/order" class="btn btn-pink">Lock In Your Shoot</a>
           <a href="#packages" class="btn btn-secondary">See Packages</a>
         </div>
       </div>
@@ -787,7 +919,7 @@
 
         <div class="work-cta">
           <p>Want your listing to look like this?</p>
-          <a href="#contact" class="btn btn-pink">Lock In Your Shoot</a>
+          <a href="https://listingpixl.hd.pics/order" class="btn btn-pink">Lock In Your Shoot</a>
         </div>
       </div>
     </section>
@@ -829,7 +961,7 @@
     <section class="section" aria-labelledby="about-heading">
       <div class="wrap narrow">
         <h2 id="about-heading">About</h2>
-        <p class="about-text">Listing Pixl is a South Jersey real estate media studio helping agents win listings and sell homes faster with photography that stops the scroll.</p>
+        <p class="about-text">Listing Pixl is a real estate photography and media studio based in Dennisville, New Jersey, serving Cape May County and nearby South Jersey towns. We photograph homes, vacation rentals and commercial listings, with HDR photography, drone aerials, virtual twilights, floor plans, video and Matterport 3D tours. Agents order and receive their media through HDPhotoHub.</p>
       </div>
     </section>
 
@@ -848,7 +980,7 @@
           </details>
           <details class="faq-item">
             <summary>How are photos delivered?</summary>
-            <p>Through your own private client site on our HD Photo Hub, ready to download for the MLS, Zillow and social. Use <a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a> at the top of this page.</p>
+            <p>Through your own private client site on our HD Photo Hub, ready to download for the MLS, Zillow and social. Use <a href="https://listingpixl.hd.pics/Dashboard/" target="_blank" rel="noopener">Client Login</a> at the top of this page.</p>
           </details>
           <details class="faq-item">
             <summary>Do you shoot drone photos and video?</summary>
@@ -868,7 +1000,7 @@
           </details>
           <details class="faq-item">
             <summary>How do I book?</summary>
-            <p>Use the <a href="#contact">Lock In Your Shoot</a> form, call or text <a href="tel:+16097807027">(609) 780-7027</a>, or email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a>. We&rsquo;ll text you to confirm the day and time.</p>
+            <p>Choose your package in the <a href="https://listingpixl.hd.pics/order">HDPhotoHub order form</a>. You can skip the calendar if the date is not decided yet. You can also call or text <a href="tel:+16097807027">(609) 780-7027</a>, or email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a>. We&rsquo;ll confirm your shoot details with you.</p>
           </details>
         </div>
       </div>
@@ -877,40 +1009,24 @@
     <!-- CONTACT -->
     <section id="contact" class="section section-alt" aria-labelledby="contact-heading">
       <div class="wrap narrow">
-        <h2 id="contact-heading">Lock In Your Shoot</h2>
-        <p class="section-lede">Pick your package and preferred day — we&rsquo;ll text you to confirm your shoot time.</p>
+        <h2 id="contact-heading">Ask a Question</h2>
+        <p class="section-lede">Need help choosing services or planning a listing? Send us a message.</p>
         <div class="contact-details">
           <p>Phone: <a href="tel:+16097807027">(609) 780-7027</a></p>
           <p>Email: <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a></p>
         </div>
-        <form id="booking-form" novalidate>
+        <form id="contact-form" novalidate>
           <div class="form-row">
-            <label>Name <span aria-hidden="true">*</span><input type="text" name="name" required autocomplete="name"></label>
-            <label>Email <span aria-hidden="true">*</span><input type="email" name="email" required autocomplete="email"></label>
+            <label>Name <span aria-hidden="true">*</span><input type="text" name="name" required maxlength="100" autocomplete="name"></label>
+            <label>Email <span aria-hidden="true">*</span><input type="email" name="email" required maxlength="200" autocomplete="email"></label>
           </div>
-          <div class="form-row">
-            <label>Phone <span aria-hidden="true">*</span><input type="tel" name="phone" autocomplete="tel" required></label>
-            <label>Package
-              <select name="package">
-                <option value="">Not sure yet</option>
-                <option>Essential</option>
-                <option>Standard</option>
-                <option>Marketing</option>
-                <option>Luxury</option>
-                <option>Signature</option>
-              </select>
-            </label>
-          </div>
-          <div class="form-row">
-            <label>Property address<input type="text" name="address" autocomplete="off"></label>
-            <label>Preferred date<input type="date" name="date"></label>
-          </div>
-          <label>Message<textarea name="message" rows="4" placeholder="Shoot date, services needed, anything else…"></textarea></label>
+          <label>Phone <span class="optional">(optional)</span><input type="tel" name="phone" maxlength="40" autocomplete="tel"></label>
+          <label>How can we help? <span aria-hidden="true">*</span><textarea name="message" rows="4" required maxlength="2000" placeholder="Tell us about your listing, services you need, or your question."></textarea></label>
           <div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-          <button type="submit" class="btn btn-pink">Lock In My Shoot</button>
+          <button type="submit" class="btn btn-pink">Send Message</button>
           <p class="form-status" id="form-status" role="status" aria-live="polite" hidden></p>
           <p class="form-note" id="form-fallback" hidden>Nothing opened? Email <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a> or call/text <a href="tel:+16097807027">(609) 780-7027</a> instead.</p>
-          <p class="form-note">Your request comes straight to us. We&rsquo;ll text you to confirm the details.</p>
+          <p class="form-note">Your message comes straight to us. Ready to order? <a href="https://listingpixl.hd.pics/order">Lock in your shoot</a>.</p>
         </form>
       </div>
     </section>
@@ -920,27 +1036,37 @@
   <nav class="mobile-cta" aria-label="Quick contact">
     <a href="tel:+16097807027">Call</a>
     <a href="sms:+16097807027">Text</a>
-    <a href="#contact" class="is-pink">Book a shoot</a>
+    <a href="https://listingpixl.hd.pics/order" class="is-pink">Book a shoot</a>
   </nav>
 
   <footer class="site-footer">
     <div class="wrap">
-      <p class="footer-contact">Call or text <a href="tel:+16097807027">(609) 780-7027</a> &middot; <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a></p>
-      <p>Real estate photography across Cape May County &amp; South Jersey</p>
-      <p class="footer-areas">Areas we serve: <a href="areas/villas-nj-real-estate-photographer.html">Villas</a> &middot; <a href="areas/cape-may-nj-real-estate-photographer.html">Cape May</a> &middot; <a href="areas/north-cape-may-nj-real-estate-photographer.html">North Cape May</a> &middot; <a href="areas/wildwood-nj-real-estate-photographer.html">Wildwood</a> &middot; <a href="areas/north-wildwood-nj-real-estate-photographer.html">North Wildwood</a> &middot; <a href="areas/cape-may-court-house-nj-real-estate-photographer.html">Cape May Court House</a> &middot; <a href="areas/ocean-view-nj-real-estate-photographer.html">Ocean View</a> &middot; <a href="areas/millville-nj-real-estate-photographer.html">Millville</a> &middot; <a href="areas/vineland-nj-real-estate-photographer.html">Vineland</a> &middot; <a href="areas/buena-nj-real-estate-photographer.html">Buena</a> &middot; <a href="areas/somers-point-nj-real-estate-photographer.html">Somers Point</a></p>
-      <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="privacy.html">Privacy Policy</a> &middot; <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Find us on Facebook</a> &middot; <a href="https://www.instagram.com/listing_pixl/" target="_blank" rel="noopener">Find us on Instagram</a> &middot; <a href="/staff" rel="nofollow">Team login</a></p>
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-wordmark">Listing <span>Pixl.</span></a>
+          <p>Real estate media for Cape May County &amp; South Jersey.</p>
+        </div>
+        <div class="footer-contact">
+          <a href="tel:+16097807027">(609) 780-7027</a>
+          <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a>
+        </div>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="https://listingpixl.hd.pics/order">Book a shoot</a>
+        <a href="index.html#contact">Ask a question</a>
+        <a href="index.html#areas">Service area</a>
+        <a href="https://g.page/r/CVSEya8zBj9wEBM/review" target="_blank" rel="noopener">Google review</a>
+        <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/listing_pixl/" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Listing Pixl.</p>
+        <div><a href="privacy.html">Privacy</a><a href="/staff" rel="nofollow">Team login</a></div>
+      </div>
     </div>
   </footer>
 
   <script>
-    // Package buttons preselect their package in the booking form
-    document.querySelectorAll('a[data-package]').forEach(a => a.addEventListener('click', () => {
-      const sel = document.querySelector('#booking-form select[name="package"]');
-      const opt = sel && [...sel.options].find(o => o.text.startsWith(a.dataset.package));
-      if (opt) sel.value = opt.value;
-    }));
-
     // Service area: one pin per property we've shot
     (function () {
       const el = document.getElementById('area-map');
@@ -1024,64 +1150,10 @@
       } else { init(); }
     })();
 
-    // Booking form -> /api/book emails it to us; the visitor's email app is only the fallback
-    const bookingForm = document.getElementById('booking-form');
-    const loadedAt = Date.now();
-    const dateInput = bookingForm.querySelector('input[name="date"]');
-    const d = new Date();
-    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
-    dateInput.min = `${y}-${m}-${day}`;
-    const formStatus = document.getElementById('form-status');
-    const submitBtn = bookingForm.querySelector('button[type="submit"]');
-    const trackLead = pkg => {
-      if (window.fbq) fbq('track', 'Lead', {content_name: pkg});
-      if (window.gtag) gtag('event', 'generate_lead', {package: pkg});
-    };
-    const openEmailApp = (get, pkg) => {
-      const subject = encodeURIComponent('Shoot booking — ' + (get('address') || get('name') || 'Listing Pixl'));
-      const body = encodeURIComponent(
-        'Name: ' + get('name') + '\r\n' +
-        'Email: ' + get('email') + '\r\n' +
-        'Phone: ' + get('phone') + '\r\n' +
-        'Property address: ' + get('address') + '\r\n' +
-        'Preferred date: ' + get('date') + '\r\n' +
-        'Package: ' + pkg + '\r\n\r\n' +
-        'Message:\r\n' + get('message')
-      );
-      window.location.href = 'mailto:ListingPixl.Media@gmail.com?subject=' + subject + '&body=' + body;
-      document.getElementById('form-fallback').hidden = false;
-    };
-    bookingForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!bookingForm.reportValidity()) return;
-      const data = new FormData(bookingForm);
-      const get = (k) => (data.get(k) || '').toString().trim();
-      const pkg = get('package') || 'Not sure yet';
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending…';
-      let sent = false;
-      try {
-        const r = await fetch('/api/book', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...Object.fromEntries(data), elapsed: Date.now() - loadedAt }),
-        });
-        sent = r.ok;
-      } catch (err) { /* offline or blocked: fall back to the email app */ }
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Lock In My Shoot';
-      trackLead(pkg);
-      if (!sent) { openEmailApp(get, pkg); return; }
-      const first = get('name').split(/\s+/)[0];
-      bookingForm.reset();
-      formStatus.className = 'form-status is-sent';
-      formStatus.textContent = 'Got it, ' + first + '! Your request is in. We’ll text you at ' + get('phone') + ' to confirm your shoot time.';
-      formStatus.hidden = false;
-      formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
   </script>
   <script src="site.js" defer></script>
   <script src="pricing.js" defer></script>
 </body>
 </html>
+
 

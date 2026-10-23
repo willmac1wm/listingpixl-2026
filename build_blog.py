@@ -26,7 +26,7 @@ PIXEL_SNIPPET = """  <!-- Meta Pixel Code -->
   fbq('init', '1900535534248768');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img alt="" height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=1900535534248768&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
@@ -1145,8 +1145,8 @@ NAV = """  <header class="site-header">
         <li><a href="../index.html#portfolio">Portfolio</a></li>
         <li><a href="../index.html#areas">Service Area</a></li>
         <li><a href="index.html">Blog</a></li>
-        <li><a href="https://listingpixl.hd.pics/" target="_blank" rel="noopener">Client Login</a></li>
-        <li><a href="../index.html#contact" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
+        <li><a href="https://listingpixl.hd.pics/Dashboard/" target="_blank" rel="noopener">Client Login</a></li>
+        <li><a href="https://listingpixl.hd.pics/order" class="nav-cta btn-pink">Lock In Your Shoot</a></li>
       </ul>
     </nav>
   </header>"""
@@ -1154,16 +1154,33 @@ NAV = """  <header class="site-header">
 FOOTER = f"""  <nav class="mobile-cta" aria-label="Quick contact">
     <a href="tel:+16097807027">Call</a>
     <a href="sms:+16097807027">Text</a>
-    <a href="../index.html#contact" class="is-pink">Book a shoot</a>
+    <a href="https://listingpixl.hd.pics/order" class="is-pink">Book a shoot</a>
   </nav>
 
   <footer class="site-footer">
     <div class="wrap">
-      <p class="footer-contact">Call or text <a href="tel:+16097807027">{PHONE}</a> &middot; <a href="mailto:{EMAIL}">{EMAIL}</a></p>
-      <p>Real estate photography across Cape May County &amp; South Jersey</p>
-      <p class="footer-areas">Areas we serve: {area_links("../")}</p>
-      <p>&copy; 2026 Listing Pixl. All rights reserved.</p>
-      <p><a href="../privacy.html">Privacy Policy</a> &middot; <a href="{FB}" target="_blank" rel="noopener">Find us on Facebook</a> &middot; <a href="{IG}" target="_blank" rel="noopener">Find us on Instagram</a> &middot; <a href="/staff" rel="nofollow">Team login</a></p>
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a href="../index.html" class="footer-wordmark">Listing <span>Pixl.</span></a>
+          <p>Real estate media for Cape May County &amp; South Jersey.</p>
+        </div>
+        <div class="footer-contact">
+          <a href="tel:+16097807027">(609) 780-7027</a>
+          <a href="mailto:ListingPixl.Media@gmail.com">ListingPixl.Media@gmail.com</a>
+        </div>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="https://listingpixl.hd.pics/order">Book a shoot</a>
+        <a href="../index.html#contact">Ask a question</a>
+        <a href="../index.html#areas">Service area</a>
+        <a href="https://g.page/r/CVSEya8zBj9wEBM/review" target="_blank" rel="noopener">Google review</a>
+        <a href="https://www.facebook.com/listing.pixl.media/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/listing_pixl/" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Listing Pixl.</p>
+        <div><a href="../privacy.html">Privacy</a><a href="/staff" rel="nofollow">Team login</a></div>
+      </div>
     </div>
   </footer>
 
@@ -1225,13 +1242,13 @@ def post_page(s):
     town_text, nearby = TOWNS.get(s["town"], ("", ["Wildwood", "Ocean City", "Stone Harbor", "Avalon", "Sea Isle City"]))
     area_list = ", ".join(nearby)
     cta = (f"Selling in {html.escape(s['town'])} or anywhere in Cape May County? Listing Pixl shoots across "
-           f"{html.escape(s['town'])}, {area_list}, and surrounding South Jersey towns. Packages from $295. "
-           f'Call or text <a href="tel:+16097807027">{PHONE}</a> or <a href="../index.html#contact">lock in your shoot online</a>.')
+           f"{html.escape(s['town'])}, {area_list}, and surrounding South Jersey towns. Compare our current packages online. "
+           f'Call or text <a href="tel:+16097807027">{PHONE}</a> or <a href="https://listingpixl.hd.pics/order">lock in your shoot online</a>.')
     schema = {"@context": "https://schema.org", "@type": "BlogPosting",
               "headline": f"Real Estate Photography in {s['town']}, NJ: {s['address']}",
               "image": [f"{DOMAIN}/images/{p}" for p, _ in s["photos"]],
-              "author": {"@type": "Organization", "name": "Listing Pixl", "telephone": PHONE},
-              "publisher": {"@type": "Organization", "name": "Listing Pixl",
+              "author": {"@type": "Organization", "@id": f"{DOMAIN}/#business", "name": "Listing Pixl", "telephone": PHONE},
+              "publisher": {"@type": "Organization", "@id": f"{DOMAIN}/#business", "name": "Listing Pixl",
                             "logo": {"@type": "ImageObject", "url": f"{DOMAIN}/listing-pixl-logo-official.png"}},
               "mainEntityOfPage": f"{DOMAIN}/blog/{s['slug']}.html",
               "about": f"Real estate photography in {s['town']}, New Jersey",
@@ -1323,7 +1340,7 @@ def post_page(s):
 {town_section}{related_html}
         <h2>Lock In {a_an(s['town'])} {html.escape(s['town'])}, NJ Real Estate Photographer</h2>
         <p>{cta}</p>
-        <p class="post-cta"><a class="btn btn-pink" href="../index.html#contact">Lock In Your Shoot</a> <a class="btn btn-outline" href="index.html">See more shoots</a></p>
+        <p class="post-cta"><a class="btn btn-pink" href="https://listingpixl.hd.pics/order">Lock In Your Shoot</a> <a class="btn btn-outline" href="index.html">See more shoots</a></p>
       </div>
     </article>
   </main>
@@ -1378,7 +1395,7 @@ def index_page():
         </div>
         <div class="work-cta">
           <p>Want your listing to look like this?</p>
-          <a href="../index.html#contact" class="btn btn-pink">Lock In Your Shoot</a>
+          <a href="https://listingpixl.hd.pics/order" class="btn btn-pink">Lock In Your Shoot</a>
         </div>
       </div>
     </section>
@@ -1432,7 +1449,6 @@ def update_homepage():
             return f'<li><a href="areas/{area_slug(t)}.html">{html.escape(t)}</a></li>'
         return f"<li>{html.escape(t)}</li>"
     page = page.replace(towns, re.sub(r"<li>(.*?)</li>", _town, towns))
-    page = re.sub(r'<p class="footer-areas">.*?</p>', f'<p class="footer-areas">Areas we serve: {area_links("")}</p>', page)
     page = re.sub(r'<p class="fc-count"[^>]*>.*?</p>', f'<p class="fc-count" aria-live="polite"><span class="fc-now">1</span> / {n}</p>', page)
     open(path, "w", encoding="utf-8").write(page)
 
@@ -1462,3 +1478,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
