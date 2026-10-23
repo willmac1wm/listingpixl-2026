@@ -23,6 +23,11 @@ function prettyDate(iso) {
 }
 
 module.exports = async (req, res) => {
+  if (req.method === 'GET' && req.query?.health === '1') {
+    res.setHeader('Cache-Control', 'no-store');
+    const ready = Boolean(process.env.GMAIL_APP_PASSWORD);
+    return res.status(ready ? 200 : 503).json({ ready });
+  }
   // Non-sending readiness check for monitoring the contact form.
   if (req.method === 'HEAD') {
     res.setHeader('Cache-Control', 'no-store');
