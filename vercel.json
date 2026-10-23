@@ -20,6 +20,19 @@
           "value": "camera=(), microphone=(), geolocation=(), payment=()"
         }
       ]
+    },
+    {
+      "source": "/card.vcf",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/vcard; charset=utf-8"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "inline; filename=\"listing-pixl.vcf\""
+        }
+      ]
     }
   ],
   "redirects": [
