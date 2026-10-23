@@ -22,6 +22,10 @@ Most pages are generated. Edit the generator, then rebuild; don't hand-edit the 
 - `api/home.js` renders public HDPhotoHub prices directly in the homepage HTML;
   `/api/prices` supports the client refresh. Both cache for five minutes without
   copying prices into source files. Keep `index.html` bundled with the homepage function.
+- The Team Dashboard has a holiday-decoration master switch, default off. Read
+  `docs/holiday-skin.md` before changing it. Preview and production settings are
+  separate. `/holiday-preview` is a noindex demo of the current homepage;
+  preview controls do not save the master switch.
 - `api/sms-reply.js` is an optional, disabled two-way provider adapter. It is not
   connected to HDPhotoHub's existing scheduled review texts. Read
   `docs/inquiry-and-feedback-workflow.md` before changing messaging or delivery triggers.

@@ -50,6 +50,10 @@
       "dest": "/api/inquiries"
     },
     {
+      "src": "/holiday-preview/?",
+      "dest": "/api/holiday-preview"
+    },
+    {
       "handle": "filesystem"
     }
   ],
@@ -78,6 +82,13 @@
     },
     "api/inquiries.js": {
       "maxDuration": 30
+    },
+    "api/holiday-preview.js": {
+      "maxDuration": 15,
+      "includeFiles": "index.html"
+    },
+    "api/seasonal.js": {
+      "maxDuration": 20
     }
   }
 }

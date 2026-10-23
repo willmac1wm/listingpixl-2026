@@ -84,7 +84,11 @@ async function hdphSites() {
     agent: (s.user && s.user.name) || '',
     photos: s.media.filter(m => m.type === 'still' && !m.hidden).length,
     slug: `${s.address || ''} ${s.city || ''} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-  })).sort((a, b) => b.created.localeCompare(a.created));
+  }))
+    // Hide empty sites and navigation templates from the drafting picker.
+    // This does not delete or combine HDPhotoHub records or repeat visits.
+    .filter(s => s.photos > 0 && s.address.trim() && s.city.trim() && !/^(home|order form)$/i.test(s.address.trim()))
+    .sort((a, b) => b.created.localeCompare(a.created));
 }
 
 async function previewUrl(sha) {

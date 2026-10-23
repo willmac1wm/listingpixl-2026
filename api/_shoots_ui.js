@@ -36,7 +36,7 @@ const html = `
           <select id="sh-site" aria-label="Shoot from HD Photo Hub"><option>Loading shoots from HD Photo Hub…</option></select>
           <button class="sh-btn pink" id="sh-go" type="button" disabled>Write the posts</button>
         </div>
-        <p class="sh-msg">Pick a shoot. In about 5 minutes the draft blog post and social posts appear below for you to check. Nothing is published until you press Approve.</p>
+        <p class="sh-msg">Choose a shoot with photos. Drafting and the preview build take several minutes and can take longer. Dates in the picker are HDPhotoHub record dates; confirm the shoot date in the draft. Nothing is published until you press Approve and publish.</p>
         <p class="sh-msg sh-err" id="sh-load-err" role="alert"></p>
         <p class="sh-msg" id="sh-status" role="status"></p>
       </div>
@@ -81,11 +81,12 @@ function client() {
       const sel = $('sh-site');
       sel.replaceChildren(...sites.map(s => el('option', {
         value: s.sid,
-        text: `${s.address}, ${s.city} · ${s.created} · ${s.photos} photos${s.agent ? ' · ' + s.agent : ''}${s.onBlog ? ' · already on blog' : ''}${s.drafted ? ' · draft waiting' : ''}`,
+        text: `${s.address}, ${s.city} · added ${s.created} · ${s.photos} photos${s.agent ? ' · ' + s.agent : ''}${s.onBlog ? ' · blog page exists' : ''}${s.drafted ? ' · draft waiting' : ''}`,
       })));
       const first = sites.find(s => !s.onBlog && !s.drafted);
       if (first) sel.value = first.sid;
-      $('sh-go').disabled = false;
+      $('sh-go').disabled = !sites.length;
+      if (!sites.length) sel.replaceChildren(el('option', { text: 'No shoots with visible photos are available' }));
     } catch (e) {
       $('sh-site').replaceChildren(el('option', { text: 'Could not load shoots' }));
       $('sh-load-err').textContent = 'Loading shoots failed: ' + e.message;
@@ -98,22 +99,29 @@ function client() {
     btn.disabled = true;
     try {
       await api('draft', { sid: $('sh-site').value });
-      status('Started. The draft will show up below in about 5 minutes (this page checks every 30 seconds).');
+      status('Started. Drafting and the preview build take several minutes and can take longer. This page checks every 30 seconds.');
       setTimeout(refresh, 5000);
     } catch (e) { status(e.message, true); }
     btn.disabled = false;
   });
 
-  function photoPicker(d, files) {
+  function photoPicker(d, files, max) {
     const box = el('div', { class: 'sh-thumbs' });
+    const count = el('p', { class: 'sh-msg', role: 'status' });
+    const update = () => { if (max) count.textContent = `${box.querySelectorAll('input:checked').length} of ${max} photos selected. Uncheck a photo before choosing another when full.`; };
     for (const [file, alt] of d.photos) {
       const on = files.includes(file);
       const cb = el('input', { type: 'checkbox', 'data-file': file, 'aria-label': alt });
       cb.checked = on;
       const lab = el('label', { class: on ? '' : 'off', title: alt }, [cb, el('img', { src: d.photoBase + file.replace(/\.jpg$/, '-480.jpg'), alt, loading: 'lazy', onerror: e => { if (e.target.src.endsWith('-480.jpg')) e.target.src = e.target.src.replace(/-480\.jpg$/, '.jpg'); } })]);
-      cb.addEventListener('change', () => lab.classList.toggle('off', !cb.checked));
+      cb.addEventListener('change', () => {
+        if (max && cb.checked && box.querySelectorAll('input:checked').length > max) cb.checked = false;
+        lab.classList.toggle('off', !cb.checked);
+        update();
+      });
       box.append(lab);
     }
+    if (max) { box.append(count); update(); }
     return box;
   }
   const picked = box => [...box.querySelectorAll('input:checked')].map(i => i.dataset.file);
@@ -140,9 +148,9 @@ function client() {
     const counts = () => { igCount.textContent = `${igText.value.length} / 2,200`; gCount.textContent = `${gText.value.length} / 1,500`; };
     igText.addEventListener('input', counts); gText.addEventListener('input', counts); counts();
     const fbPhotos = photoPicker(d, d.facebook.photos);
-    const igPhotos = photoPicker(d, d.instagram.photos);
+    const igPhotos = photoPicker(d, d.instagram.photos, 10);
     const fb = channel('Facebook page post', chans.includes('facebook'), [fbText, fbPhotos]);
-    const ig = channel('Instagram post', chans.includes('instagram'), [el('div', {}, [igCount]), igText, igPhotos, el('p', { class: 'sh-msg', text: 'Up to 10 photos. The first one is the cover.' })]);
+    const ig = channel('Instagram post', chans.includes('instagram'), [el('div', {}, [igCount]), igText, igPhotos, el('p', { class: 'sh-msg', text: 'This publisher uses up to 10 photos; the blog can show more. The first selected photo is the cover.' })]);
     const st = channel('Instagram story', chans.includes('story'), [el('img', { class: 'sh-story', src: d.photoBase + d.story.photo, alt: 'Story image' })]);
     const google = el('div', { class: 'sh-chan' }, [
       el('h4', { text: 'Google Business post (post it by hand for now)' }), el('div', {}, [gCount]), gText,
@@ -194,12 +202,12 @@ function client() {
             if (!confirm(`Put ${d.address} on the live website now, and post it to the ticked social channels at ${new Date(when.value).toLocaleString()}?`)) return '';
             const r = await api('approve', { ...edits(), post_at: new Date(when.value).toISOString() });
             setTimeout(refresh, 2000);
-            return `Approved. The blog post goes live on the ${r.base} branch in a couple of minutes.`;
+            return r.base === 'main' ? 'Approved. The live website deployment is starting; check the blog link after it finishes.' : `Approved to the ${r.base} test branch. This does not publish the live website.`;
           }),
         ]),
         el('h4', { text: 'Or redo / reject', style: 'margin-top:0.9rem' }), notes,
         el('div', { class: 'sh-row' }, [
-          act('Redo with these changes', 'ghost', async () => { await api('reject', { slug: d.slug, sid: d.sid, redo: true, notes: notes.value }); setTimeout(refresh, 2000); return 'Redoing. The new draft shows up in about 5 minutes.'; }),
+          act('Redo with these changes', 'ghost', async () => { await api('reject', { slug: d.slug, sid: d.sid, redo: true, notes: notes.value }); setTimeout(refresh, 2000); return 'Redoing. Drafting and the preview build take several minutes and can take longer.'; }),
           act('Reject', 'ghost', async () => { if (!confirm('Throw this draft away?')) return ''; await api('reject', { slug: d.slug }); setTimeout(refresh, 1000); return 'Rejected.'; }),
         ]),
         msg,
@@ -216,7 +224,7 @@ function client() {
   // copy by hand until it is ticked off
   function approvedCard(p) {
     const status = [
-      p.status === 'approved' ? `Social posts go out ${new Date(p.post_at).toLocaleString()}.` : '',
+      p.status === 'approved' ? `Scheduled for ${new Date(p.post_at).toLocaleString()}; posting waits for the next publisher check.` : '',
       Object.keys(p.posted || {}).length ? `Posted: ${Object.keys(p.posted).join(', ')}.` : '',
     ].filter(Boolean).join(' ');
     const kids = [el('h3', { text: `${p.address}, ${p.town}` }), status ? el('p', { class: 'sh-msg', text: status }) : null];
