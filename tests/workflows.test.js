@@ -105,6 +105,16 @@ test('hourly submission limit is durable and shared between requests', async () 
   assert.equal(await inquiries.allowed('test-ip', storage, now), false);
   assert.equal(await inquiries.allowed('test-ip', storage, now + 3600000), true);
 });
+test('health detects a delayed inquiry behind a leftover delivered marker', async () => {
+  const storage = new MemoryStore();
+  const first = await inquiries.save(sample(), inquiries.newId(), storage);
+  await storage.write(inquiries.recordPath(first.id), { ...first, status: 'sent' }, (await storage.read(inquiries.recordPath(first.id))).etag);
+  const second = await inquiries.save(sample(), inquiries.newId(), storage);
+  await storage.write(inquiries.recordPath(second.id), { ...second, createdAt: new Date(Date.now() - 180000).toISOString() }, (await storage.read(inquiries.recordPath(second.id))).etag);
+  assert.equal((await inquiries.health(storage)).delayed, true);
+  await storage.remove(inquiries.recordPath(second.id));
+  await assert.rejects(inquiries.health(storage), /Saved inquiry unavailable/);
+});
 test('feedback triage prioritizes concerns and leaves uncertain replies for a person', () => {
   assert.equal(feedback.classify('They look great!'), 'positive');
   assert.equal(feedback.classify('Great service but the kitchen is too dark'), 'concern');

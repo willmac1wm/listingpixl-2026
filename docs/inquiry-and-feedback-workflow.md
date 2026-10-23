@@ -70,6 +70,9 @@ The homepage is rendered by `api/home.js` using the same validated HDPhotoHub
 public catalog as `/api/prices`. All 13 prices are in the initial HTML. Each
 response can be cached for five minutes; homepage rendering fetches HDPhotoHub
 directly to avoid stacking that cache on another five-minute API cache.
+Ordered routes serve the homepage function before the static `index.html` file.
+The browser skips a redundant refresh on arrival, retains verified prices through
+a brief feed outage, and replaces prices older than ten minutes with checkout links.
 The public price feed is crawlable. Private and operational APIs remain blocked.
 No numeric prices are manually maintained in page copy or structured data.
 
