@@ -13,7 +13,7 @@
     if (document.hidden || checking) return;
     checking = true;
     try {
-      const response = await fetch('/api/seasonal', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(10000) });
+      const response = await fetch('/api/seasonal', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
       if (!response.ok || (await response.json()).enabled !== true) { off(); return; }
       document.documentElement.setAttribute('data-lp-seasonal-on', '');
       if (!script && !document.querySelector('listing-pixl-holiday-skin')) {
