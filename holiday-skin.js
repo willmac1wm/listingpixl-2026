@@ -116,7 +116,7 @@
       const header = document.querySelector('.site-header, header');
       const headerBottom = header ? Math.max(0, Math.min(180, header.getBoundingClientRect().bottom)) : 0;
       // Ornaments fit inside outer gutters. On narrow layouts, only edge trim remains.
-      const content = document.querySelector('main .wrap, main, .wrap');
+      const content = document.querySelector('main .wrap') || document.querySelector('.wrap') || document.querySelector('main');
       const rect = content && content.getBoundingClientRect();
       const gutter = rect ? Math.min(rect.left, innerWidth - rect.right) : (innerWidth - 1100) / 2;
       host.style.setProperty('--edge', `${Math.max(0, Math.min(100, gutter - 16))}px`);
