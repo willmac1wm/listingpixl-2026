@@ -19,9 +19,11 @@ Most pages are generated. Edit the generator, then rebuild; don't hand-edit the 
 - `api/book.js`: Ask a Question contact form. Saves to private Vercel Blob before Gmail
   delivery (`BLOB_STORE_ID` via OIDC and `GMAIL_APP_PASSWORD`). Saved inquiries and
   protected retry actions are at `/staff/inquiries`, using the existing team login.
-- `api/home.js` renders public HDPhotoHub prices directly in the homepage HTML;
-  `/api/prices` supports the client refresh. Both cache for five minutes without
-  copying prices into source files. Keep `index.html` bundled with the homepage function.
+- `api/home.js` renders public prices directly in the homepage HTML;
+  `/api/prices` supports the client refresh. Prices are public and always
+  shown — never "See checkout". The live HDPhotoHub menu is tried first;
+  when that fetch fails, `lib/public-prices.js` serves a verified fallback
+  catalog (flagged `fallback: true`). Keep `index.html` bundled with the homepage function.
 - `api/sms-reply.js` is an optional, disabled two-way provider adapter. It is not
   connected to HDPhotoHub's existing scheduled review texts. Read
   `docs/inquiry-and-feedback-workflow.md` before changing messaging or delivery triggers.
@@ -50,7 +52,27 @@ photos, writing posts and publishing.
   leave the brokerage blank when it isn't known. Leave the agent off if only a first name is known.
 - Take the shoot month from the photos' EXIF date (tools/shoot_sheets.py prints it).
 - Twilight exteriors are virtual twilights. Say "virtual twilight".
-- Pricing is managed in HDPhotoHub. Current packages are Essential, Standard, Marketing, Luxury and Signature; do not copy numeric prices into other pages or schemas. The homepage renders public checkout prices on the server and refreshes through `/api/prices`. Link town/service pages to current packages. No travel fee in Cape May County. Luxury covers up to 5,000 sq ft; Signature is the next option for 5,001–6,500 sq ft; confirm scope above 6,500 sq ft.
+- Pricing is managed in HDPhotoHub, and prices are public on the site.
+  Current packages are Essential, Standard, Marketing, Luxury and Signature.
+  The homepage renders public checkout prices on the server and refreshes
+  through `/api/prices`; when the HDPhotoHub fetch fails, the verified
+  fallback catalog in `lib/public-prices.js` is shown instead — never
+  "See checkout". Numeric prices live only in that fallback catalog and the
+  existing `data-hd-price` placeholders in `index.html`; do not copy them
+  into other pages or schemas. Whenever HDPhotoHub prices change, update
+  the fallback catalog in the same change, or the site and checkout will
+  disagree. Auto-follow goal (2026-11-03, investigated, not yet solved):
+  the live fetch works from a normal server (200, all 13 prices) with any
+  User-Agent, including Node's default — so UA is not the block — and the
+  order page sends no CORS headers, so a client-side fetch cannot replace
+  it. The likely block is Cloudflare bot rules on Vercel's egress IPs.
+  Best next step: HDPhotoHub has an official API (docs inside Studio,
+  covers products/orders/sites/webhooks) — use an authenticated API call
+  for prices instead of scraping the order page. API key must come through
+  the secure flow, never in chat. Until then, the fallback stays a
+  manually-synced snapshot. Link town/service pages to current packages. No travel fee in
+  Cape May County. Luxury covers up to 5,000 sq ft; Signature is the next
+  option for 5,001–6,500 sq ft; confirm scope above 6,500 sq ft.
 - Client photo delivery: HD Photo Hub at listingpixl.hd.pics (admin: listingpixl.hd.pics/ux/studio/Dashboard).
 - Phone (609) 780-7027. AI receptionist: Smith.ai. Email ListingPixl.Media@gmail.com.
 

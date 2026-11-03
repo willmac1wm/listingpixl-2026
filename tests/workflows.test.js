@@ -42,18 +42,39 @@ test('prices render in the initial HTML with the staging unit', () => {
   assert.match(html, /\$111 \/ room/);
   assert.equal((html.match(/data-hd-price=/g) || []).length, 13);
 });
-test('a refresh outage keeps recently verified HTML prices, then expires them', async () => {
+test('fallback catalog is the published public menu with all 13 prices', () => {
+  const catalog = prices.getFallbackPrices();
+  assert.equal(catalog.fallback, true);
+  assert.equal(catalog.checkedAt, prices.FALLBACK_CHECKED_AT);
+  assert.equal(Object.keys(catalog.prices).length, 13);
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(catalog.prices).map(([id, p]) => [p.name, p.price])),
+    {
+      Essential: 189, Standard: 290, Marketing: 389, Luxury: 549, Signature: 815,
+      'Aerial Drone Photos': 145, 'Cinematic Walkthrough Video': 265,
+      'Matterport 3D Tour': 185, 'Virtual Twilight — 1 Photo': 35,
+      'Virtual Twilight — 3 Pack': 99, '2D Floor Plan': 90,
+      'Virtual Staging (per room)': 35, 'Marketing Kit': 39,
+    },
+  );
+});
+test('a failed live fetch falls back to the published public menu', async () => {
+  const catalog = await prices.getPublicPricesWithFallback(async () => { throw Error('Temporarily offline'); });
+  assert.equal(catalog.fallback, true);
+  assert.equal(catalog.prices['449299'].price, 189);
+});
+test('a refresh outage keeps the visible price — never "See checkout"', async () => {
   let now = Date.now(); let refresh; let requests = 0;
-  const field = { dataset: { hdPrice: '449299', priceCheckedAt: new Date(now).toISOString() }, textContent: '$123', replaceChildren(link) { this.textContent = link.textContent; } };
+  const field = { dataset: { hdPrice: '449299', priceCheckedAt: new Date(now).toISOString() }, textContent: '$189', replaceChildren(link) { this.textContent = link.textContent; } };
   const doc = { hidden: false, querySelectorAll: () => [field], createElement: () => ({}), addEventListener: () => {} };
   class Clock extends Date { static now() { return now; } }
   vm.runInNewContext(fs.readFileSync('pricing.js', 'utf8'), { document: doc, Date: Clock, Intl, AbortSignal, fetch: async () => { requests++; throw Error('Temporarily offline'); }, setInterval: callback => { refresh = callback; } });
   await new Promise(resolve => setImmediate(resolve));
-  assert.equal(requests, 0); assert.equal(field.textContent, '$123');
+  assert.equal(requests, 0); assert.equal(field.textContent, '$189');
   now += 360000; refresh(); await new Promise(resolve => setImmediate(resolve));
-  assert.equal(requests, 1); assert.equal(field.textContent, '$123');
+  assert.equal(requests, 1); assert.equal(field.textContent, '$189');
   now += 300000; refresh(); await new Promise(resolve => setImmediate(resolve));
-  assert.equal(field.textContent, 'See checkout');
+  assert.equal(field.textContent, '$189');
 });
 test('save failure cannot become a successful acknowledgement', async () => {
   const storage = new MemoryStore();
