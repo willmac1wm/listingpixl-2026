@@ -1,4 +1,8 @@
-// Prices are read from the public HDPhotoHub menu, never from a client session.
+// Prices are public and always visible, never hidden until checkout.
+// They are read from the public HDPhotoHub menu, never from a client session;
+// when that live fetch fails, /api/prices returns the verified fallback
+// menu, and a visible price is always kept — never replaced with
+// "See checkout".
 (function () {
   const fields = [...document.querySelectorAll('[data-hd-price]')];
   if (!fields.length) return;
@@ -10,15 +14,19 @@
   let refreshing = false;
   async function refresh() {
     // Server-rendered prices have already been checked. Avoid a second request
-    // on arrival and retain that verified menu through a brief refresh outage.
+    // on arrival and retain that verified menu through a refresh outage.
     if (refreshing || fields.every(el => fresh(el, 300000))) return;
     refreshing = true;
     try {
       const response = await fetch('/api/prices', { signal: AbortSignal.timeout(16000) });
       if (!response.ok) throw new Error('Unavailable');
       const data = await response.json();
-      const age = Date.now() - Date.parse(data.checkedAt || '');
-      if (!Number.isFinite(age) || age < -60000 || age > 600000 || data.currency !== 'USD') throw new Error('Expired prices');
+      // The verified fallback menu is a published public price list, not a
+      // live check, so its checkedAt date is not an expiry.
+      if (!data.fallback) {
+        const age = Date.now() - Date.parse(data.checkedAt || '');
+        if (!Number.isFinite(age) || age < -60000 || age > 600000 || data.currency !== 'USD') throw new Error('Expired prices');
+      }
       // Validate the entire visible menu before updating any prices.
       if (fields.some(el => !Number.isFinite(data.prices?.[el.dataset.hdPrice]?.price) || data.prices[el.dataset.hdPrice].price <= 0)) throw new Error('Incomplete prices');
       fields.forEach(el => {
@@ -26,18 +34,11 @@
         el.dataset.priceCheckedAt = data.checkedAt;
       });
     } catch (_) {
-      fields.forEach(el => {
-        if (fresh(el, 600000)) return;
-        const link = document.createElement('a');
-        link.href = 'https://listingpixl.hd.pics/order';
-        link.textContent = 'See checkout';
-        el.replaceChildren(link);
-        delete el.dataset.priceCheckedAt;
-      });
+      // Never hide a price: keep whatever is already showing, even if it is
+      // old. There is no "See checkout" fallback any more.
     } finally { refreshing = false; }
   }
   refresh();
   setInterval(() => { if (!document.hidden) refresh(); }, 300000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 })();
-
