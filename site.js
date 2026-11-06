@@ -250,6 +250,91 @@
     form.addEventListener('focusin', () => document.body.classList.add('is-typing'));
     form.addEventListener('focusout', () => document.body.classList.remove('is-typing'));
   }
+
+  // Web chat widget (Contact section): talks to the Listing Pixl text bot
+  // over POST https://bot.listingpixl.com/web-chat. Same bot as SMS, web front end.
+  const chatWidget = document.getElementById('chat-widget');
+  if (chatWidget) {
+    const chatLog = document.getElementById('chat-log');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const chatNote = document.getElementById('chat-note');
+    const CHAT_URL = 'https://bot.listingpixl.com/web-chat';
+    const SESSION_KEY = 'lp-chat-session';
+    let chatSessionId = null;
+    try { chatSessionId = window.sessionStorage.getItem(SESSION_KEY); } catch (e) { /* private mode */ }
+    if (!chatSessionId) {
+      chatSessionId = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : 'web-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      try { window.sessionStorage.setItem(SESSION_KEY, chatSessionId); } catch (e) { /* private mode */ }
+    }
+    let chatOfflineShown = false;
+
+    const addChatMessage = (text, kind) => {
+      const el = document.createElement('div');
+      el.className = 'chat-msg ' + kind;
+      el.textContent = text;
+      chatLog.appendChild(el);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    };
+    const showChatOffline = () => {
+      if (chatOfflineShown) return;
+      chatOfflineShown = true;
+      const el = document.createElement('div');
+      el.className = 'chat-msg offline';
+      el.textContent = "Chat isn't online yet — email ";
+      const email = document.createElement('a');
+      email.href = 'mailto:ListingPixl.Media@gmail.com';
+      email.textContent = 'ListingPixl.Media@gmail.com';
+      const mid = document.createTextNode(' or call/text ');
+      const phone = document.createElement('a');
+      phone.href = 'tel:+16097807027';
+      phone.textContent = '(609) 780-7027';
+      el.append(email, mid, phone, document.createTextNode(' instead.'));
+      chatLog.appendChild(el);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    const postChat = async (message) => {
+      const res = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, session_id: chatSessionId })
+      });
+      if (!res.ok) throw new Error('Chat request failed: ' + res.status);
+      return res.json();
+    };
+
+    const askChat = async (message) => {
+      chatSend.disabled = true;
+      try {
+        const data = await postChat(message);
+        if (data && data.reply) addChatMessage(data.reply, 'bot');
+        if (data && data.complete) {
+          chatInput.disabled = true;
+          chatSend.disabled = true;
+          chatNote.textContent = "Thanks — we've got what we need and will follow up.";
+          chatNote.hidden = false;
+        }
+      } catch (error) {
+        showChatOffline();
+      } finally {
+        if (!chatInput.disabled) chatSend.disabled = false;
+      }
+    };
+
+    chatForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addChatMessage(text, 'user');
+      chatInput.value = '';
+      askChat(text);
+    });
+
+    // Fetch the bot's greeting on load.
+    askChat('');
+  }
 })();
 
 
