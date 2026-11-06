@@ -255,12 +255,94 @@
         "Aerial front (landscaped version) \u2014 only if the ground twilight is approved first"
       ],
       "use_when": "Hero exterior that needs dusk drama, run AFTER the landscape recipe so the lawn matches. Do not run twilight on a dirt yard \u2014 landscape first, twilight second."
+    },
+    {
+      "id": "mb-modern-beach-interior",
+      "name": "Virtual Staging \u2014 Modern Beach Interior",
+      "category": "interior",
+      "button_image": "/images/recipes/modern-beach-interior.jpg",
+      "price_anchor": "Virtual staging $35/photo in Listing Pixl pricing. Charge per edited angle.",
+      "use_when": "Empty living room / open-plan living area in a Cape May County shore house \u2014 new-build or resale. The 114 E Anna St open-plan living area is the worked example.",
+      "source": "Built from the real 114 E Anna St open-plan living area (114-E-Anna-St-37-Kitchen-Living.jpg \u2014 empty, white shaker kitchen on the left, big empty living area with windows and a sliding glass door to the deck, light oak plank floor). First approved angle (Test 4, #37) is the anchor for all other angles. Distinct from Recipe 2's farmhouse kitchen: no dark wood, no black metal furniture, no cognac leather \u2014 light linen, rattan, whitewash, sand and soft sea-blue only.",
+      "anchor": "The first approved Modern Beach angle \u2014 Test 4 output from 114-E-Anna-St-37-Kitchen-Living.jpg. Stage one hero living angle first, approve it, then use THAT as the anchor for the other living angles. All angles must match the anchor's furniture exactly.",
+      "target_angles": [
+        "Living room wide (kitchen side)",
+        "Living room wide (sliding-door end)",
+        "Living room wide (entry end)"
+      ],
+      "keep": [
+        "White shaker cabinets, exact layout, black bar pulls, where visible \u2014 do not move or recolour cabinets",
+        "Black gooseneck kitchen faucet, white quartz counters, where visible",
+        "Stainless steel appliances where present (fridge, range, microwave, dishwasher) \u2014 do not change appliance positions",
+        "Light oak plank flooring",
+        "Black 5-light chandelier with white shades and black ceiling fan where present \u2014 these are the house's own fixtures, do not swap them. The 'no black metal' rule is for the NEW furniture, not the house's fixtures",
+        "Sliding glass door and window views \u2014 keep the autumn trees outside, do not change the view",
+        "Walls white, ceilings white, room shape and window/door positions unchanged"
+      ],
+      "change_only": [
+        "Add furniture and d\u00e9cor from the locked list below, in the same positions on every angle",
+        "Add sheer white curtains on the windows only",
+        "Add small counter d\u00e9cor only where a kitchen counter is in frame: white ceramic vase with greenery, small bowl of lemons"
+      ],
+      "materials_locked": [
+        "Sofa: light natural-linen 3-seat sofa, warm white / oatmeal linen, low profile, light wood legs, against the main living wall",
+        "Armchairs: 2 light rattan / woven armchairs with natural linen cushions, facing the sofa",
+        "Coffee table: light whitewashed-wood rectangular coffee table between sofa and chairs, with a white ceramic vase with greenery and a small piece of driftwood on top",
+        "Rug: woven rug in sand and white, flat-weave, under the coffee table and the front legs of sofa and chairs",
+        "Cushions: 2 soft sea-blue / sea-glass linen cushions on the sofa only \u2014 muted, not bright",
+        "Plant: tall green plant (palm or olive) in a woven basket in the corner by the window",
+        "Curtains: sheer white curtains on the windows, light and airy, not heavy drapes",
+        "Floor lamp: slim white floor lamp beside the sofa",
+        "Kitchen counter d\u00e9cor, only where a counter is in frame: white ceramic vase with greenery, small bowl of lemons \u2014 no clutter, no dishes, no food mess"
+      ],
+      "furniture_placement_locked": [
+        "Living set placement \u2014 LOCKED: light linen sofa against the main living wall, 2 rattan armchairs facing the sofa, whitewashed coffee table on the woven rug between them, tall green plant in a woven basket in the corner by the window, floor lamp beside the sofa. The set stays in the same place in the room on every angle \u2014 only the camera moves.",
+        "Rug visibility: on angles shot from the living end (camera in the living area looking toward the kitchen), the woven rug is in the foreground at the bottom of the frame, with the edge of the linen sofa and the coffee table visible in the foreground. Do not leave the foreground as empty floor \u2014 the rug is there.",
+        "Alignment \u2014 LOCKED, square to the room: the rug, coffee table, sofa and armchairs are all square to the walls, never diagonal. Rug edges run parallel to the walls, long axis parallel to the sofa, centred between sofa and armchairs with the coffee table centred on the rug. Sofa sits straight against the wall, long axis parallel to the wall. Armchairs sit straight, side by side, facing the sofa. Do not angle, rotate or turn the living group diagonally in the foreground, and do not push it off-centre to one side."
+      ],
+      "do_not": [
+        "Do not add a kitchen island \u2014 114 E Anna St has no island. Do not add bar stools",
+        "Do not use dark wood furniture, black metal furniture, or farmhouse black hardware in the NEW furniture \u2014 the look is light wood, whitewash, rattan, linen",
+        "Do not add farmhouse d\u00e9cor: no barn wood, no gingham, no black metal lanterns, no 'farmhouse' signs",
+        "Do not add Victorian ornament: no carved dark wood, no heavy drapes, no ornate patterns",
+        "Do not add nautical kitsch: no anchors, no rope, no 'beach' signs, no shells scattered everywhere, no bright saturated blues",
+        "Do not change cabinets, counters, appliances, faucet, flooring, or light fixtures",
+        "Do not change the room size, move walls, windows, or doors, or add a fireplace / built-ins",
+        "Do not use a different sofa, chairs, or coffee table on different angles \u2014 same set, same colours, every angle",
+        "Do not rotate the living group \u2014 rug, coffee table, sofa and armchairs square to the walls, never diagonal",
+        "Do not drop the rug / living set on living-end angles \u2014 if the camera is in the living area, the rug is in the foreground",
+        "Do not add people, pets, text, or logos",
+        "Do not stage a room that is already furnished \u2014 this recipe is for empty rooms only"
+      ],
+      "prompt_chatgpt": "Image 1 is the anchor \u2014 the finished staged look every other angle must match. Images 2-4 are other angles of the SAME open-plan living room. Stage them with the EXACT same furniture and d\u00e9cor as Image 1.\n\nKEEP EXACTLY THE SAME ON EVERY IMAGE: white shaker cabinets in the same layout with black bar pulls, black gooseneck faucet, white quartz counters, stainless steel appliances in the same positions, light oak plank flooring, black 5-light chandelier with white shades, sliding glass door and window views with autumn trees outside, white walls, room shape and window/door positions unchanged.\n\nCHANGE ONLY \u2014 add this exact furniture, same items, same colours, same positions on every angle: light natural-linen 3-seat sofa in warm white / oatmeal linen with light wood legs; 2 light rattan / woven armchairs with natural linen cushions facing the sofa; light whitewashed-wood rectangular coffee table with a white ceramic vase with greenery and a small piece of driftwood on top; woven rug in sand and white under the coffee table; 2 soft sea-blue / sea-glass linen cushions on the sofa only; tall green plant in a woven basket in the corner by the window; sheer white curtains on the windows; slim white floor lamp beside the sofa. On the kitchen counter only, where visible: white ceramic vase with greenery, small bowl of lemons.\n\nDO NOT use dark wood furniture, black metal furniture, or farmhouse d\u00e9cor. Do not add Victorian ornament, nautical kitsch, anchors, rope, or 'beach' signs. Do not add a kitchen island or bar stools \u2014 there is no island. Do not change cabinets, counters, appliances, faucet, flooring, or light fixtures. Do not move walls, windows, or doors. Do not use different furniture on different angles. Do not turn the living group diagonal \u2014 rug, coffee table, sofa and armchairs square to the walls, centred. Do not add people, pets, text, or logos. Photorealistic real-estate photo, bright daylight, same camera look as the anchor.",
+      "qc_checklist": [
+        "Same linen sofa, same 2 rattan chairs, same whitewashed coffee table on every angle?",
+        "No dark wood or black metal furniture? No farmhouse d\u00e9cor, no Victorian ornament, no nautical kitsch?",
+        "Cushions only 2, soft sea-blue / sea-glass, muted \u2014 not bright?",
+        "Curtains sheer white, light and airy \u2014 not heavy drapes?",
+        "Cabinets, faucet, floor, and chandelier unchanged?",
+        "Room still reads as the same house, not a different living room?",
+        "On living-end angles, is the rug in the foreground at the bottom of the frame?",
+        "Living group square to the walls \u2014 rug edges parallel to walls, sofa straight, armchairs facing sofa, nothing diagonal or off-centre?"
+      ],
+      "settings": {
+        "batch": "Anchor + up to 3 target angles in one call/message",
+        "input_fidelity": "high where offered",
+        "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
+        "quality": "high"
+      },
+      "output_naming": "114-E-Anna-St-NN-<Room>-Virtually-Staged.jpg. Keep the real Auto HDR original with the same NN and no suffix.",
+      "disclosure": {
+        "bright_mls_remarks": "Some photos are virtually staged. Furniture and d\u00e9cor shown are digital and are not included with the property.",
+        "keep_original": "Always deliver the real empty photo alongside the staged version, same angle.",
+        "rules": "Bright MLS: furniture and d\u00e9cor may be added; the image must be disclosed in BOTH Private and Public Remarks as 'virtually staged or digitally modified'. No text or watermark on the photo itself. Keep the real empty-room photo in the set, same angle."
+      }
     }
   ],
-  "version": "1.1",
+  "version": "1.2",
   "why_batch_not_one_off": "One-off edits re-invent the room/yard every time. A recipe locks one anchor image, one materials list, one KEEP list and one CHANGE-ONLY list, and all angles of the same space are sent in ONE batch with the same prompt. That is what made Jason's two renders match.",
   "worked_example_property": "114 E Anna St, Whitesboro, NJ 08210 \u2014 white farmhouse, dark charcoal roof, wood front porch/deck, gravel drive, dirt yard in the real photos. That dirt yard is why this property is the perfect test case.",
-  "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere.",
+  "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere. v1.2 2026-11-06: Recipe 4 Modern Beach Interior added (William: do whats best \u2014 style first, most Cape May / shore-relevant). Modern Beach moved from planned_styles to a live recipe under Interior.",
   "planned_styles": [
     {
       "name": "Minimal",
@@ -274,11 +356,6 @@
     },
     {
       "name": "Victorian",
-      "category": "interior",
-      "status": "planned"
-    },
-    {
-      "name": "Modern Beach",
       "category": "interior",
       "status": "planned"
     }

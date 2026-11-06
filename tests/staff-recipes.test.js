@@ -28,10 +28,10 @@ function memoryStore() {
   return () => Object.assign(store, original);
 }
 
-test('recipes list comes from data/recipes.json v1.1 with all three recipes', () => {
+test('recipes list comes from data/recipes.json v1.2 with all four recipes', () => {
   const list = recipes.listRecipes();
-  assert.deepEqual(list.map(r => r.id), ['vl-lush-lawn-autumn', 'vs-modern-farmhouse-kitchen', 'vt-virtual-twilight']);
-  assert.equal(recipes.RECIPES.version, '1.1');
+  assert.deepEqual(list.map(r => r.id), ['vl-lush-lawn-autumn', 'vs-modern-farmhouse-kitchen', 'vt-virtual-twilight', 'mb-modern-beach-interior']);
+  assert.equal(recipes.RECIPES.version, '1.2');
   assert.match(recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt, /lawn is the hero/i);
 });
 
@@ -135,7 +135,7 @@ test('writes without the X-Staff header are rejected', async () => {
 test('photo picker: recipes split Interior / Exterior, each with a real button photo in the repo', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  assert.deepEqual(recipes.recipesByCategory('interior').map(r => r.id), ['vs-modern-farmhouse-kitchen']);
+  assert.deepEqual(recipes.recipesByCategory('interior').map(r => r.id), ['vs-modern-farmhouse-kitchen', 'mb-modern-beach-interior']);
   assert.deepEqual(recipes.recipesByCategory('exterior').map(r => r.id), ['vl-lush-lawn-autumn', 'vt-virtual-twilight']);
   assert.throws(() => recipes.recipesByCategory('attic'), /Interior or Exterior/);
   for (const r of recipes.listRecipes()) {
@@ -154,7 +154,7 @@ test('photo picker: recipes split Interior / Exterior, each with a real button p
 
 test('coming-soon styles are names only: planned, no recipe, no photo, never selectable', () => {
   const planned = recipes.listPlannedStyles();
-  assert.deepEqual(planned.map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+  assert.deepEqual(planned.map(s => s.name), ['Minimal', 'Classic', 'Victorian']);
   for (const s of planned) {
     assert.equal(s.status, 'planned');
     assert.equal(s.category, 'interior');
@@ -163,7 +163,7 @@ test('coming-soon styles are names only: planned, no recipe, no photo, never sel
     assert.equal(recipes.getRecipe(s.name), null); // no recipe behind the name
     assert.throws(() => recipes.validateBatch(s.name, [{ name: 'a.jpg', mime: 'image/jpeg', bytes: 100 }, { name: 'b.jpg', mime: 'image/jpeg', bytes: 100 }]), /Unknown recipe/);
   }
-  assert.deepEqual(recipes.plannedStylesByCategory('interior').map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+  assert.deepEqual(recipes.plannedStylesByCategory('interior').map(s => s.name), ['Minimal', 'Classic', 'Victorian']);
   assert.deepEqual(recipes.plannedStylesByCategory('exterior'), []);
   assert.throws(() => recipes.plannedStylesByCategory('attic'), /Interior or Exterior/);
 });
@@ -176,10 +176,38 @@ test('recipes API returns categories, button images and planned styles for the p
     await handler({ method: 'GET', url: '/staff/recipes?action=recipes', headers: headers({ authorization: basic() }) }, res);
     assert.equal(res.statusCode, 200);
     const out = JSON.parse(res.body);
-    assert.equal(out.recipes.length, 3);
+    assert.equal(out.recipes.length, 4);
     for (const r of out.recipes) assert.ok(['interior', 'exterior'].includes(r.category) && r.button_image.startsWith('/images/recipes/'));
-    assert.deepEqual(out.plannedStyles.map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+    assert.deepEqual(out.plannedStyles.map(s => s.name), ['Minimal', 'Classic', 'Victorian']);
   } finally {
     if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
   }
+});
+
+test('Modern Beach Interior is a live Interior recipe, distinct from the farmhouse kitchen', () => {
+  const r = recipes.getRecipe('mb-modern-beach-interior');
+  assert.ok(r, 'recipe exists');
+  assert.equal(r.category, 'interior');
+  assert.equal(r.button_image, '/images/recipes/modern-beach-interior.jpg');
+  assert.match(r.price_anchor, /\$35\/photo/);
+  assert.equal(recipes.listPlannedStyles().some(s => s.name === 'Modern Beach'), false);
+  // Locked coastal look, not farmhouse again.
+  const locked = r.materials_locked.join(' ');
+  assert.match(locked, /linen/i);
+  assert.match(locked, /rattan/i);
+  assert.match(locked, /whitewashed/i);
+  assert.match(locked, /sea-blue/i);
+  assert.doesNotMatch(locked, /cognac|leather|farmhouse/i);
+  assert.doesNotMatch(r.prompt_chatgpt, /cognac/i);
+  // Farmhouse appears only as a prohibition, never as a material.
+  assert.match(r.prompt_chatgpt, /DO NOT.*farmhouse décor/i);
+  assert.match(r.prompt_chatgpt, /rattan|whitewashed|sea-blue/i);
+  assert.match(r.do_not.join(' '), /nautical kitsch|dark wood/i);
+  assert.match(r.do_not.join(' '), /kitchen island/i);
+  // The batch gate still applies: a valid batch validates, and the
+  // recipe is selectable like the other live recipes.
+  assert.doesNotThrow(() => recipes.validateBatch('mb-modern-beach-interior', [
+    { name: 'anchor.jpg', mime: 'image/jpeg', bytes: 100 },
+    { name: 'angle.jpg', mime: 'image/jpeg', bytes: 100 },
+  ]));
 });
