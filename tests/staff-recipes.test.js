@@ -435,6 +435,53 @@ test('recipe settings live behind a closed door: warning + confirm first, prompt
   assert.match(ui.script, /api\('savePrompt', \{ recipeId: p\.id, prompt: ta\.value \}\)/);
 });
 
+test('Select Model picker: segmented toggle, photo model cards, selected state, twilight disabled without a landscaped anchor', () => {
+  const ui = require('../api/_recipes_ui');
+  // A segmented Interior / Exterior toggle at the top of the panel, one
+  // side active at a time; the grid is filtered by the active side.
+  assert.match(ui.html, /id="rc-model-toggle"[^>]*aria-label="Interior or Exterior"/);
+  assert.match(ui.html, /id="rc-seg-interior"[^>]*>Interior</);
+  assert.match(ui.html, /id="rc-seg-exterior"[^>]*>Exterior</);
+  assert.match(ui.script, /\$\('rc-seg-interior'\)\.addEventListener\('click', \(\) => setCategory\('interior'\)\)/);
+  assert.match(ui.script, /\$\('rc-seg-exterior'\)\.addEventListener\('click', \(\) => setCategory\('exterior'\)\)/);
+  assert.match(ui.script, /let pickedCategory = 'exterior';/);
+  assert.match(ui.script, /recipes\.filter\(x => x\.category === pickedCategory\)/);
+  // Exterior shows Lush Lawn + Twilight, Interior shows Farmhouse + Beach.
+  assert.deepEqual(recipes.recipesByCategory('exterior').map(r => r.id), ['vl-lush-lawn-autumn', 'vt-virtual-twilight']);
+  assert.deepEqual(recipes.recipesByCategory('interior').map(r => r.id), ['vs-modern-farmhouse-kitchen', 'mb-modern-beach-interior']);
+  // Variant pills and one-line taglines, grounded in the locked recipes.
+  for (const [id, variant, tagline] of [
+    ['vl-lush-lawn-autumn', 'Autumn', 'Lush green lawn, five plantings, autumn trees'],
+    ['vs-modern-farmhouse-kitchen', 'Farmhouse', 'Light wood table, grey sofa, cognac chairs'],
+    ['vt-virtual-twilight', 'Dusk', 'Deep blue dusk, warm windows, porch lights'],
+    ['mb-modern-beach-interior', 'Coastal', 'Linen sofa, rattan chairs, sea-blue cushions'],
+  ]) {
+    assert.match(ui.script, new RegExp(`'${id}': \\{ variant: '${variant}', tagline: '${tagline}' \\}`));
+  }
+  assert.match(ui.script, /class: 'rc-variant-pill', text: d\.variant/);
+  // The selected card is unmistakable: outline, checkmark, Default pill.
+  assert.match(ui.css, /\.rc-model-card\.rc-selected \{[^}]*border-color: var\(--accent, #0c7a8c\)[^}]*box-shadow: 0 0 0 2px var\(--accent, #0c7a8c\)/);
+  assert.match(ui.script, /class: 'rc-model-check', text: '✓'/);
+  assert.match(ui.script, /class: 'rc-model-default', text: 'Default'/);
+  assert.match(ui.script, /class: 'rc-model-card' \+ \(selected \? ' rc-selected' : ''\)/);
+  // Coming soon: greyed-out divs in the grid, labelled, never a button.
+  assert.match(ui.script, /class: 'rc-model-card rc-soon', 'aria-disabled': 'true'/);
+  assert.match(ui.script, /text: 'Coming soon — not built yet'/);
+  assert.doesNotMatch(ui.script, /rc-soon[^}]*onclick/);
+  // Twilight gate in the picker: without the step 03 landscaped box
+  // ticked, the card is shown disabled with the reason — never hidden,
+  // never runnable. Unchecking the box clears a twilight pick.
+  assert.match(ui.script, /function twilightBlocked\(recipeId\) \{\n    return recipeId === 'vt-virtual-twilight' && !\$\('rc-landscaped'\)\.checked;/);
+  assert.match(ui.script, /class: 'rc-model-card rc-model-disabled', 'aria-disabled': 'true'/);
+  assert.match(ui.script, /text: 'Needs a landscaped anchor first — tick the box in step 03\.'/);
+  assert.match(ui.script, /\$\('rc-landscaped'\)\.addEventListener\('change', \(\) => \{/);
+  assert.match(ui.script, /if \(\$\('rc-recipe'\)\.value === 'vt-virtual-twilight' && twilightBlocked\('vt-virtual-twilight'\)\) \{/);
+  // The server still enforces the gate — the card is only the UI half.
+  assert.match(ui.script, /if \(recipe\.id === 'vt-virtual-twilight' && !\$\('rc-landscaped'\)\.checked\)/);
+  // Display strings only: the picker never rewrites a prompt or list.
+  assert.doesNotMatch(ui.script, /MODEL_DISPLAY[^}]*prompt_chatgpt|keep:|change_only:|do_not:/);
+});
+
 test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, priced Run button, labelled results', () => {
   const ui = require('../api/_recipes_ui');
   // One screen, two columns on wide screens: narrow controls on the left,
@@ -455,11 +502,14 @@ test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, p
   }
   const order = ['>01<', '>02<', '>03<', '>04<'].map(t => ui.html.indexOf(t));
   assert.ok(order.every(i => i > -1) && order[0] < order[1] && order[1] < order[2] && order[2] < order[3]);
-  assert.ok(ui.html.indexOf('id="rc-anchor"') < ui.html.indexOf('id="rc-pick-category"'));
-  // Step 02 keeps the photo-tile picker: Interior / Exterior first, then
-  // style tiles — no dropdown.
-  assert.match(ui.script, /rc-pick-category/);
-  assert.match(ui.script, /rc-style-cards/);
+  assert.ok(ui.html.indexOf('id="rc-anchor"') < ui.html.indexOf('id="rc-model-grid"'));
+  // Step 02 is the Select Model grid (see the picker test below): a
+  // segmented Interior / Exterior toggle filtering photo model cards —
+  // no dropdown, no two-step back-and-forth.
+  assert.match(ui.html, /Select Model/);
+  assert.match(ui.script, /rc-model-grid/);
+  assert.match(ui.html, /rc-model-toggle/);
+  assert.doesNotMatch(ui.script, /rc-pick-category|rc-style-cards|rc-pick-back/);
   assert.doesNotMatch(ui.html, /<select[^>]*rc-recipe/);
   // Cost visible where the user commits: $35 per photo × angles.
   assert.match(ui.script, /const PRICE_PER_PHOTO = 35;/);

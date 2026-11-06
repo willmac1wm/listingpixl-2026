@@ -31,16 +31,26 @@ const css = `
     .rc-compare img { width: 100%; height: auto; border-radius: 8px; display: block; }
     .rc-compare figcaption { font-size: 0.85rem; color: var(--muted, #666); margin-top: 0.25rem; }
     .rc-qc { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
-    .rc-pick { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
-    .rc-pick-btn, .rc-card { font: inherit; text-align: left; border: 2px solid #cfc8b8; border-radius: 12px; background: #fff; color: #1d1d1d; padding: 0; cursor: pointer; overflow: hidden; }
-    .rc-pick-btn img, .rc-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
-    .rc-pick-btn span, .rc-card span { display: block; padding: 0.55rem 0.75rem; }
-    .rc-pick-btn b, .rc-card b { display: block; font-size: 1rem; }
-    .rc-pick-btn small, .rc-card small { display: block; font-size: 0.85rem; color: var(--muted, #555); margin-top: 0.2rem; }
-    .rc-pick-btn:hover, .rc-card:hover { border-color: var(--accent-pink, #d63384); }
-    .rc-pick-btn.rc-selected, .rc-card.rc-selected { border-color: var(--accent-pink, #d63384); box-shadow: 0 0 0 2px var(--accent-pink, #d63384); }
-    .rc-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
-    .rc-card.rc-soon:hover { border-color: #cfc8b8; }
+    .rc-segment { display: inline-flex; border: 1px solid #cfc8b8; border-radius: 999px; overflow: hidden; margin: 0.5rem 0; }
+    .rc-seg-btn { font: inherit; border: 0; background: #fff; color: #1d1d1d; padding: 0.45rem 1.1rem; cursor: pointer; }
+    .rc-seg-btn + .rc-seg-btn { border-left: 1px solid #cfc8b8; }
+    .rc-seg-btn.rc-seg-active { background: #1d1d1d; color: #fff; font-weight: 700; }
+    .rc-model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
+    .rc-model-card { position: relative; font: inherit; text-align: left; border: 2px solid #cfc8b8; border-radius: 12px; background: #fff; color: #1d1d1d; padding: 0; cursor: pointer; overflow: hidden; }
+    .rc-model-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+    .rc-model-body { display: block; padding: 0.55rem 0.75rem; }
+    .rc-model-body b { display: block; font-size: 1rem; }
+    .rc-model-body small { display: block; font-size: 0.85rem; color: var(--muted, #555); margin-top: 0.2rem; }
+    .rc-model-card:hover { border-color: var(--accent-pink, #d63384); }
+    .rc-model-card.rc-selected { border-color: var(--accent, #0c7a8c); box-shadow: 0 0 0 2px var(--accent, #0c7a8c); }
+    .rc-model-check { position: absolute; top: 0.5rem; right: 0.5rem; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--accent, #0c7a8c); color: #fff; font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .rc-variant-pill { display: inline-block; background: #eef6f7; color: var(--accent, #0c7a8c); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px; margin-top: 0.25rem; }
+    .rc-model-default { display: inline-block; background: var(--accent, #0c7a8c); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px; margin-top: 0.25rem; margin-left: 0.35rem; }
+    .rc-model-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
+    .rc-model-card.rc-soon:hover { border-color: #cfc8b8; }
+    .rc-model-card.rc-model-disabled { opacity: 0.8; cursor: not-allowed; background: #f4f1ea; }
+    .rc-model-card.rc-model-disabled:hover { border-color: #cfc8b8; }
+    .rc-model-note { color: #7a4d00 !important; font-weight: 700; }
     .rc-step { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
     .rc-step-num { display: inline-block; min-width: 2rem; text-align: center; font-weight: 700; color: #fff; background: var(--accent, #0c7a8c); border-radius: 999px; padding: 0.1rem 0.45rem; margin-right: 0.4rem; }
     .rc-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 1rem; align-items: start; }
@@ -119,11 +129,14 @@ const html = `
         </div>
         <p class="rc-msg">Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
         <p class="rc-step"><span class="rc-step-num">02</span> Choose style</p>
-        <div class="rc-pick" id="rc-pick-category"><p class="rc-msg">Loading recipes…</p></div>
-        <div id="rc-pick-styles" hidden>
-          <p class="rc-msg" id="rc-step2-title">Pick a style</p>
-          <div class="rc-pick" id="rc-style-cards"></div>
-          <button class="rc-btn ghost" id="rc-pick-back" type="button">← Back to Interior / Exterior</button>
+        <div id="rc-model-panel">
+          <h3 style="margin: 0.5rem 0 0">Select Model</h3>
+          <p class="rc-msg">Pick the model to mimic — the batch runs every angle of the space in that one look.</p>
+          <div class="rc-segment" id="rc-model-toggle" role="group" aria-label="Interior or Exterior">
+            <button class="rc-seg-btn" id="rc-seg-interior" type="button" aria-pressed="false">Interior</button>
+            <button class="rc-seg-btn" id="rc-seg-exterior" type="button" aria-pressed="false">Exterior</button>
+          </div>
+          <div class="rc-model-grid" id="rc-model-grid"><p class="rc-msg">Loading models…</p></div>
         </div>
         <input type="hidden" id="rc-recipe" value="">
         <p class="rc-msg" id="rc-recipe-note"></p>
@@ -172,81 +185,106 @@ function client() {
 
   let recipes = [];
   let plannedStyles = [];
-  let pickedCategory = null;
-  // Step 02 photo: a real photo from the tests — the first live recipe in
-  // that category (kitchen for Interior, lush lawn for Exterior).
-  function categoryPhoto(category) {
-    const r = recipes.find(x => x.category === category && x.button_image);
-    return r ? r.button_image : null;
-  }
-  function renderCategoryStep() {
-    const box = $('rc-pick-category');
-    box.replaceChildren();
-    for (const category of ['interior', 'exterior']) {
-      const photo = categoryPhoto(category);
-      const label = category === 'interior' ? 'Interior' : 'Exterior';
-      const caption = category === 'interior' ? 'Staging inside the house' : 'Landscaping and twilight outside the house';
-      box.append(el('button', {
-        type: 'button',
-        class: 'rc-pick-btn' + (pickedCategory === category ? ' rc-selected' : ''),
-        'aria-pressed': pickedCategory === category ? 'true' : 'false',
-        onclick: () => pickCategory(category),
-      }, [
-        photo ? el('img', { src: photo, alt: label + ' — example photo' }) : null,
-        el('span', {}, [el('b', { text: label }), el('small', { text: caption })]),
-      ]));
-    }
-  }
-  function pickCategory(category) {
+  // Step 02 is an AutoHDR-style "Select Model" grid: a segmented
+  // Interior / Exterior toggle filters one grid of photo model cards.
+  // Display strings only — the variant pill and one-line tagline for each
+  // live recipe, keyed by id. They describe the locked recipe look; the
+  // prompt, KEEP / CHANGE ONLY / DO NOT lists and prices are untouched.
+  const MODEL_DISPLAY = {
+    'vl-lush-lawn-autumn': { variant: 'Autumn', tagline: 'Lush green lawn, five plantings, autumn trees' },
+    'vs-modern-farmhouse-kitchen': { variant: 'Farmhouse', tagline: 'Light wood table, grey sofa, cognac chairs' },
+    'vt-virtual-twilight': { variant: 'Dusk', tagline: 'Deep blue dusk, warm windows, porch lights' },
+    'mb-modern-beach-interior': { variant: 'Coastal', tagline: 'Linen sofa, rattan chairs, sea-blue cushions' },
+  };
+  // Exterior first: Lush Lawn is recipe 1 and the flagship look.
+  let pickedCategory = 'exterior';
+  function setCategory(category) {
     pickedCategory = category;
     $('rc-recipe').value = '';
     $('rc-recipe-note').textContent = '';
-    $('rc-pick-styles').hidden = false;
-    $('rc-step2-title').textContent = 'Pick a ' + category + ' style';
-    renderCategoryStep();
-    renderStyleCards();
+    clearRecipeNoteBlock();
+    renderModelGrid();
   }
-  function renderStyleCards() {
-    const box = $('rc-style-cards');
+  $('rc-seg-interior').addEventListener('click', () => setCategory('interior'));
+  $('rc-seg-exterior').addEventListener('click', () => setCategory('exterior'));
+  function clearRecipeNoteBlock() {
+    const old = $('rc-recipe-note').nextElementSibling;
+    if (old && old.tagName === 'DIV' && old.querySelector('.rc-qc')) old.remove();
+  }
+  // Twilight only runs on an approved Virtually-Landscaped anchor, so
+  // until the step 03 box is ticked its card is shown disabled with the
+  // reason — never hidden, never runnable.
+  function twilightBlocked(recipeId) {
+    return recipeId === 'vt-virtual-twilight' && !$('rc-landscaped').checked;
+  }
+  function renderModelGrid() {
+    const box = $('rc-model-grid');
     box.replaceChildren();
+    for (const [id, on] of [['rc-seg-interior', pickedCategory === 'interior'], ['rc-seg-exterior', pickedCategory === 'exterior']]) {
+      $(id).classList.toggle('rc-seg-active', on);
+      $(id).setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
     for (const r of recipes.filter(x => x.category === pickedCategory)) {
+      const d = MODEL_DISPLAY[r.id] || { variant: '', tagline: '' };
+      const selected = $('rc-recipe').value === r.id;
+      const bodyKids = [
+        el('b', { text: r.name }),
+        d.variant ? el('span', { class: 'rc-variant-pill', text: d.variant }) : null,
+        selected ? el('span', { class: 'rc-model-default', text: 'Default' }) : null,
+        el('small', { text: d.tagline }),
+      ];
+      if (twilightBlocked(r.id)) {
+        bodyKids.push(el('small', { class: 'rc-model-note', text: 'Needs a landscaped anchor first — tick the box in step 03.' }));
+        box.append(el('div', { class: 'rc-model-card rc-model-disabled', 'aria-disabled': 'true' }, [
+          r.button_image ? el('img', { src: r.button_image, alt: r.name }) : null,
+          el('span', { class: 'rc-model-body' }, bodyKids),
+        ]));
+        continue;
+      }
       box.append(el('button', {
         type: 'button',
-        class: 'rc-card' + ($('rc-recipe').value === r.id ? ' rc-selected' : ''),
-        'aria-pressed': $('rc-recipe').value === r.id ? 'true' : 'false',
+        class: 'rc-model-card' + (selected ? ' rc-selected' : ''),
+        'aria-pressed': selected ? 'true' : 'false',
         onclick: () => pickRecipe(r.id),
       }, [
         r.button_image ? el('img', { src: r.button_image, alt: r.name }) : null,
-        el('span', {}, [el('b', { text: r.name }), el('small', { text: r.price_anchor })]),
+        selected ? el('span', { class: 'rc-model-check', text: '✓' }) : null,
+        el('span', { class: 'rc-model-body' }, bodyKids),
       ]));
     }
     // Coming soon: a name only — no photo, no recipe, no prompt behind it.
     // A plain div, never a button, so it cannot be selected or run.
     for (const s of plannedStyles.filter(s => s.category === pickedCategory)) {
-      box.append(el('div', { class: 'rc-card rc-soon', 'aria-disabled': 'true' }, [
-        el('span', {}, [el('b', { text: s.name }), el('small', { text: 'Coming soon — not built yet' })]),
+      box.append(el('div', { class: 'rc-model-card rc-soon', 'aria-disabled': 'true' }, [
+        el('span', { class: 'rc-model-body' }, [
+          el('b', { text: s.name }),
+          el('small', { text: 'Coming soon — not built yet' }),
+        ]),
       ]));
     }
   }
   function pickRecipe(id) {
     $('rc-recipe').value = id;
-    renderStyleCards();
+    renderModelGrid();
     showRecipeNote();
   }
-  $('rc-pick-back').addEventListener('click', () => {
-    pickedCategory = null;
-    $('rc-recipe').value = '';
-    $('rc-recipe-note').textContent = '';
-    $('rc-pick-styles').hidden = true;
-    renderCategoryStep();
+  // Unchecking the landscaped box blocks twilight again: clear a twilight
+  // pick made while it was ticked, and re-render the grid either way.
+  $('rc-landscaped').addEventListener('change', () => {
+    if ($('rc-recipe').value === 'vt-virtual-twilight' && twilightBlocked('vt-virtual-twilight')) {
+      $('rc-recipe').value = '';
+      $('rc-recipe-note').textContent = '';
+      clearRecipeNoteBlock();
+    }
+    renderModelGrid();
   });
   async function loadRecipes() {
     try {
       const data = await api('recipes');
       recipes = data.recipes || [];
       plannedStyles = data.plannedStyles || [];
-      renderCategoryStep();
-    } catch (e) { $('rc-pick-category').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Could not load recipes: ' + e.message })); err(e); }
+      renderModelGrid();
+    } catch (e) { $('rc-model-grid').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Could not load models: ' + e.message })); err(e); }
   }
 
   // --- Recipe prompts: see and edit the exact prompt each recipe runs ---
@@ -351,9 +389,8 @@ function client() {
     const ul = el('ul', { class: 'rc-qc' });
     r.qc_checklist.forEach(q => ul.append(el('li', { text: q })));
     box.append(ul);
-    const old = $('rc-recipe-note').nextElementSibling;
+    clearRecipeNoteBlock();
     $('rc-recipe-note').after(box);
-    if (old && old.tagName === 'DIV' && old.querySelector('.rc-qc')) old.remove();
   }
   // (Recipe selection calls showRecipeNote() directly — the picker sets
   // the hidden #rc-recipe value, it is not a user-changed select.)
