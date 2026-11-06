@@ -12,6 +12,8 @@
 const { requireStaff } = require('./_auth');
 const businessLinks = require('../config/business-links.json');
 const shoots = require('./_shoots_ui');
+const recipeStudio = require('./_recipes_ui');
+const deliveryCrm = require('./_delivery_ui');
 
 const SECTIONS = [
   {
@@ -103,6 +105,8 @@ function page() {
     .dash-todo { display: flex; flex-wrap: wrap; gap: 0.45rem; list-style: none; padding: 0; }
     .dash-todo li { border: 1px dashed var(--card-border, #ccc); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.88rem; color: var(--muted, #666); }
 ${shoots.css}
+${recipeStudio.css}
+${deliveryCrm.css}
     .dash-foot { margin-top: 3rem; font-size: 0.85rem; color: var(--muted, #666); }
   </style>
 </head>
@@ -113,6 +117,8 @@ ${shoots.css}
       <h1>Team Dashboard</h1><a href="/staff/logout">Sign out</a>
     </div>
 ${shoots.html}
+${recipeStudio.html}
+${deliveryCrm.html}
     ${sections}
     <section class="dash-section">
       <h2>How to update the website</h2>
@@ -124,7 +130,9 @@ ${shoots.html}
     </section>
     <p class="dash-foot">Links open in a new tab. Each service still asks for its own login. Team sessions expire after four hours.</p>
   </main>
-  <script>${shoots.script}</script>
+  <script>${shoots.script}
+${recipeStudio.script}
+${deliveryCrm.script}</script>
 </body>
 </html>`;
 }

@@ -46,6 +46,18 @@
       "dest": "/api/shoots"
     },
     {
+      "src": "/staff/recipes",
+      "dest": "/api/staff-recipes"
+    },
+    {
+      "src": "/staff/delivery",
+      "dest": "/api/staff-delivery"
+    },
+    {
+      "src": "/gallery/([a-f0-9]+)",
+      "dest": "/api/gallery?token=$1"
+    },
+    {
       "src": "/staff/inquiries/?",
       "dest": "/api/inquiries"
     },
@@ -62,6 +74,15 @@
   "functions": {
     "api/shoots.js": {
       "maxDuration": 60
+    },
+    "api/staff-recipes.js": {
+      "maxDuration": 60
+    },
+    "api/staff-delivery.js": {
+      "maxDuration": 30
+    },
+    "api/gallery.js": {
+      "maxDuration": 15
     },
     "api/prices.js": {
       "maxDuration": 20

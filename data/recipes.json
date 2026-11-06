@@ -1,0 +1,258 @@
+{
+  "api_example": {
+    "curl": "curl https://api.openai.com/v1/images/edits -H \"Authorization: Bearer $OPENAI_API_KEY\" -F model=\"gpt-image-1.5\" -F \"image[]=@anchor.png\" -F \"image[]=@angle-2.png\" -F \"image[]=@angle-3.png\" -F prompt=\"$(cat prompt.txt)\" -F quality=\"high\" -F size=\"1536x1024\"",
+    "note": "ChatGPT UI is $0 extra if you already have ChatGPT. The API is pay-per-image \u2014 test on one batch first. Endpoint and model names change; verify at run time."
+  },
+  "batch_inputs": {
+    "api": "POST /v1/images/edits \u2014 image[0] = anchor, image[1..n] = target angles (up to 16 images total). Same prompt for the whole batch. Model names change often \u2014 gpt-image-1 was shut down 2026-10-23; use the current gpt-image-1.5 / gpt-image-2.5 model at run time. Quality: high. Input fidelity: high where the model offers it.",
+    "chatgpt_ui": "Upload the anchor image FIRST, then upload the 2-4 target angles in the same message, then paste the recipe prompt. Do not start a new chat per angle.",
+    "max_angles_per_batch": 4,
+    "output_size": "Match the input angle's aspect ratio. Do not let the model crop to square unless the input was square."
+  },
+  "batch_workflow": [
+    "1. Shoot, then Auto HDR. Do not start AI edits on un-HDR'd originals.",
+    "2. Triage: pick the spaces that need extra \u2014 usually 1 exterior/yard set and 1-2 interior rooms. Pick the anchor angle for each space first.",
+    "3. Pick the recipe. Do not write a fresh prompt. Copy the recipe prompt exactly.",
+    "4. Batch: upload anchor FIRST, then 2-3 target angles of the SAME space, in the SAME message/call, with the recipe prompt pasted once.",
+    "5. Review the whole set together, side by side. Check the QC list in the recipe. If one angle is off, fix ONLY that angle, with the anchor + the approved angles attached, and the full KEEP list repeated.",
+    "6. Approve, then save the approved set as the new anchor. Name files with -Virtually-Staged / -Virtually-Landscaped, keep originals untouched.",
+    "7. Push to gallery: MLS-ready export (2048px long edge, sRGB, under 2 MB), add Matterport / Kuula / video links as iframe fields, deliver with text + email, follow up, ask for a review. See DELIVERY-CHECKLIST in RECIPE-PACK.md."
+  ],
+  "blank_template": {
+    "anchor": "Best finished angle of that space \u2014 describe it",
+    "change_only": [
+      "List only what may change"
+    ],
+    "disclosure": "Bright MLS: disclose in BOTH Private and Public Remarks as 'virtually staged or digitally modified'. Keep the real original, same angle.",
+    "do_not": [
+      "List the traps for this style"
+    ],
+    "id": "new-style-slug",
+    "keep": [
+      "List everything that must not change, exactly"
+    ],
+    "materials_locked": [
+      "Exact items, exact colours \u2014 closed list, no synonyms"
+    ],
+    "name": "New style name",
+    "output_naming": "<Address>-NN-<Room>-Virtually-Staged.jpg or -Virtually-Landscaped.jpg",
+    "prompt_chatgpt": "Image 1 is the anchor \u2014 [finish]. KEEP EXACTLY THE SAME: [paste keep list]. CHANGE ONLY: [paste change-only + materials]. DO NOT: [paste do-not list]. Photorealistic real-estate photo, same camera look as the anchor.",
+    "target_angles": [],
+    "use_when": ""
+  },
+  "created": "2026-11-06",
+  "golden_rules": [
+    "Never edit one angle alone. Always send the anchor + all angles of that space together, in one batch, in one chat/session.",
+    "Anchor first. Image 1 is always the best finished angle of that space. Every other angle must match the anchor, not invent its own look.",
+    "KEEP list repeated every time. Say what must not change, in every prompt, every round. Drift builds up if you only say it once.",
+    "CHANGE ONLY list. Name exactly what may change. Everything else is frozen.",
+    "Materials are a closed list. Same lawn, same plants, same sofa, same table \u2014 exact items, exact colours. No synonyms, no 'similar'.",
+    "One change per round. If a result is close but one thing is wrong, fix only that one thing, and repeat the full KEEP list.",
+    "Never overwrite an original. Auto HDR originals stay untouched. Edited files get a new name with -Virtually-Staged or -Virtually-Landscaped.",
+    "Save the approved set as the new anchor. The next angle you add later must match the approved set, not the first draft."
+  ],
+  "owner": "Listing Pixl \u2014 William Macomber",
+  "pack": "Listing Pixl Recipe Pack",
+  "recipes": [
+    {
+      "anchor": "Best ground front exterior after Auto HDR \u2014 for 114 E Anna St, 114-E-Anna-St-01-Front-Exterior.jpg. The aerial is a target angle, not the anchor.",
+      "change_only": [
+        "The bare dirt yard \u2192 lush lawn \u2014 the lawn is the hero, at least 80% of the yard",
+        "Add ONE thin dark-mulch bed along the house foundation only, narrow, not wide",
+        "Add a maximum of 5 plantings total, inside that bed only"
+      ],
+      "disclosure": {
+        "bright_mls_remarks": "Some photos are virtually landscaped / digitally modified. Landscaping shown is a digital rendering and is not the current yard.",
+        "keep_original": "Always deliver the real photo alongside the landscaped version, same angle, so the agent can pair them.",
+        "rules": "Bright MLS: furniture/d\u00e9cor may be added; adding/removing anything outside the owner's control is banned. A lawn/landscaping that does not exist is in that risky zone \u2014 disclose in BOTH Private and Public Remarks, keep the real unedited photo in the set, do NOT use a landscaped render as the lead photo if the real yard is dirt, and do NOT put text or a watermark on the photo itself."
+      },
+      "do_not": [
+        "Do not change the house, roof, porch, deck, door, windows, or driveway",
+        "Do not add a pool, fence, patio, pergola, fire pit, shed, or walkway that is not there",
+        "Do not change the season \u2014 keep autumn trees, do not make it summer green or winter bare",
+        "Do not move the house, change its size, or straighten / widen the driveway",
+        "Do not add a foreground mulch bed, do not fill the foreground with plants or rocks",
+        "Do not add more than 5 plantings total. If in doubt, leave it out \u2014 lawn first, planting second",
+        "Do not add people, cars, animals, or text"
+      ],
+      "id": "vl-lush-lawn-autumn",
+      "keep": [
+        "White horizontal-siding farmhouse, exact shape, roofline, windows, and front porch \u2014 do not move, resize, or restyle the house",
+        "Dark charcoal-grey shingle roof",
+        "Natural wood front porch/deck, wood steps and wood railing",
+        "Black front door",
+        "Light grey gravel driveway, same shape and position",
+        "Existing autumn woodland trees around the property \u2014 same trees, same positions, green / yellow / orange / red autumn colour. Do not remove or add trees",
+        "Bright blue sky with wispy white clouds, late-morning sun, same lighting on every angle"
+      ],
+      "materials_locked": [
+        "Lawn: emerald green, lush, full coverage, freshly mowed with subtle mow stripes. Clean open lawn, no dirt, no bare patches \u2014 this is most of the image",
+        "Mulch: ONE thin dark-brown mulch bed along the house foundation only. Narrow. No bed along the driveway, no bed in the foreground",
+        "Plantings, maximum 5 total, inside the foundation bed only: 2 white hydrangea clusters by the porch, 1 small red Japanese maple, 2 ornamental grasses. That is all \u2014 no more plants anywhere else",
+        "No river rocks, no extra shrubs, no plants in the middle of the lawn, no plants along the driveway"
+      ],
+      "name": "Virtual Landscape \u2014 Lush Lawn, Autumn Farmhouse",
+      "output_naming": "114-E-Anna-St-NN-<View>-Virtually-Landscaped.jpg \u2014 e.g. 114-E-Anna-St-01-Front-Exterior-Virtually-Landscaped.jpg. Keep the real Auto HDR original with the same NN and no suffix.",
+      "price_anchor": "Virtual landscape is a $35/photo add-on in Listing Pixl pricing (same as twilight / staging per photo). Charge per edited angle, not per batch.",
+      "prompt_chatgpt": "Image 1 is the anchor \u2014 the finished look every other angle must match. Images 2-4 are other angles of the SAME house and yard. Apply the exact same SIMPLE landscaping from Image 1 to Images 2-4. Less is more \u2014 the lawn is the hero.\n\nKEEP EXACTLY THE SAME ON EVERY IMAGE: white horizontal-siding farmhouse, dark charcoal-grey shingle roof, natural wood front porch/deck with wood steps and railing, black front door, light grey gravel driveway in the same shape and position, existing autumn woodland trees in the same positions with green/yellow/orange/red autumn colour, bright blue sky with wispy white clouds, late-morning sun.\n\nCHANGE ONLY: replace the bare dirt yard with a lush emerald-green lawn, full coverage, freshly mowed with subtle mow stripes, no dirt or bare patches. The clean open lawn should be at least 80% of the yard. Add ONE thin dark-brown mulch bed along the house foundation only, narrow, not wide. Inside that bed only, add a maximum of 5 plantings total: 2 white hydrangea clusters by the porch, 1 small red Japanese maple, and 2 ornamental grasses. That is all.\n\nDO NOT add a bed along the driveway, do not add a bed in the foreground, do not add river rocks, do not add extra shrubs, do not put plants in the middle of the lawn. Do not change the house, roof, porch, deck, door, windows, or driveway. Do not add a pool, fence, patio, pergola, fire pit, shed, or walkway. Do not change the season. Do not add people, cars, animals, or text. Photorealistic real-estate photo, same camera look as the anchor, no cartoon look, no oversaturated colour. Simple, clean, calm \u2014 like Jason's renders, not a garden centre.",
+      "qc_checklist": [
+        "House shape, roof, porch, door, and driveway identical to the real photo?",
+        "Is the lawn at least 80% of the yard \u2014 clean and open, not covered in beds?",
+        "Count the plantings: 5 or fewer total? Only hydrangeas, 1 red maple, 2 grasses?",
+        "Only ONE thin foundation bed \u2014 no foreground bed, no driveway bed, no rocks everywhere?",
+        "Trees still autumn, sky still blue, lighting still late-morning?",
+        "Does it look calm and simple like Jason's, not busy?"
+      ],
+      "settings": {
+        "batch": "Anchor + up to 3 target angles in one call/message",
+        "input_fidelity": "high where offered",
+        "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time \u2014 check current name, gpt-image-1 is retired)",
+        "quality": "high"
+      },
+      "source": "Reverse-engineered 2026-11-06 from Jason Ruffenach's two ChatGPT renders of 114 E Anna St: 'Landscaped White Farmhouse with Lush Lawn.png' (ground, 1536x1024, 3.7 MB) and 'Autumn Woodland Home Aerial View.png' (aerial, 1673x940, 3.7 MB). Same house, same lawn, same plantings, ground + aerial \u2014 that match is the proof the batch method works.",
+      "target_angles": [
+        "Ground front exterior",
+        "Ground angle / porch angle",
+        "Aerial front",
+        "Aerial top-down / neighbourhood"
+      ],
+      "use_when": "Exterior / yard / aerial where the real yard is dirt, patchy, or unfinished. The Jason look."
+    },
+    {
+      "anchor": "114-E-Anna-St-42-Dining-Living-Virtually-Staged.jpg \u2014 the finished open-plan look. For a kitchen-only job, stage one hero kitchen angle first, approve it, then use THAT as the anchor for the other kitchen angles.",
+      "change_only": [
+        "Add furniture and d\u00e9cor from the locked list below, in the same positions on every angle",
+        "Add small counter d\u00e9cor only: cutting board, vase, fruit bowl"
+      ],
+      "disclosure": {
+        "bright_mls_remarks": "Some photos are virtually staged. Furniture and d\u00e9cor shown are digital and are not included with the property.",
+        "keep_original": "Always deliver the real empty photo alongside the staged version, same angle.",
+        "rules": "Bright MLS: furniture and d\u00e9cor may be added; the image must be disclosed in BOTH Private and Public Remarks as 'virtually staged or digitally modified'. No text or watermark on the photo itself. Keep the real empty-room photo in the set, same angle."
+      },
+      "do_not": [
+        "Do not add a kitchen island \u2014 114 E Anna St has no island. Do not add bar stools",
+        "Do not change cabinets, counters, appliances, faucet, flooring, or light fixtures",
+        "Do not change the room size, move walls, windows, or doors, or add a fireplace / built-ins",
+        "Do not use a different sofa, table, or chairs on different angles \u2014 same set, same colours, every angle",
+        "Do not add people, pets, text, or logos",
+        "Do not stage a room that is already furnished \u2014 this recipe is for empty rooms only",
+        "Do not rotate the dining table 90 degrees \u2014 its long axis must point toward the sliding door on every angle",
+        "Do not drop the rug / living set on living-end angles \u2014 if the camera is in the living area, the rug is in the foreground"
+      ],
+      "id": "vs-modern-farmhouse-kitchen",
+      "keep": [
+        "White shaker cabinets, exact layout, black bar pulls \u2014 do not move or recolour cabinets",
+        "Black gooseneck kitchen faucet, white quartz counters",
+        "Stainless steel appliances where present (fridge, range, microwave, dishwasher) \u2014 do not change appliance positions",
+        "Light oak plank flooring",
+        "Black 5-light chandelier with white shades over the dining area, black ceiling fan where present",
+        "Sliding glass door and window views \u2014 keep the autumn trees outside, do not change the view",
+        "Walls white, ceilings white, room shape and window/door positions unchanged"
+      ],
+      "materials_locked": [
+        "Dining table: light natural-wood rectangular table, centred in the dining area",
+        "Dining chairs: 4 light grey upholstered chairs with light wood legs, 2 per side",
+        "Table dressing, same every angle: beige woven runner down the centre, wooden bowl with decorative spheres in the middle",
+        "Living sofa: light grey fabric 3-seat sofa, right-hand wall",
+        "Armchairs: 2 cognac / tan leather armchairs facing the sofa",
+        "Coffee table: round brushed-silver / stainless coffee table between sofa and chairs, with 2 stacked books and a small white vase with greenery on top",
+        "Rug: textured off-white / light grey rug under the coffee table and front legs of sofa and chairs",
+        "Plant: tall fiddle-leaf fig in a woven basket in the corner by the window",
+        "Floor lamp: slim white floor lamp beside the sofa",
+        "Kitchen counter d\u00e9cor, same every angle: light wood cutting board leaning at the backsplash, white ceramic vase with greenery, small bowl of lemons on the island-side counter \u2014 no clutter, no dishes, no food mess"
+      ],
+      "name": "Virtual Staging \u2014 Modern Farmhouse Kitchen / Dining-Living",
+      "output_naming": "114-E-Anna-St-NN-<Room>-Virtually-Staged.jpg. Keep the real Auto HDR original with the same NN and no suffix.",
+      "price_anchor": "Virtual staging $35/photo in Listing Pixl pricing. Charge per edited angle.",
+      "prompt_chatgpt": "Image 1 is the anchor \u2014 the finished staged look every other angle must match. Images 2-4 are other angles of the SAME kitchen and open-plan dining-living room. Stage them with the EXACT same furniture and d\u00e9cor as Image 1.\n\nKEEP EXACTLY THE SAME ON EVERY IMAGE: white shaker cabinets in the same layout with black bar pulls, black gooseneck faucet, white quartz counters, stainless steel appliances in the same positions, light oak plank flooring, black 5-light chandelier with white shades, sliding glass door and window views with autumn trees outside, white walls, room shape and window/door positions unchanged.\n\nCHANGE ONLY \u2014 add this exact furniture, same items, same colours, same positions on every angle: light natural-wood rectangular dining table with 4 light grey upholstered chairs with light wood legs, beige woven runner and a wooden bowl with decorative spheres in the centre; light grey fabric 3-seat sofa; 2 cognac/tan leather armchairs; round brushed-silver coffee table with 2 stacked books and a small white vase with greenery; textured off-white/light grey rug under the coffee table; tall fiddle-leaf fig in a woven basket in the corner; slim white floor lamp beside the sofa. On the kitchen counter only: light wood cutting board, white ceramic vase with greenery, small bowl of lemons.\n\nDO NOT add a kitchen island or bar stools \u2014 there is no island. Do not change cabinets, counters, appliances, faucet, flooring, or light fixtures. Do not move walls, windows, or doors. Do not use different furniture on different angles. Do not add people, pets, text, or logos. Photorealistic real-estate photo, bright daylight, same camera look as the anchor.",
+      "qc_checklist": [
+        "Same table, same 4 grey chairs, same sofa, same 2 cognac chairs on every angle?",
+        "No island added? No bar stools?",
+        "Cabinets, faucet, floor, and chandelier unchanged?",
+        "Counter d\u00e9cor identical \u2014 same bowl, same vase, same cutting board?",
+        "Room still reads as the same house, not a different kitchen?",
+        "Table long axis points toward the sliding door on every angle \u2014 not parallel to the back kitchen wall?",
+        "On living-end angles, is the rug in the foreground at the bottom of the frame?",
+        "Sofa, armchairs, coffee table and rug in the same place in the room as the anchor?",
+        "Living group square to the walls \u2014 rug edges parallel to walls, sofa straight, armchairs facing sofa, nothing diagonal or off-centre?"
+      ],
+      "settings": {
+        "batch": "Anchor + up to 3 target angles in one call/message",
+        "input_fidelity": "high where offered",
+        "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
+        "quality": "high"
+      },
+      "source": "Built from the real 114 E Anna St kitchen (114-E-Anna-St-17-Kitchen.jpg \u2014 empty, white shaker cabinets, black hardware, black faucet, light oak floor, black 5-light chandelier) and the one staged angle that actually worked, 114-E-Anna-St-42-Dining-Living-Virtually-Staged.jpg. Note the failure it fixes: 114-E-Anna-St-41-Kitchen-Virtually-Staged.jpg is labelled 'Virtually Staged' but is completely EMPTY \u2014 no furniture was added. This recipe names every piece so the model cannot return an empty room.",
+      "target_angles": [
+        "Kitchen wide (sink / range wall)",
+        "Kitchen from dining side",
+        "Dining-living wide",
+        "Kitchen sink close"
+      ],
+      "use_when": "Empty new-build or empty resale kitchen / open-plan kitchen-dining-living. The 114 E Anna St kitchen is the worked example.",
+      "furniture_placement_locked": [
+        "Dining table orientation \u2014 LOCKED, same on every angle: long axis runs from the kitchen toward the sliding glass door / living area, perpendicular to the kitchen counter run. Short end faces the kitchen, long sides face the fridge wall and the sliding door. Never rotate the table 90 degrees so it runs parallel to the back kitchen wall.",
+        "Living set placement \u2014 LOCKED: grey sofa against the east wall, 2 cognac armchairs facing the sofa, round silver coffee table on the textured rug between them, fiddle-leaf fig in the corner by the east windows, floor lamp beside the sofa. The set stays in the same place in the room on every angle \u2014 only the camera moves.",
+        "Rug visibility: on angles shot from the living end (camera in the living area looking toward the kitchen), the textured rug is in the foreground at the bottom of the frame, with the edge of the grey sofa and the round coffee table visible at the foreground right. Do not leave the foreground as empty floor \u2014 the rug is there.",
+        "Alignment \u2014 LOCKED, square to the room (added 2026-11-06 after v2 #19 came out turned sideways): the rug, coffee table, sofa and armchairs are all square to the walls, never diagonal. Rug edges run parallel to the walls, long axis parallel to the sofa / east wall, centred between sofa and armchairs with the coffee table centred on the rug. Sofa sits straight against the east wall, long axis parallel to the wall. Armchairs sit straight, side by side, facing the sofa. Do not angle, rotate or turn the living group diagonally in the foreground, and do not push it off-centre to one side."
+      ]
+    },
+    {
+      "anchor": "The approved Virtually-Landscaped ground front exterior from recipe vl-lush-lawn-autumn. Twilight is a second pass on an approved landscaped image, not a fresh edit of the dirt-yard original.",
+      "change_only": [
+        "Sky: bright blue day sky \u2192 deep blue dusk sky with a warm orange band at the horizon",
+        "Windows: warm golden light glowing from every window",
+        "Porch light on, warm",
+        "Landscape / path lights on, warm, low glow in the mulch beds",
+        "Overall light: dusk, long soft shadows, house lit warm against a blue evening"
+      ],
+      "disclosure": {
+        "bright_mls_remarks": "Some photos are virtually staged / digitally modified, including virtual twilight and virtual landscaping.",
+        "keep_original": "Always deliver the real daytime photo alongside the twilight version, same angle.",
+        "rules": "Same disclosure as the landscape recipe \u2014 BOTH Private and Public Remarks, keep the real daytime original in the set, no text on the photo."
+      },
+      "do_not": [
+        "Do not change the house, lawn, plantings, driveway, or trees",
+        "Do not make it night \u2014 it is dusk/twilight, the house and yard must still be clearly visible",
+        "Do not add string lights, a fire pit, or a pool",
+        "Do not change the season"
+      ],
+      "id": "vt-virtual-twilight",
+      "keep": [
+        "Everything from the approved landscaped image: house, roof, porch, door, driveway, lawn, mulch beds, hydrangeas, red Japanese maple, grasses, river rocks, trees in the same positions"
+      ],
+      "materials_locked": [
+        "Sky: deep blue dusk, warm orange horizon glow, a few early stars only \u2014 no purple cartoon sky",
+        "Window light: warm golden yellow, same on every window, no white or blue light",
+        "Porch light: one warm wall light by the front door, on",
+        "Lawn and plantings: same emerald lawn and same beds as the landscaped anchor, just in dusk light \u2014 do not re-invent the landscaping"
+      ],
+      "name": "Virtual Twilight \u2014 Exterior Dusk",
+      "output_naming": "114-E-Anna-St-NN-<View>-Virtually-Landscaped-Twilight.jpg",
+      "price_anchor": "Twilight $35/photo in Listing Pixl pricing. Charge per edited angle, on top of the landscape charge if both were done.",
+      "prompt_chatgpt": "Image 1 is the anchor \u2014 the approved landscaped daytime exterior. Apply a virtual twilight / dusk look to the SAME image, keeping everything else identical.\n\nKEEP EXACTLY THE SAME: white farmhouse, dark charcoal roof, wood porch/deck, black front door, gravel driveway, emerald lawn, dark mulch beds, white hydrangeas, red Japanese maple, ornamental grasses, river rocks, and autumn trees in the same positions.\n\nCHANGE ONLY: sky to deep blue dusk with a warm orange band at the horizon; warm golden light glowing from every window; porch light on warm by the front door; low warm landscape lights glowing in the mulch beds. Dusk light, long soft shadows, house lit warm against a blue evening.\n\nDO NOT make it full night \u2014 house and yard must still be clearly visible. Do not change the house, lawn, plantings, driveway, or trees. Do not add string lights, a fire pit, or a pool. Photorealistic real-estate twilight photo, no cartoon look.",
+      "qc_checklist": [
+        "Lawn and plantings still the same as the daytime landscaped version?",
+        "Windows all warm gold, none white/blue or dark?",
+        "Still clearly dusk, not night?",
+        "House still readable \u2014 roof, porch, door all visible?"
+      ],
+      "settings": {
+        "batch": "One angle at a time for twilight \u2014 approve the ground hero first, then use it as the anchor for the aerial",
+        "input_fidelity": "high where offered",
+        "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
+        "quality": "high"
+      },
+      "source": "Companion to vl-lush-lawn-autumn. Same 114 E Anna St house, same anchor discipline.",
+      "target_angles": [
+        "Ground front exterior (landscaped version)",
+        "Aerial front (landscaped version) \u2014 only if the ground twilight is approved first"
+      ],
+      "use_when": "Hero exterior that needs dusk drama, run AFTER the landscape recipe so the lawn matches. Do not run twilight on a dirt yard \u2014 landscape first, twilight second."
+    }
+  ],
+  "version": "1.1",
+  "why_batch_not_one_off": "One-off edits re-invent the room/yard every time. A recipe locks one anchor image, one materials list, one KEEP list and one CHANGE-ONLY list, and all angles of the same space are sent in ONE batch with the same prompt. That is what made Jason's two renders match.",
+  "worked_example_property": "114 E Anna St, Whitesboro, NJ 08210 \u2014 white farmhouse, dark charcoal roof, wood front porch/deck, gravel drive, dirt yard in the real photos. That dirt yard is why this property is the perfect test case.",
+  "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere."
+}
