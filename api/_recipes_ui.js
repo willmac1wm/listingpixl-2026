@@ -14,148 +14,269 @@
 // Twilight is gated: it only runs on an approved Virtually-Landscaped
 // anchor — landscape first, twilight second.
 const css = `
-    .rc-box { border: 1px solid var(--card-border, #e5e0d5); border-radius: 12px; background: var(--card, #fff); padding: 1rem 1.1rem; margin: 0.75rem 0; }
+    /* Every rule is scoped to .rc-studio / .rc-*, so the rest of /staff is untouched.
+       Each numbered step sets --rc-tone (strong colour), --rc-tint (panel) and
+       --rc-band (header), so the eye can tell the four steps apart at a glance. */
+    .rc-studio { --rc-ink: #14262b; --rc-muted: #4f5b5e; --rc-line: #cfd6d7; --rc-teal: var(--accent, #0c7a8c); --rc-pink: var(--accent-pink, #d71266); --rc-blue: #007fff; --rc-blue-deep: #0060cc; --rc-space: 1rem; color: var(--rc-ink); }
+    .rc-studio [hidden] { display: none !important; }
+    .rc-studio h3, .rc-studio h4 { text-align: left; }
+
+    .rc-hero { background: var(--rc-ink); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem; }
+    .rc-studio .rc-hero h2 { color: #fff; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.35rem; }
+    .rc-hero-sub { margin: 0; font-size: 1rem; color: #d4e4e7; }
+    .rc-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: #e9eeef; border: 1px solid var(--rc-line); border-top: 0; border-radius: 0 0 16px 16px; padding: 0.75rem 1.5rem; margin-bottom: var(--rc-space); }
+    .rc-key-status { display: flex; align-items: center; gap: 0.5rem; margin: 0; font-size: 0.9rem; font-weight: 600; flex: 1 1 280px; }
+    .rc-key-status::before { content: ""; flex: none; width: 0.65rem; height: 0.65rem; border-radius: 50%; background: var(--rc-teal); }
+    .rc-key-status.rc-key-off { color: var(--rc-pink); }
+    .rc-key-status.rc-key-off::before { background: var(--rc-pink); }
+    #rc-settings-door:has(#rc-settings-open[hidden]) { flex: 1 1 100%; }
+    #rc-settings-warning, #rc-settings-body { margin-top: 0.25rem; }
+
+    .rc-steps { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--rc-space); }
+    .rc-panel { border: 1px solid var(--rc-edge); border-radius: 16px; background: var(--rc-tint); overflow: hidden; scroll-margin-top: 1rem; }
+    .rc-panel-upload { --rc-tone: var(--rc-teal); --rc-tint: #f0f9fa; --rc-band: #d5eef1; --rc-edge: #9fd3da; }
+    .rc-panel-model { --rc-tone: var(--rc-blue-deep); --rc-tint: #f0f6ff; --rc-band: #d6e7ff; --rc-edge: #a3caff; }
+    .rc-panel-run { --rc-tone: var(--rc-pink); --rc-tint: #fff2f7; --rc-band: #fcd9e7; --rc-edge: #f4a9c8; }
+    .rc-panel-review { --rc-tone: var(--rc-ink); --rc-tint: #f5f5f3; --rc-band: #e2e3df; --rc-edge: #bfc3bd; }
+    .rc-panel-head { display: flex; align-items: center; gap: 0.85rem; background: var(--rc-band); padding: 0.9rem 1.5rem; border-bottom: 1px solid var(--rc-edge); }
+    .rc-panel-body { padding: 1.25rem 1.5rem 1.5rem; }
+    .rc-studio .rc-step { display: flex; align-items: center; gap: 0.75rem; margin: 0; font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+    .rc-step-num { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--rc-tone); color: #fff; font-size: 1rem; font-weight: 800; }
+    .rc-step-sub { margin: 0.1rem 0 0 3.25rem; font-size: 0.95rem; font-weight: 400; color: var(--rc-muted); }
+    .rc-panel-title { min-width: 0; }
+
+    .rc-studio input:not([type]), .rc-studio input[type="password"], .rc-studio textarea { font: inherit; width: 100%; min-height: 44px; padding: 0.55rem 0.75rem; border: 1px solid #8a9598; border-radius: 10px; background: #fff; color: var(--rc-ink); }
+    .rc-field { display: block; font-size: 0.9rem; font-weight: 700; }
+    .rc-field input { display: block; margin-top: 0.3rem; font-weight: 400; }
+    .rc-fields { display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: var(--rc-space); }
     .rc-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-    .rc-box select, .rc-box input, .rc-box textarea { font: inherit; padding: 0.45rem 0.6rem; border: 1px solid #cfc8b8; border-radius: 8px; background: #fff; color: #1d1d1d; max-width: 100%; }
-    .rc-box select { flex: 1 1 320px; }
-    .rc-box label { font-size: 0.9rem; }
-    .rc-btn { font: inherit; border: 0; border-radius: 999px; padding: 0.5rem 1.1rem; cursor: pointer; background: #1d1d1d; color: #fff; }
-    .rc-btn.pink { background: var(--accent-pink, #d63384); }
-    .rc-btn.ghost { background: transparent; color: #1d1d1d; border: 1px solid #cfc8b8; }
-    .rc-btn:disabled { opacity: 0.5; cursor: wait; }
-    .rc-msg { font-size: 0.9rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
-    .rc-err { color: #b00020; }
-    .rc-warn { background: #fff7e0; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; margin: 0.5rem 0; }
-    .rc-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.5rem 0; }
+    .rc-box { border: 1px solid var(--rc-line); border-radius: 12px; background: #fff; padding: 1rem 1.1rem; margin: 0.75rem 0; }
+    .rc-box h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+
+    .rc-btn { font: inherit; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 1px solid transparent; border-radius: 999px; padding: 0.5rem 1.25rem; cursor: pointer; background: var(--rc-ink); color: #fff; }
+    .rc-btn.pink { background: var(--rc-pink); }
+    .rc-btn.pink:hover:not(:disabled) { background: var(--accent-pink-dark, #c2145f); }
+    .rc-btn.ghost { background: #fff; color: var(--rc-ink); border-color: #8a9598; }
+    .rc-btn.ghost:hover:not(:disabled) { border-color: var(--rc-ink); }
+    .rc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .rc-btn:focus-visible, .rc-seg-btn:focus-visible, .rc-model-card:focus-visible { outline: 3px solid var(--rc-blue); outline-offset: 2px; }
+
+    .rc-msg { font-size: 0.95rem; color: var(--rc-muted); margin: 0.5rem 0 0; }
+    .rc-msg:empty { display: none; }
+    .rc-err { color: #b00020; font-weight: 600; }
+    .rc-warn { background: #fff2f7; border: 1px solid #f4a9c8; border-radius: 10px; padding: 0.65rem 0.85rem; font-size: 0.95rem; margin: 0 0 0.6rem; }
+
+    .rc-slots { display: grid; grid-template-columns: 1.5fr repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+    .rc-slot { position: relative; min-height: 168px; }
+    .rc-slot-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; }
+    .rc-slot-face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; padding: 0.75rem; text-align: center; background: #fff; border: 2px dashed #6fb9c3; border-radius: 12px; overflow: hidden; }
+    .rc-slot:hover .rc-slot-face, .rc-slot-input:focus-visible + .rc-slot-face { border-color: var(--rc-teal); background: #e4f4f6; }
+    .rc-slot-input:focus-visible + .rc-slot-face { outline: 3px solid var(--rc-blue); outline-offset: 2px; }
+    .rc-slot-face b { font-size: 1rem; }
+    .rc-slot-face small { font-size: 0.85rem; color: var(--rc-muted); }
+    .rc-slot-anchor .rc-slot-face { background: #fff; border-style: solid; border-color: var(--rc-teal); }
+    .rc-slot-anchor .rc-slot-face b { font-size: 1.15rem; color: var(--rc-teal); }
+    .rc-slot-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .rc-slot-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.3rem 0.5rem; background: rgba(20, 38, 43, 0.85); color: #fff; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rc-slot-role { position: absolute; top: 0.45rem; left: 0.45rem; background: var(--rc-teal); color: #fff; font-size: 0.78rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
+    .rc-slot-clear { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 2; width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: rgba(20, 38, 43, 0.85); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+
+    .rc-segment { display: flex; gap: 0.25rem; background: #fff; border: 1px solid var(--rc-edge); border-radius: 14px; padding: 0.3rem; margin: 0 0 var(--rc-space); max-width: 460px; }
+    .rc-seg-btn { flex: 1 1 0; font: inherit; font-size: 1.05rem; font-weight: 700; min-height: 48px; border: 0; border-radius: 10px; background: transparent; color: var(--rc-ink); cursor: pointer; }
+    .rc-seg-btn:hover:not(.rc-seg-active) { background: #e6f0ff; }
+    .rc-seg-btn.rc-seg-active { background: var(--rc-blue-deep); color: #fff; }
+    .rc-model-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--rc-space); }
+    .rc-model-card { position: relative; display: flex; flex-direction: column; font: inherit; text-align: left; border: 2px solid var(--rc-line); border-radius: 14px; background: #fff; color: var(--rc-ink); padding: 0; cursor: pointer; overflow: hidden; }
+    .rc-model-card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; }
+    .rc-model-body { display: block; padding: 0.75rem 0.85rem 0.9rem; }
+    .rc-model-body b { display: block; font-size: 1.1rem; font-weight: 800; }
+    .rc-model-body small { display: block; font-size: 0.9rem; color: var(--rc-muted); margin-top: 0.35rem; }
+    button.rc-model-card:hover { border-color: var(--rc-blue); }
+    .rc-model-card.rc-selected { border-color: var(--rc-blue); box-shadow: 0 0 0 3px var(--rc-blue); background: #e6f0ff; }
+    .rc-model-check { position: absolute; top: 0.6rem; right: 0.6rem; width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 2px solid #fff; background: var(--rc-blue-deep); color: #fff; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .rc-variant-pill, .rc-model-default { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.6rem; border-radius: 999px; margin-top: 0.35rem; }
+    .rc-variant-pill { background: #e6f0ff; color: var(--rc-blue-deep); }
+    .rc-selected .rc-variant-pill { background: #fff; }
+    .rc-model-default { background: var(--rc-blue-deep); color: #fff; margin-left: 0.35rem; }
+    .rc-model-card.rc-soon { justify-content: center; min-height: 140px; cursor: not-allowed; background: transparent; border-style: dashed; color: var(--rc-muted); }
+    .rc-model-card.rc-model-disabled { cursor: not-allowed; background: #f4f5f5; }
+    .rc-model-card.rc-model-disabled img { filter: grayscale(0.7); opacity: 0.7; }
+    .rc-model-note { color: var(--rc-pink) !important; font-weight: 700; }
+    .rc-recipe-detail { margin-top: var(--rc-space); }
+    .rc-qc { font-size: 0.95rem; color: var(--rc-muted); padding-left: 1.2rem; margin: 0.35rem 0 0; }
+
+    .rc-gate { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.95rem; background: #fff; border: 1px solid var(--rc-edge); border-radius: 10px; padding: 0.75rem 0.9rem; cursor: pointer; }
+    .rc-gate input { flex: none; width: 1.2rem; height: 1.2rem; margin: 0.1rem 0 0; accent-color: var(--rc-pink); }
+    .rc-run-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: var(--rc-space); }
+    .rc-run-actions #rc-run { font-size: 1.15rem; font-weight: 800; min-height: 56px; padding: 0.6rem 1.75rem; }
+
+    .rc-run + .rc-run { border-top: 1px solid var(--rc-edge); margin-top: 1.25rem; padding-top: 1.25rem; }
+    .rc-run-head { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.75rem; }
+    .rc-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); gap: var(--rc-space); }
+    .rc-result-card { border: 1px solid var(--rc-line); border-radius: 12px; background: #fff; padding: 0.9rem; }
+    .rc-result-card h3 { margin: 0 0 0.6rem; font-size: 0.95rem; overflow-wrap: anywhere; }
+    .rc-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0 0 0.5rem; }
     .rc-compare figure { margin: 0; }
     .rc-compare img { width: 100%; height: auto; border-radius: 8px; display: block; }
-    .rc-compare figcaption { font-size: 0.85rem; color: var(--muted, #666); margin-top: 0.25rem; }
-    .rc-qc { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
-    .rc-segment { display: inline-flex; border: 1px solid #cfc8b8; border-radius: 999px; overflow: hidden; margin: 0.5rem 0; }
-    .rc-seg-btn { font: inherit; border: 0; background: #fff; color: #1d1d1d; padding: 0.45rem 1.1rem; cursor: pointer; }
-    .rc-seg-btn + .rc-seg-btn { border-left: 1px solid #cfc8b8; }
-    .rc-seg-btn.rc-seg-active { background: #1d1d1d; color: #fff; font-weight: 700; }
-    .rc-model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
-    .rc-model-card { position: relative; font: inherit; text-align: left; border: 2px solid #cfc8b8; border-radius: 12px; background: #fff; color: #1d1d1d; padding: 0; cursor: pointer; overflow: hidden; }
-    .rc-model-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
-    .rc-model-body { display: block; padding: 0.55rem 0.75rem; }
-    .rc-model-body b { display: block; font-size: 1rem; }
-    .rc-model-body small { display: block; font-size: 0.85rem; color: var(--muted, #555); margin-top: 0.2rem; }
-    .rc-model-card:hover { border-color: var(--accent-pink, #d63384); }
-    .rc-model-card.rc-selected { border-color: var(--accent, #0c7a8c); box-shadow: 0 0 0 2px var(--accent, #0c7a8c); }
-    .rc-model-check { position: absolute; top: 0.5rem; right: 0.5rem; width: 1.6rem; height: 1.6rem; border-radius: 999px; background: var(--accent, #0c7a8c); color: #fff; font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-    .rc-variant-pill { display: inline-block; background: #eef6f7; color: var(--accent, #0c7a8c); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px; margin-top: 0.25rem; }
-    .rc-model-default { display: inline-block; background: var(--accent, #0c7a8c); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px; margin-top: 0.25rem; margin-left: 0.35rem; }
-    .rc-model-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
-    .rc-model-card.rc-soon:hover { border-color: #cfc8b8; }
-    .rc-model-card.rc-model-disabled { opacity: 0.8; cursor: not-allowed; background: #f4f1ea; }
-    .rc-model-card.rc-model-disabled:hover { border-color: #cfc8b8; }
-    .rc-model-note { color: #7a4d00 !important; font-weight: 700; }
-    .rc-step { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
-    .rc-step-num { display: inline-block; min-width: 2rem; text-align: center; font-weight: 700; color: #fff; background: var(--accent, #0c7a8c); border-radius: 999px; padding: 0.1rem 0.45rem; margin-right: 0.4rem; }
-    .rc-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 1rem; align-items: start; }
-    @media (max-width: 900px) { .rc-layout { grid-template-columns: 1fr; } }
-    .rc-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
-    .rc-result-card { border: 1px solid var(--card-border, #e5e0d5); border-radius: 12px; background: var(--card, #fff); padding: 0.75rem; }
-    .rc-result-card h3 { margin: 0 0 0.5rem; font-size: 0.95rem; overflow-wrap: anywhere; }
+    .rc-compare figcaption { font-size: 0.85rem; color: var(--rc-muted); margin-top: 0.25rem; overflow-wrap: anywhere; }
     .rc-shot { position: relative; }
-    .rc-badge { position: absolute; top: 0.4rem; left: 0.4rem; background: #1d1d1d; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
-    .rc-badge.after { background: var(--accent, #0c7a8c); }
-    .rc-result-meta { font-size: 0.85rem; color: var(--muted, #555); margin: 0.5rem 0; }
-    .rc-style-badge { background: #007fff; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 0.1rem 0.55rem; border-radius: 999px; }
-    .rc-run-head { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
-    .rc-run + .rc-run { border-top: 1px solid var(--card-border, #e5e0d5); margin-top: 0.75rem; padding-top: 0.5rem; }
-    .rc-prompt-card { display: flex; gap: 0.75rem; align-items: flex-start; border: 1px solid #cfc8b8; border-radius: 12px; padding: 0.75rem; margin: 0.5rem 0; background: #fff; }
+    .rc-badge { position: absolute; top: 0.4rem; left: 0.4rem; background: var(--rc-ink); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
+    .rc-badge.after { background: var(--rc-teal); }
+    .rc-result-meta { font-size: 0.85rem; color: var(--rc-muted); margin: 0.5rem 0; }
+    .rc-style-badge { display: inline-block; background: var(--rc-blue-deep); color: #fff; font-weight: 700; font-size: 0.8rem; padding: 0.15rem 0.6rem; border-radius: 10px; }
+    .rc-run-save { margin-top: var(--rc-space); }
+    .rc-history { border-top: 1px solid var(--rc-edge); margin-top: 1.25rem; padding-top: 1rem; }
+    .rc-studio .rc-history h3 { font-size: 1.05rem; font-weight: 700; margin: 0; }
+
+    .rc-prompt-card { display: flex; gap: 0.75rem; align-items: flex-start; border: 1px solid var(--rc-line); border-radius: 12px; padding: 0.75rem; margin: 0.5rem 0; background: #fff; }
     .rc-prompt-card img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; flex: none; }
     .rc-prompt-card .rc-prompt-body { flex: 1 1 auto; min-width: 0; }
     .rc-prompt-card b { display: block; font-size: 1rem; }
     .rc-prompt-status { font-size: 0.9rem; margin: 0.2rem 0 0.5rem; }
-    .rc-prompt-status.rc-edited { color: #7a4d00; font-weight: 700; }
-    .rc-prompt-editor textarea { width: 100%; min-height: 220px; font: inherit; font-size: 0.9rem; line-height: 1.45; }
+    .rc-prompt-status.rc-edited { color: var(--rc-pink); font-weight: 700; }
+    .rc-prompt-editor textarea { min-height: 220px; font-size: 0.9rem; line-height: 1.45; }
     .rc-prompt-editor details { margin: 0.5rem 0; }
-    .rc-prompt-editor summary { cursor: pointer; font-size: 0.9rem; color: var(--muted, #555); }
-    #rc-settings-door { margin: 0.75rem 0; }
-    #rc-settings-warning { margin-top: 0.5rem; }
-    #rc-settings-body { margin-top: 0.5rem; }
-    .rc-prompt-lists { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
-    .rc-prompt-lists h4 { margin: 0.6rem 0 0.2rem; font-size: 0.9rem; color: #1d1d1d; }
+    .rc-prompt-editor summary { cursor: pointer; font-size: 0.9rem; color: var(--rc-muted); }
+    .rc-prompt-lists { font-size: 0.9rem; color: var(--rc-muted); padding-left: 1.2rem; }
+    .rc-prompt-lists h4, .rc-prompt-editor h4 { margin: 0.6rem 0 0.2rem; font-size: 0.9rem; color: var(--rc-ink); }
+
+    @media (max-width: 860px) {
+      .rc-model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .rc-slots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .rc-slot-anchor { grid-column: 1 / -1; min-height: 200px; }
+      .rc-slot { min-height: 130px; }
+    }
+    @media (max-width: 560px) {
+      .rc-hero { padding: 1.1rem; }
+      .rc-studio .rc-hero h2 { font-size: 1.4rem; }
+      .rc-toolbar { padding: 0.75rem 1.1rem; }
+      #rc-settings-door, #rc-settings-open { width: 100%; }
+      .rc-panel-head { padding: 0.75rem 1.1rem; }
+      .rc-panel-body { padding: 1rem 1.1rem 1.2rem; }
+      .rc-studio .rc-step { font-size: 1.2rem; }
+      .rc-step-sub { margin-left: 0; margin-top: 0.4rem; }
+      .rc-fields { grid-template-columns: minmax(0, 1fr); }
+      .rc-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .rc-segment { max-width: none; }
+      .rc-model-grid { grid-template-columns: minmax(0, 1fr); }
+      .rc-model-card.rc-soon { min-height: 0; }
+      .rc-run-actions .rc-btn { width: 100%; }
+      .rc-compare { grid-template-columns: minmax(0, 1fr); }
+      .rc-prompt-card { flex-direction: column; }
+      .rc-prompt-card img { width: 100%; height: 140px; }
+    }
 `;
 
+const IMAGE_TYPES = 'image/jpeg,image/png,image/webp';
+const slot = (inputAttrs, title, hint, extraClass = '') => `
+              <div class="rc-slot${extraClass}">
+                <input ${inputAttrs} type="file" accept="${IMAGE_TYPES}" aria-label="${title}">
+                <div class="rc-slot-face"><b>${title}</b><small>${hint}</small></div>
+                <button class="rc-slot-clear" type="button" aria-label="Remove ${title}" hidden>×</button>
+              </div>`;
+
 const html = `
-    <section class="dash-section" id="recipe-studio">
-      <h2>Recipe Studio — batch edits, one space at a time</h2>
-      <p class="rc-msg">Batch first: one space, every angle together — same anchor, same prompt, one batch. No one-photo-at-a-time.</p>
-      <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
-      <div class="rc-layout">
-        <div class="rc-controls">
-      <div id="rc-settings-door">
-        <button class="rc-btn ghost" id="rc-settings-open" type="button">Recipe settings — advanced</button>
-        <div id="rc-settings-warning" hidden>
-          <p class="rc-warn">These settings affect other things. Changing a prompt changes every future batch that uses that recipe. Changing or removing the key stops batch runs until a key is set again.</p>
-          <div class="rc-row">
-            <button class="rc-btn pink" id="rc-settings-confirm" type="button">I understand, open settings</button>
-            <button class="rc-btn ghost" id="rc-settings-cancel" type="button">Not now</button>
-          </div>
-        </div>
-        <div id="rc-settings-body" hidden>
-          <div class="rc-box" id="rc-prompts-box">
-            <h3 style="margin-top:0">Recipe prompts — see and edit the exact prompt each recipe runs</h3>
-            <p class="rc-msg">Every batch runs the prompt shown here, word for word. Pick a recipe below, press <b>Edit prompt</b>, change the wording, and save — the next batch runs your edited version. Nothing here changes the original photos.</p>
-            <p class="rc-msg">Pack default: <b>data/recipes.json</b> in the site repo (and <b>~/workspace/listing-pixl-recipes/recipes.json</b> in the recipe pack). Editing here overrides it in this portal only — it does <b>not</b> change the pack files. Press <b>Reset to pack default</b> any time to go back to the pack wording.</p>
-            <div id="rc-prompt-cards"><p class="rc-msg">Loading prompts…</p></div>
-          </div>
-          <div class="rc-box">
-            <div class="rc-row" id="rc-key-form">
-              <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px">
-              <button class="rc-btn" id="rc-key-save" type="button">Save key</button>
-              <button class="rc-btn ghost" id="rc-key-delete" type="button" hidden>Remove saved key</button>
+    <section class="dash-section rc-studio" id="recipe-studio">
+      <div class="rc-hero">
+        <h2>Recipe Studio — batch edits, one space at a time</h2>
+        <p class="rc-hero-sub">Batch first: one space, every angle together — same anchor, same prompt, one batch. No one-photo-at-a-time.</p>
+      </div>
+      <div class="rc-toolbar">
+        <p class="rc-key-status" id="rc-key-status" role="status">Checking the image API key…</p>
+        <div id="rc-settings-door">
+          <button class="rc-btn ghost" id="rc-settings-open" type="button">Recipe settings — advanced</button>
+          <div id="rc-settings-warning" hidden>
+            <p class="rc-warn">These settings affect other things. Changing a prompt changes every future batch that uses that recipe. Changing or removing the key stops batch runs until a key is set again.</p>
+            <div class="rc-row">
+              <button class="rc-btn pink" id="rc-settings-confirm" type="button">I understand, open settings</button>
+              <button class="rc-btn ghost" id="rc-settings-cancel" type="button">Not now</button>
             </div>
-            <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
           </div>
-          <button class="rc-btn ghost" id="rc-settings-close" type="button" hidden>Close settings</button>
+          <div id="rc-settings-body" hidden>
+            <div class="rc-box" id="rc-prompts-box">
+              <h3>Recipe prompts — see and edit the exact prompt each recipe runs</h3>
+              <p class="rc-msg">Every batch runs the prompt shown here, word for word. Pick a recipe below, press <b>Edit prompt</b>, change the wording, and save — the next batch runs your edited version. Nothing here changes the original photos.</p>
+              <p class="rc-msg">Pack default: <b>data/recipes.json</b> in the site repo (and <b>~/workspace/listing-pixl-recipes/recipes.json</b> in the recipe pack). Editing here overrides it in this portal only — it does <b>not</b> change the pack files. Press <b>Reset to pack default</b> any time to go back to the pack wording.</p>
+              <div id="rc-prompt-cards"><p class="rc-msg">Loading prompts…</p></div>
+            </div>
+            <div class="rc-box">
+              <div class="rc-row" id="rc-key-form">
+                <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px;width:auto">
+                <button class="rc-btn" id="rc-key-save" type="button">Save key</button>
+                <button class="rc-btn ghost" id="rc-key-delete" type="button" hidden>Remove saved key</button>
+              </div>
+              <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
+            </div>
+            <button class="rc-btn ghost" id="rc-settings-close" type="button" hidden>Close settings</button>
+          </div>
         </div>
       </div>
-      <div class="rc-box">
-        <p class="rc-step"><span class="rc-step-num">01</span> Upload — anchor + angles of the same space</p>
-        <div class="rc-row" style="margin-top:.5rem">
-          <input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug" style="flex:1 1 280px">
-          <input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space" style="flex:1 1 160px">
-        </div>
-        <div class="rc-row" style="margin-top:.5rem">
-          <label>Anchor (finished look)<br><input id="rc-anchor" type="file" accept="image/jpeg,image/png,image/webp"></label>
-          <label>Angle 2<br><input class="rc-angle" type="file" accept="image/jpeg,image/png,image/webp"></label>
-          <label>Angle 3<br><input class="rc-angle" type="file" accept="image/jpeg,image/png,image/webp"></label>
-          <label>Angle 4<br><input class="rc-angle" type="file" accept="image/jpeg,image/png,image/webp"></label>
-        </div>
-        <p class="rc-msg">Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
-        <p class="rc-step"><span class="rc-step-num">02</span> Choose style</p>
-        <div id="rc-model-panel">
-          <h3 style="margin: 0.5rem 0 0">Select Model</h3>
-          <p class="rc-msg">Pick the model to mimic — the batch runs every angle of the space in that one look.</p>
-          <div class="rc-segment" id="rc-model-toggle" role="group" aria-label="Interior or Exterior">
-            <button class="rc-seg-btn" id="rc-seg-interior" type="button" aria-pressed="false">Interior</button>
-            <button class="rc-seg-btn" id="rc-seg-exterior" type="button" aria-pressed="false">Exterior</button>
+      <div class="rc-steps">
+        <div class="rc-panel rc-panel-upload">
+          <div class="rc-panel-head">
+            <div class="rc-panel-title">
+              <h3 class="rc-step"><span class="rc-step-num">01</span> Upload</h3>
+              <p class="rc-step-sub">Anchor + angles of the same space.</p>
+            </div>
           </div>
-          <div class="rc-model-grid" id="rc-model-grid"><p class="rc-msg">Loading models…</p></div>
-        </div>
-        <input type="hidden" id="rc-recipe" value="">
-        <p class="rc-msg" id="rc-recipe-note"></p>
-        <p class="rc-step"><span class="rc-step-num">03</span> Run batch</p>
-        <label><input type="checkbox" id="rc-landscaped"> This anchor is an approved Virtually-Landscaped image (required for twilight — landscape first, twilight second)</label>
-        <div class="rc-row" style="margin-top:.5rem">
-          <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first — $35</button>
-          <button class="rc-btn pink" id="rc-run" type="button">Run batch — $35 per photo</button>
-        </div>
-        <p class="rc-msg" id="rc-status" role="status"></p>
-        <p class="rc-msg rc-err" id="rc-error" role="alert"></p>
-      </div>
-        </div>
-        <div class="rc-results-col">
-          <div class="rc-box">
-            <p class="rc-step"><span class="rc-step-num">04</span> Review &amp; download</p>
-            <div id="rc-results"><p class="rc-msg">No results yet — run a batch and each angle appears here, beside the form.</p></div>
+          <div class="rc-panel-body">
+            <div class="rc-fields">
+              <label class="rc-field">Shoot<input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug"></label>
+              <label class="rc-field">Space<input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space"></label>
+            </div>
+            <div class="rc-slots">${slot('id="rc-anchor" class="rc-slot-input"', 'Anchor', 'Finished look — click or drop a photo', ' rc-slot-anchor')}${slot('class="rc-slot-input rc-angle"', 'Angle 2', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 3', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 4', 'Click or drop')}
+            </div>
+            <p class="rc-msg">Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
           </div>
-          <div class="rc-box"><h3 style="margin-top:0">Recent batches</h3><div id="rc-batches"><p class="rc-msg">Loading…</p></div></div>
+        </div>
+
+        <div class="rc-panel rc-panel-model" id="rc-model-panel">
+          <div class="rc-panel-head">
+            <div class="rc-panel-title">
+              <h3 class="rc-step"><span class="rc-step-num">02</span> Select Model</h3>
+              <p class="rc-step-sub">Pick the model to mimic — the batch runs every angle of the space in that one look.</p>
+            </div>
+          </div>
+          <div class="rc-panel-body">
+            <div class="rc-segment" id="rc-model-toggle" role="group" aria-label="Interior or Exterior">
+              <button class="rc-seg-btn" id="rc-seg-interior" type="button" aria-pressed="false">Interior</button>
+              <button class="rc-seg-btn" id="rc-seg-exterior" type="button" aria-pressed="false">Exterior</button>
+            </div>
+            <div class="rc-model-grid" id="rc-model-grid"><p class="rc-msg">Loading models…</p></div>
+            <input type="hidden" id="rc-recipe" value="">
+            <p class="rc-msg" id="rc-recipe-note"></p>
+          </div>
+        </div>
+
+        <div class="rc-panel rc-panel-run">
+          <div class="rc-panel-head">
+            <div class="rc-panel-title">
+              <h3 class="rc-step"><span class="rc-step-num">03</span> Run batch</h3>
+              <p class="rc-step-sub">$35 per edited photo. You confirm before anything is sent.</p>
+            </div>
+          </div>
+          <div class="rc-panel-body">
+            <label class="rc-gate"><input type="checkbox" id="rc-landscaped"> <span>This anchor is an approved Virtually-Landscaped image (required for twilight — landscape first, twilight second)</span></label>
+            <div class="rc-run-actions">
+              <button class="rc-btn pink" id="rc-run" type="button">Run batch — $35 per photo</button>
+              <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first — $35</button>
+            </div>
+            <p class="rc-msg" id="rc-status" role="status"></p>
+            <p class="rc-msg rc-err" id="rc-error" role="alert"></p>
+          </div>
+        </div>
+
+        <div class="rc-panel rc-panel-review">
+          <div class="rc-panel-head">
+            <div class="rc-panel-title">
+              <h3 class="rc-step"><span class="rc-step-num">04</span> Review &amp; download</h3>
+              <p class="rc-step-sub">Check each angle against its original, then save the ones you approve.</p>
+            </div>
+          </div>
+          <div class="rc-panel-body">
+            <div id="rc-results"><p class="rc-msg">No results yet — run a batch and each angle appears here.</p></div>
+            <div class="rc-history"><h3>Recent batches</h3><div id="rc-batches"><p class="rc-msg">Loading…</p></div></div>
+          </div>
         </div>
       </div>
     </section>
@@ -384,7 +505,7 @@ function client() {
     const r = recipes.find(x => x.id === $('rc-recipe').value);
     if (!r) return;
     $('rc-recipe-note').textContent = `${r.use_when} Anchor: ${r.anchor}`;
-    const box = el('div', {});
+    const box = el('div', { class: 'rc-box rc-recipe-detail' });
     box.append(el('p', { class: 'rc-msg', text: 'QC — check the set side by side:' }));
     const ul = el('ul', { class: 'rc-qc' });
     r.qc_checklist.forEach(q => ul.append(el('li', { text: q })));
@@ -406,6 +527,7 @@ function client() {
       // The input and Save live behind the settings door, so they are
       // always shown there — the door is the gate, not the form.
       $('rc-key-delete').hidden = s.source !== 'staff-settings';
+      $('rc-key-status').classList.toggle('rc-key-off', !s.configured);
       $('rc-run').disabled = !s.configured;
       $('rc-test-one').disabled = !s.configured;
     } catch (e) {
@@ -473,6 +595,35 @@ function client() {
     return [await downscale(anchorFile), ...await Promise.all(angles.map(downscale))];
   }
 
+  // Upload slots: the real file input covers the tile (so clicking and
+  // dropping both work natively); this only shows what was picked. The
+  // inputs themselves are what collectImages() reads.
+  document.querySelectorAll('.rc-slot').forEach(slot => {
+    const input = slot.querySelector('.rc-slot-input');
+    const face = slot.querySelector('.rc-slot-face');
+    const clear = slot.querySelector('.rc-slot-clear');
+    const title = face.querySelector('b').textContent;
+    const blank = [...face.children];
+    let thumbUrl = '';
+    input.addEventListener('change', () => {
+      if (thumbUrl) URL.revokeObjectURL(thumbUrl);
+      thumbUrl = '';
+      const file = input.files[0];
+      clear.hidden = !file;
+      if (!file) { face.replaceChildren(...blank); return; }
+      thumbUrl = URL.createObjectURL(file);
+      face.replaceChildren(
+        el('img', { class: 'rc-slot-thumb', src: thumbUrl, alt: title + ': ' + file.name }),
+        el('span', { class: 'rc-slot-role', text: title }),
+        el('span', { class: 'rc-slot-name', text: file.name }),
+      );
+    });
+    clear.addEventListener('click', () => {
+      input.value = '';
+      input.dispatchEvent(new Event('change'));
+    });
+  });
+
   // $35 per edited photo — Listing Pixl pricing for staging, landscape
   // and twilight alike. The Run button always shows the batch total so
   // the cost is visible before anything is sent.
@@ -488,7 +639,7 @@ function client() {
   [...document.querySelectorAll('.rc-angle')].forEach(i => i.addEventListener('change', updateRunLabel));
   updateRunLabel();
 
-  // Results accumulate in the grid beside the form — a new run never
+  // Results accumulate in the step 04 grid — a new run never
   // wipes the previous one. Each run remembers its space, style and time.
   let runs = [];
   async function run(onlyFirst) {
@@ -520,7 +671,7 @@ function client() {
     const box = $('rc-results');
     box.replaceChildren();
     if (!runs.length) {
-      box.append(el('p', { class: 'rc-msg', text: 'No results yet — run a batch and each angle appears here, beside the form.' }));
+      box.append(el('p', { class: 'rc-msg', text: 'No results yet — run a batch and each angle appears here.' }));
       return;
     }
     for (const entry of runs) {
@@ -576,7 +727,7 @@ function client() {
           loadBatches();
         } catch (e) { msg.textContent = e.message; msg.classList.add('rc-err'); save.disabled = false; }
       });
-      runEl.append(el('div', { class: 'rc-box' }, [save, msg]));
+      runEl.append(el('div', { class: 'rc-run-save' }, [save, msg]));
       box.append(runEl);
     }
   }

@@ -460,7 +460,11 @@ test('Select Model picker: segmented toggle, photo model cards, selected state, 
   }
   assert.match(ui.script, /class: 'rc-variant-pill', text: d\.variant/);
   // The selected card is unmistakable: outline, checkmark, Default pill.
-  assert.match(ui.css, /\.rc-model-card\.rc-selected \{[^}]*border-color: var\(--accent, #0c7a8c\)[^}]*box-shadow: 0 0 0 2px var\(--accent, #0c7a8c\)/);
+  assert.match(ui.css, /\.rc-model-card\.rc-selected \{[^}]*border-color: var\(--rc-blue\)[^}]*box-shadow: 0 0 0 3px var\(--rc-blue\)/);
+  // A real grid: three equal columns on a laptop, two on a tablet, one on a phone.
+  assert.match(ui.css, /\.rc-model-grid \{ display: grid; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(ui.css, /@media \(max-width: 860px\) \{\s*\.rc-model-grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(ui.css, /@media \(max-width: 560px\) \{[\s\S]*\.rc-model-grid \{ grid-template-columns: minmax\(0, 1fr\)/);
   assert.match(ui.script, /class: 'rc-model-check', text: '✓'/);
   assert.match(ui.script, /class: 'rc-model-default', text: 'Default'/);
   assert.match(ui.script, /class: 'rc-model-card' \+ \(selected \? ' rc-selected' : ''\)/);
@@ -482,22 +486,33 @@ test('Select Model picker: segmented toggle, photo model cards, selected state, 
   assert.doesNotMatch(ui.script, /MODEL_DISPLAY[^}]*prompt_chatgpt|keep:|change_only:|do_not:/);
 });
 
-test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, priced Run button, labelled results', () => {
+test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batch first, priced Run button, labelled results', () => {
   const ui = require('../api/_recipes_ui');
-  // One screen, two columns on wide screens: narrow controls on the left,
-  // persistent results on the right; stacked on narrow screens.
-  assert.match(ui.css, /\.rc-layout \{[^}]*grid-template-columns: 340px minmax\(0, 1fr\)/);
-  assert.match(ui.css, /@media \(max-width: 900px\) \{ \.rc-layout \{ grid-template-columns: 1fr; \}/);
-  const layoutAt = ui.html.indexOf('class="rc-layout"');
-  assert.ok(layoutAt > -1);
-  assert.ok(ui.html.indexOf('class="rc-controls"', layoutAt) > layoutAt);
-  assert.ok(ui.html.indexOf('class="rc-results-col"', layoutAt) > layoutAt);
-  assert.ok(ui.html.indexOf('id="rc-results"', layoutAt) > ui.html.indexOf('class="rc-results-col"', layoutAt));
+  // Steps stack full width (no narrow form column squeezing the model grid),
+  // each with its own panel: tint, border and header colour tell them apart.
+  assert.doesNotMatch(ui.css, /340px/);
+  assert.match(ui.css, /\.rc-steps \{ display: grid; grid-template-columns: minmax\(0, 1fr\)/);
+  const panelTints = new Set();
+  for (const name of ['upload', 'model', 'run', 'review']) {
+    const rule = ui.css.match(new RegExp(`\\.rc-panel-${name} \\{ --rc-tone: [^;]+; --rc-tint: ([^;]+); --rc-band: [^;]+; --rc-edge: [^;]+; \\}`));
+    assert.ok(rule, `${name} panel sets its own colours`);
+    panelTints.add(rule[1]);
+    assert.ok(ui.html.includes(`rc-panel rc-panel-${name}`));
+  }
+  assert.equal(panelTints.size, 4);
+  // Section titles are clearly bigger and bolder than body text.
+  assert.match(ui.css, /\.rc-studio \.rc-step \{[^}]*font-size: 1\.4rem; font-weight: 800/);
+  assert.ok(ui.html.indexOf('id="rc-results"') > ui.html.indexOf('id="rc-run"'));
+  // Hidden file inputs still cover the slots, and collectImages reads them.
+  assert.match(ui.html, /id="rc-anchor" class="rc-slot-input" type="file" accept="image\/jpeg,image\/png,image\/webp"/);
+  assert.equal(ui.html.match(/class="rc-slot-input rc-angle" type="file"/g).length, 3);
+  // [hidden] must keep working on restyled buttons (settings door, key delete).
+  assert.match(ui.css, /\.rc-studio \[hidden\] \{ display: none !important; \}/);
   // The batch is the point, not one photo at a time — one line under the heading.
   assert.match(ui.html, /Batch first: one space, every angle together — same anchor, same prompt, one batch\. No one-photo-at-a-time\./);
-  // Numbered steps in order: 01 Upload, 02 Choose style, 03 Run batch,
+  // Numbered steps in order: 01 Upload, 02 Select Model, 03 Run batch,
   // 04 Review & download. Upload comes before the style picker.
-  for (const [num, label] of [['01', 'Upload'], ['02', 'Choose style'], ['03', 'Run batch'], ['04', 'Review']]) {
+  for (const [num, label] of [['01', 'Upload'], ['02', 'Select Model'], ['03', 'Run batch'], ['04', 'Review']]) {
     assert.match(ui.html, new RegExp(`<span class="rc-step-num">${num}</span> ${label}`));
   }
   const order = ['>01<', '>02<', '>03<', '>04<'].map(t => ui.html.indexOf(t));
@@ -517,7 +532,7 @@ test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, p
   assert.match(ui.html, /Run batch — \$35 per photo/);
   assert.match(ui.script, /Test one angle first — \$35/);
   assert.doesNotMatch(ui.script, /PRICE_PER_PHOTO = (?!35)\d+/);
-  // Results accumulate beside the form instead of replacing it, each card
+  // Results accumulate in step 04 instead of replacing each other, each card
   // a Before/After pair labelled with space, style badge and run time.
   assert.match(ui.script, /let runs = \[\];/);
   assert.match(ui.script, /runs\.unshift\(\{ batchId: out\.batchId, images, results: out\.results, space:.*recipeName: recipe\.name, ranAt: new Date\(\)\.toISOString\(\) \}\)/);
@@ -532,10 +547,11 @@ test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, p
   // Per-card Approve control and per-run Save stay as they were.
   assert.match(ui.script, /Approve this angle/);
   assert.match(ui.script, /text: 'Save approved set'/);
-  // Listing Pixl's own palette: teal step numbers, pink run button,
-  // electric-blue style badge. No orange, no purple/magenta theme.
-  assert.match(ui.css, /\.rc-step-num \{[^}]*background: var\(--accent, #0c7a8c\)/);
-  assert.match(ui.css, /\.rc-style-badge \{[^}]*background: #007fff/);
-  assert.doesNotMatch(ui.css, /orange|#f97316|#ff6b35|purple|#7c3aed|#a855f7|magenta/i);
+  // Listing Pixl's own palette: teal, hot pink, electric blue. No orange
+  // (including the old amber warning colours), no purple/magenta theme.
+  assert.match(ui.css, /--rc-teal: var\(--accent, #0c7a8c\); --rc-pink: var\(--accent-pink, #d71266\); --rc-blue: #007fff/);
+  assert.match(ui.css, /\.rc-step-num \{[^}]*background: var\(--rc-tone\)/);
+  assert.match(ui.css, /\.rc-style-badge \{[^}]*background: var\(--rc-blue-deep\)/);
+  assert.doesNotMatch(ui.css, /orange|#f97316|#ff6b35|purple|#7c3aed|#a855f7|magenta|#fff7e0|#7a4d00/i);
   assert.match(ui.html, /class="rc-btn pink" id="rc-run"/);
 });
