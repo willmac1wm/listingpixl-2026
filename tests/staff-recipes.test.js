@@ -395,20 +395,37 @@ test('settingsStatus reports where the key comes from, and deleting cannot remov
   }
 });
 
-test('key form only shows what can be done, and the prompt reference lists sit behind a closed toggle', () => {
+test('recipe settings live behind a closed door: warning + confirm first, prompts and key controls only after opening', () => {
   const ui = require('../api/_recipes_ui');
-  // A "Change key" control exists; the field and both buttons start
-  // hidden and are only revealed by the status check or the link.
-  assert.match(ui.html, /id="rc-key-change"/);
-  assert.match(ui.html, /Change key/);
-  assert.match(ui.html, /id="rc-key-input"[^>]*hidden/);
-  assert.match(ui.html, /id="rc-key-save"[^>]*hidden/);
-  assert.match(ui.html, /id="rc-key-delete"[^>]*hidden/);
-  // The client shows the field + Save only with no key, shows Remove
-  // only for a Blob-saved key, and shows Change key when one is set.
+  // The door button is the only settings control outside the door.
+  assert.match(ui.html, /id="rc-settings-open"/);
+  assert.match(ui.html, /Recipe settings — advanced/);
+  // Warning and contents both start hidden.
+  assert.match(ui.html, /id="rc-settings-warning" hidden/);
+  assert.match(ui.html, /id="rc-settings-body" hidden/);
+  // The warning names what is at stake and needs an explicit confirm.
+  assert.match(ui.html, /Changing a prompt changes every future batch/);
+  assert.match(ui.html, /Changing or removing the key stops batch runs/);
+  assert.match(ui.html, /id="rc-settings-confirm"/);
+  assert.match(ui.html, /I understand, open settings/);
+  // Prompts box and key form are inside the hidden settings body, and the
+  // read-only key status line sits outside it.
+  const bodyAt = ui.html.indexOf('id="rc-settings-body" hidden');
+  assert.ok(bodyAt > -1);
+  assert.ok(ui.html.indexOf('id="rc-prompts-box"', bodyAt) > bodyAt);
+  assert.ok(ui.html.indexOf('id="rc-key-form"', bodyAt) > bodyAt);
+  assert.ok(ui.html.indexOf('id="rc-key-status"') < ui.html.indexOf('id="rc-settings-door"'));
+  // Key controls behind the door: input + Save shown there, no Change-key
+  // link, Remove only for a Blob-saved key.
+  assert.match(ui.html, /id="rc-key-input"/);
+  assert.match(ui.html, /id="rc-key-save"/);
+  assert.doesNotMatch(ui.html, /rc-key-change/);
   assert.match(ui.script, /\$\('rc-key-delete'\)\.hidden = s\.source !== 'staff-settings'/);
-  assert.match(ui.script, /\$\('rc-key-change'\)\.hidden = !s\.configured/);
-  assert.match(ui.script, /rc-key-change.*addEventListener\('click'/s);
+  // Prompts are not loaded at page load — only when the door is confirmed open.
+  assert.match(ui.script, /loadRecipes\(\); loadKeyStatus\(\); loadBatches\(\);/);
+  assert.doesNotMatch(ui.script, /loadRecipes\(\); loadKeyStatus\(\); loadBatches\(\); loadPrompts\(\);/);
+  assert.match(ui.script, /rc-settings-confirm.*loadPrompts\(\)/s);
+  assert.match(ui.script, /\$\('rc-settings-body'\)\.hidden = false/);
   // The reference lists are a closed <details>, not open text under the box.
   assert.match(ui.script, /el\('details', \{\}, \[/);
   assert.match(ui.script, /Show the KEEP \/ CHANGE ONLY \/ DO NOT lists/);

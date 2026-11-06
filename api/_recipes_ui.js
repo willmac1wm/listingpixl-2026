@@ -51,7 +51,9 @@ const css = `
     .rc-prompt-editor textarea { width: 100%; min-height: 220px; font: inherit; font-size: 0.9rem; line-height: 1.45; }
     .rc-prompt-editor details { margin: 0.5rem 0; }
     .rc-prompt-editor summary { cursor: pointer; font-size: 0.9rem; color: var(--muted, #555); }
-    .rc-linklike { background: none; border: 0; padding: 0; font: inherit; font-size: 0.9rem; color: var(--accent-pink, #d63384); text-decoration: underline; cursor: pointer; }
+    #rc-settings-door { margin: 0.75rem 0; }
+    #rc-settings-warning { margin-top: 0.5rem; }
+    #rc-settings-body { margin-top: 0.5rem; }
     .rc-prompt-lists { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
     .rc-prompt-lists h4 { margin: 0.6rem 0 0.2rem; font-size: 0.9rem; color: #1d1d1d; }
 `;
@@ -59,21 +61,33 @@ const css = `
 const html = `
     <section class="dash-section" id="recipe-studio">
       <h2>Recipe Studio — batch edits, one space at a time</h2>
-      <div class="rc-box" id="rc-prompts-box">
-        <h3 style="margin-top:0">Recipe prompts — see and edit the exact prompt each recipe runs</h3>
-        <p class="rc-msg">Every batch runs the prompt shown here, word for word. Pick a recipe below, press <b>Edit prompt</b>, change the wording, and save — the next batch runs your edited version. Nothing here changes the original photos.</p>
-        <p class="rc-msg">Pack default: <b>data/recipes.json</b> in the site repo (and <b>~/workspace/listing-pixl-recipes/recipes.json</b> in the recipe pack). Editing here overrides it in this portal only — it does <b>not</b> change the pack files. Press <b>Reset to pack default</b> any time to go back to the pack wording.</p>
-        <div id="rc-prompt-cards"><p class="rc-msg">Loading prompts…</p></div>
-      </div>
-      <div class="rc-box">
-        <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
-        <div class="rc-row" id="rc-key-form">
-          <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px" hidden>
-          <button class="rc-btn" id="rc-key-save" type="button" hidden>Save key</button>
-          <button class="rc-btn ghost" id="rc-key-delete" type="button" hidden>Remove saved key</button>
-          <button class="rc-linklike" id="rc-key-change" type="button" hidden>Change key…</button>
+      <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
+      <div id="rc-settings-door">
+        <button class="rc-btn ghost" id="rc-settings-open" type="button">Recipe settings — advanced</button>
+        <div id="rc-settings-warning" hidden>
+          <p class="rc-warn">These settings affect other things. Changing a prompt changes every future batch that uses that recipe. Changing or removing the key stops batch runs until a key is set again.</p>
+          <div class="rc-row">
+            <button class="rc-btn pink" id="rc-settings-confirm" type="button">I understand, open settings</button>
+            <button class="rc-btn ghost" id="rc-settings-cancel" type="button">Not now</button>
+          </div>
         </div>
-        <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
+        <div id="rc-settings-body" hidden>
+          <div class="rc-box" id="rc-prompts-box">
+            <h3 style="margin-top:0">Recipe prompts — see and edit the exact prompt each recipe runs</h3>
+            <p class="rc-msg">Every batch runs the prompt shown here, word for word. Pick a recipe below, press <b>Edit prompt</b>, change the wording, and save — the next batch runs your edited version. Nothing here changes the original photos.</p>
+            <p class="rc-msg">Pack default: <b>data/recipes.json</b> in the site repo (and <b>~/workspace/listing-pixl-recipes/recipes.json</b> in the recipe pack). Editing here overrides it in this portal only — it does <b>not</b> change the pack files. Press <b>Reset to pack default</b> any time to go back to the pack wording.</p>
+            <div id="rc-prompt-cards"><p class="rc-msg">Loading prompts…</p></div>
+          </div>
+          <div class="rc-box">
+            <div class="rc-row" id="rc-key-form">
+              <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px">
+              <button class="rc-btn" id="rc-key-save" type="button">Save key</button>
+              <button class="rc-btn ghost" id="rc-key-delete" type="button" hidden>Remove saved key</button>
+            </div>
+            <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
+          </div>
+          <button class="rc-btn ghost" id="rc-settings-close" type="button" hidden>Close settings</button>
+        </div>
       </div>
       <div class="rc-box">
         <p class="rc-step">Step 1 — Interior or Exterior?</p>
@@ -325,34 +339,42 @@ function client() {
       $('rc-key-status').textContent = s.configured
         ? `Image API key: configured (${s.source === 'env' ? 'Vercel environment' : 'saved in Staff Settings'}). It is never shown.`
         : 'Image API key: NOT configured — batch runs are disabled until a key is saved.';
-      // The form only shows what can actually be done. When the key comes
-      // from the Vercel env var there is nothing to save or remove here —
-      // the empty input and both buttons used to sit under the "configured"
-      // line and read as if a key still had to be entered. So: env key →
-      // status plus a "Change key" link that reveals the field; saved
-      // fallback key → status, "Remove saved key" (it can remove that one)
-      // and the same "Change key" link; no key anywhere → field + Save.
-      const showForm = !s.configured;
-      $('rc-key-input').hidden = !showForm;
-      $('rc-key-save').hidden = !showForm;
+      // "Remove saved key" only removes the Blob-saved fallback key; it
+      // cannot remove the env var key, so it only appears for that case.
+      // The input and Save live behind the settings door, so they are
+      // always shown there — the door is the gate, not the form.
       $('rc-key-delete').hidden = s.source !== 'staff-settings';
-      $('rc-key-change').hidden = !s.configured;
       $('rc-run').disabled = !s.configured;
       $('rc-test-one').disabled = !s.configured;
     } catch (e) {
       $('rc-key-status').textContent = 'Could not check the key status: ' + e.message;
-      // Status unknown — leave the field open so a key can still be saved.
-      $('rc-key-input').hidden = false;
-      $('rc-key-save').hidden = false;
       $('rc-key-delete').hidden = true;
-      $('rc-key-change').hidden = true;
     }
   }
-  $('rc-key-change').addEventListener('click', () => {
-    $('rc-key-input').hidden = false;
-    $('rc-key-save').hidden = false;
-    $('rc-key-change').hidden = true;
-    $('rc-key-input').focus();
+
+  // --- Recipe settings: a closed door, opened only on purpose ---
+  // Prompts and key controls live behind it. Opening first shows a
+  // warning and needs an explicit confirm; prompts are only loaded
+  // once the door is opened, so nothing behind it is on the page
+  // before then.
+  $('rc-settings-open').addEventListener('click', () => {
+    $('rc-settings-open').hidden = true;
+    $('rc-settings-warning').hidden = false;
+  });
+  $('rc-settings-cancel').addEventListener('click', () => {
+    $('rc-settings-warning').hidden = true;
+    $('rc-settings-open').hidden = false;
+  });
+  $('rc-settings-confirm').addEventListener('click', () => {
+    $('rc-settings-warning').hidden = true;
+    $('rc-settings-body').hidden = false;
+    $('rc-settings-close').hidden = false;
+    loadPrompts();
+  });
+  $('rc-settings-close').addEventListener('click', () => {
+    $('rc-settings-body').hidden = true;
+    $('rc-settings-close').hidden = true;
+    $('rc-settings-open').hidden = false;
   });
   $('rc-key-save').addEventListener('click', async () => {
     const key = $('rc-key-input').value.trim();
@@ -465,7 +487,7 @@ function client() {
     } catch (e) { $('rc-batches').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Loading batches failed: ' + e.message })); }
   }
 
-  loadRecipes(); loadKeyStatus(); loadBatches(); loadPrompts();
+  loadRecipes(); loadKeyStatus(); loadBatches();
 }
 
 module.exports = { css, html, script: `(${client.toString()})();` };
