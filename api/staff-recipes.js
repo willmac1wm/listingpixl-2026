@@ -62,8 +62,56 @@ async function saveSettings(key) {
   return { configured: true, source: 'staff-settings' };
 }
 
+// Staff-edited prompt overrides: stored in private Blob, staff-only, the
+// same pattern as the saved API key. The override is never in the repo and
+// never in a public file, and editing here never rewrites data/recipes.json.
+async function resolvePrompt(recipe) {
+  const saved = await store.read(recipes.promptOverridePath(recipe.id)).catch(() => null);
+  return recipes.effectivePrompt(recipe, saved?.value || null);
+}
+
+async function savePromptOverride(recipe, prompt) {
+  let text;
+  try { text = recipes.validatePromptText(prompt); }
+  catch (e) { throw new HttpError(400, e.message); }
+  const value = { recipeId: recipe.id, prompt: text, updatedAt: new Date().toISOString() };
+  const path = recipes.promptOverridePath(recipe.id);
+  const existing = await store.read(path).catch(() => null);
+  if (existing) await store.write(path, value, existing.etag);
+  else await store.create(path, value);
+  return value;
+}
+
 const actions = {
   async recipes() { return { version: recipes.RECIPES.version, recipes: recipes.listRecipes(), plannedStyles: recipes.listPlannedStyles() }; },
+
+  // "Recipe prompts" section: for each live recipe, the exact prompt a
+  // batch will run, where it came from, and the lists it was built from.
+  // Staff login only — the handler 401s before this is ever reached.
+  async prompts() {
+    const out = [];
+    for (const recipe of recipes.RECIPES.recipes) {
+      const saved = await store.read(recipes.promptOverridePath(recipe.id)).catch(() => null);
+      out.push(recipes.promptDetails(recipe, saved?.value || null));
+    }
+    return { prompts: out, plannedStyles: recipes.listPlannedStyles() };
+  },
+
+  async savePrompt(body) {
+    const recipe = recipes.getRecipe(String(body.recipeId || ''));
+    if (!recipe) throw new HttpError(400, 'That recipe has no prompt to edit — planned styles have no prompt yet.');
+    const saved = await savePromptOverride(recipe, body.prompt);
+    return { ok: true, recipeId: recipe.id, source: 'override', updatedAt: saved.updatedAt };
+  },
+
+  async resetPrompt(body) {
+    const recipe = recipes.getRecipe(String(body.recipeId || ''));
+    if (!recipe) throw new HttpError(400, 'That recipe has no prompt to reset — planned styles have no prompt yet.');
+    const path = recipes.promptOverridePath(recipe.id);
+    const existing = await store.read(path).catch(() => null);
+    if (existing) await store.remove(path, existing.etag).catch(() => {});
+    return { ok: true, recipeId: recipe.id, source: 'pack' };
+  },
 
   async settingsStatus() {
     const { source } = await resolveKey();
@@ -102,7 +150,9 @@ const actions = {
     let model;
     try { model = recipes.modelFor(recipe, body.model); }
     catch (e) { throw new HttpError(400, e.message); }
-    const prompt = recipes.buildPrompt(recipe);
+    // The batch runs the staff-edited prompt when one exists, the pack
+    // default otherwise. The record says which one it was.
+    const { prompt, source: promptSource } = await resolvePrompt(recipe);
     const shootSlug = String(body.shootSlug || '').slice(0, 120);
     if (shootSlug && !delivery.SLUG.test(shootSlug)) throw new HttpError(400, 'Bad shoot slug.');
     const space = String(body.space || 'space').slice(0, 80);
@@ -121,9 +171,9 @@ const actions = {
       results.push({ angleName: angle.name, editedFilename: recipes.editedFilename(angle.name, recipe.id), mime: 'image/png', dataUrl: `data:image/png;base64,${b64}` });
     }
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const record = { id, recipeId: recipe.id, shootSlug, space, createdAt: new Date().toISOString(), anchorName: anchor.name, angles: images.slice(1).map(i => i.name), status: 'ran', results: results.map(r => ({ angleName: r.angleName, editedFilename: r.editedFilename })) };
+    const record = { id, recipeId: recipe.id, shootSlug, space, createdAt: new Date().toISOString(), anchorName: anchor.name, angles: images.slice(1).map(i => i.name), status: 'ran', promptSource, results: results.map(r => ({ angleName: r.angleName, editedFilename: r.editedFilename })) };
     await store.create(batchPath(id), record).catch(() => {});
-    return { ok: true, batchId: id, model, results };
+    return { ok: true, batchId: id, model, promptSource, results };
   },
 
   async approve(body) {
@@ -150,7 +200,7 @@ const actions = {
   },
 };
 
-const POSTS = new Set(['saveKey', 'deleteKey', 'runBatch', 'approve']);
+const POSTS = new Set(['saveKey', 'deleteKey', 'savePrompt', 'resetPrompt', 'runBatch', 'approve']);
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

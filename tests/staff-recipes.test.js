@@ -184,6 +184,125 @@ test('recipes API returns categories, button images and planned styles for the p
   }
 });
 
+test('prompt overrides: pack default unless staff edited it, planned styles have no editable prompt', () => {
+  const r = recipes.getRecipe('vl-lush-lawn-autumn');
+  const pack = recipes.effectivePrompt(r, null);
+  assert.equal(pack.source, 'pack');
+  assert.equal(pack.prompt, r.prompt_chatgpt);
+  assert.equal(pack.updatedAt, null);
+  const edited = recipes.effectivePrompt(r, { prompt: 'My edited prompt', updatedAt: '2026-11-06T12:00:00.000Z' });
+  assert.equal(edited.source, 'override');
+  assert.equal(edited.prompt, 'My edited prompt');
+  assert.equal(edited.updatedAt, '2026-11-06T12:00:00.000Z');
+  assert.equal(recipes.effectivePrompt(r, { prompt: '   ' }).source, 'pack'); // blank override = pack
+  assert.throws(() => recipes.validatePromptText(''), /cannot be empty/);
+  assert.throws(() => recipes.validatePromptText('x'.repeat(8001)), /too long/);
+  assert.equal(recipes.validatePromptText('  keep it  '), '  keep it  ');
+  assert.equal(recipes.promptOverridePath('vl-lush-lawn-autumn'), 'staff/recipe-prompts/vl-lush-lawn-autumn.json');
+  assert.throws(() => recipes.promptOverridePath('../escape'), /Bad recipe id/);
+  assert.equal(recipes.isEditableRecipe('vl-lush-lawn-autumn'), true);
+  assert.equal(recipes.isEditableRecipe('Minimal'), false); // planned style, no prompt
+  const d = recipes.promptDetails(r, { prompt: 'Edited', updatedAt: '2026-11-06T12:00:00.000Z' });
+  assert.equal(d.prompt, 'Edited');
+  assert.equal(d.packPrompt, r.prompt_chatgpt);
+  assert.deepEqual(d.keep, r.keep);
+  assert.deepEqual(d.change_only, r.change_only);
+  assert.deepEqual(d.do_not, r.do_not);
+});
+
+test('Recipe prompts in /staff: edit, save, run with the override, reset to pack default', async () => {
+  const restoreStore = memoryStore();
+  const oldPass = process.env.STAFF_PASSWORD;
+  const oldKey = process.env.OPENAI_API_KEY;
+  const oldFetch = global.fetch;
+  process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
+  delete process.env.OPENAI_API_KEY;
+  const authed = extra => headers({ authorization: basic(), ...extra });
+  try {
+    // No prompt is ever returned to an unauthenticated caller.
+    const anon = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=prompts', headers: headers() }, anon);
+    assert.equal(anon.statusCode, 401);
+
+    // Pack defaults first: all four live recipes, full prompt text, lists.
+    const pack = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=prompts', headers: authed() }, pack);
+    assert.equal(pack.statusCode, 200);
+    const packOut = JSON.parse(pack.body);
+    assert.equal(packOut.prompts.length, 4);
+    for (const p of packOut.prompts) {
+      assert.equal(p.source, 'pack');
+      assert.equal(p.prompt, recipes.getRecipe(p.id).prompt_chatgpt);
+      assert.ok(Array.isArray(p.keep) && p.keep.length > 0);
+      assert.ok(Array.isArray(p.change_only) && p.change_only.length > 0);
+      assert.ok(Array.isArray(p.do_not) && p.do_not.length > 0);
+    }
+    assert.deepEqual(packOut.plannedStyles.map(s => s.name), ['Minimal', 'Classic', 'Victorian']);
+
+    // Writes need the X-Staff header; planned styles have no prompt to edit.
+    const noHeader = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=savePrompt', headers: authed({ 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', prompt: 'Edited prompt' }) }, noHeader);
+    assert.equal(noHeader.statusCode, 403);
+    const planned = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=savePrompt', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'Minimal', prompt: 'Edited prompt' }) }, planned);
+    assert.equal(planned.statusCode, 400);
+    const empty = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=savePrompt', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', prompt: '   ' }) }, empty);
+    assert.equal(empty.statusCode, 400);
+
+    // Save an edited prompt: status flips to override with a saved time.
+    const saved = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=savePrompt', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', prompt: 'Edited lawn prompt — lawn is the hero' }) }, saved);
+    assert.equal(saved.statusCode, 200);
+    assert.equal(JSON.parse(saved.body).source, 'override');
+    const after = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=prompts', headers: authed() }, after);
+    const edited = JSON.parse(after.body).prompts.find(p => p.id === 'vl-lush-lawn-autumn');
+    assert.equal(edited.source, 'override');
+    assert.equal(edited.prompt, 'Edited lawn prompt — lawn is the hero');
+    assert.ok(edited.updatedAt);
+    assert.equal(edited.packPrompt, recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt);
+    // The other three recipes are untouched, still pack defaults.
+    assert.equal(JSON.parse(after.body).prompts.filter(p => p.source === 'pack').length, 3);
+
+    // A batch runs the edited prompt, and the response says so.
+    const keySaved = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=saveKey', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ key: 'sk-test-' + 'x'.repeat(30) }) }, keySaved);
+    assert.equal(keySaved.statusCode, 200);
+    const sentPrompts = [];
+    global.fetch = async (url, opts) => {
+      sentPrompts.push(opts.body.get('prompt'));
+      return { ok: true, json: async () => ({ data: [{ b64_json: Buffer.from('edited').toString('base64') }] }) };
+    };
+    const run = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }] }) }, run);
+    assert.equal(run.statusCode, 200);
+    assert.equal(JSON.parse(run.body).promptSource, 'override');
+    assert.deepEqual(sentPrompts, ['Edited lawn prompt — lawn is the hero']);
+
+    // Reset deletes the override: pack default again, in the UI and in runs.
+    const reset = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=resetPrompt', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn' }) }, reset);
+    assert.equal(reset.statusCode, 200);
+    assert.equal(JSON.parse(reset.body).source, 'pack');
+    const back = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=prompts', headers: authed() }, back);
+    const restored = JSON.parse(back.body).prompts.find(p => p.id === 'vl-lush-lawn-autumn');
+    assert.equal(restored.source, 'pack');
+    assert.equal(restored.prompt, recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt);
+    sentPrompts.length = 0;
+    const run2 = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }] }) }, run2);
+    assert.equal(JSON.parse(run2.body).promptSource, 'pack');
+    assert.deepEqual(sentPrompts, [recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt]);
+  } finally {
+    global.fetch = oldFetch;
+    restoreStore();
+    if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
+    if (oldKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = oldKey;
+  }
+});
+
 test('Modern Beach Interior is a live Interior recipe, distinct from the farmhouse kitchen', () => {
   const r = recipes.getRecipe('mb-modern-beach-interior');
   assert.ok(r, 'recipe exists');

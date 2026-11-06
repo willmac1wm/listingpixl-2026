@@ -42,11 +42,26 @@ const css = `
     .rc-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
     .rc-card.rc-soon:hover { border-color: #cfc8b8; }
     .rc-step { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
+    .rc-prompt-card { display: flex; gap: 0.75rem; align-items: flex-start; border: 1px solid #cfc8b8; border-radius: 12px; padding: 0.75rem; margin: 0.5rem 0; background: #fff; }
+    .rc-prompt-card img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; flex: none; }
+    .rc-prompt-card .rc-prompt-body { flex: 1 1 auto; min-width: 0; }
+    .rc-prompt-card b { display: block; font-size: 1rem; }
+    .rc-prompt-status { font-size: 0.9rem; margin: 0.2rem 0 0.5rem; }
+    .rc-prompt-status.rc-edited { color: #7a4d00; font-weight: 700; }
+    .rc-prompt-editor textarea { width: 100%; min-height: 220px; font: inherit; font-size: 0.9rem; line-height: 1.45; }
+    .rc-prompt-lists { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
+    .rc-prompt-lists h4 { margin: 0.6rem 0 0.2rem; font-size: 0.9rem; color: #1d1d1d; }
 `;
 
 const html = `
     <section class="dash-section" id="recipe-studio">
       <h2>Recipe Studio — batch edits, one space at a time</h2>
+      <div class="rc-box" id="rc-prompts-box">
+        <h3 style="margin-top:0">Recipe prompts — see and edit the exact prompt each recipe runs</h3>
+        <p class="rc-msg">Every batch runs the prompt shown here, word for word. Pick a recipe below, press <b>Edit prompt</b>, change the wording, and save — the next batch runs your edited version. Nothing here changes the original photos.</p>
+        <p class="rc-msg">Pack default: <b>data/recipes.json</b> in the site repo (and <b>~/workspace/listing-pixl-recipes/recipes.json</b> in the recipe pack). Editing here overrides it in this portal only — it does <b>not</b> change the pack files. Press <b>Reset to pack default</b> any time to go back to the pack wording.</p>
+        <div id="rc-prompt-cards"><p class="rc-msg">Loading prompts…</p></div>
+      </div>
       <div class="rc-box">
         <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
         <div class="rc-row" id="rc-key-form">
@@ -190,6 +205,92 @@ function client() {
       renderCategoryStep();
     } catch (e) { $('rc-pick-category').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Could not load recipes: ' + e.message })); err(e); }
   }
+
+  // --- Recipe prompts: see and edit the exact prompt each recipe runs ---
+  let promptCards = [];
+  let plannedPromptStyles = [];
+  let editingPromptId = null;
+  function promptStatusText(p) {
+    return p.source === 'override' && p.updatedAt
+      ? 'Using your edited prompt — saved ' + new Date(p.updatedAt).toLocaleString()
+      : 'Using pack default prompt';
+  }
+  function renderPromptCards() {
+    const box = $('rc-prompt-cards');
+    box.replaceChildren();
+    for (const p of promptCards) {
+      const body = el('div', { class: 'rc-prompt-body' }, [
+        el('b', { text: p.name + ' — ' + p.category }),
+        el('p', { class: 'rc-prompt-status' + (p.source === 'override' ? ' rc-edited' : ''), text: promptStatusText(p) }),
+      ]);
+      const card = el('div', { class: 'rc-prompt-card' }, [
+        p.button_image ? el('img', { src: p.button_image, alt: p.name }) : null,
+        body,
+      ]);
+      if (editingPromptId === p.id) {
+        const ta = el('textarea', { rows: '12', 'aria-label': 'Prompt for ' + p.name });
+        ta.value = p.prompt;
+        const lists = el('div', {}, []);
+        for (const [title, items] of [['KEEP — do not change', p.keep], ['CHANGE ONLY', p.change_only], ['DO NOT', p.do_not]]) {
+          lists.append(el('h4', { text: title }));
+          const ul = el('ul', { class: 'rc-prompt-lists' });
+          (items || []).forEach(t => ul.append(el('li', { text: t })));
+          lists.append(ul);
+        }
+        const msg = el('p', { class: 'rc-msg', role: 'status' });
+        const save = el('button', { class: 'rc-btn pink', type: 'button', text: 'Save prompt' });
+        save.addEventListener('click', async () => {
+          save.disabled = true;
+          try {
+            const out = await api('savePrompt', { recipeId: p.id, prompt: ta.value });
+            msg.textContent = 'Saved — batches now run your edited prompt (saved ' + new Date(out.updatedAt).toLocaleString() + ').';
+            editingPromptId = null;
+            await loadPrompts();
+          } catch (e) { msg.textContent = e.message; msg.classList.add('rc-err'); save.disabled = false; }
+        });
+        const reset = el('button', { class: 'rc-btn ghost', type: 'button', text: 'Reset to pack default' });
+        reset.addEventListener('click', async () => {
+          if (!confirm('Throw away your edited prompt for ' + p.name + ' and go back to the pack wording?')) return;
+          try { await api('resetPrompt', { recipeId: p.id }); editingPromptId = null; await loadPrompts(); }
+          catch (e) { msg.textContent = e.message; msg.classList.add('rc-err'); }
+        });
+        const cancel = el('button', { class: 'rc-btn ghost', type: 'button', text: 'Cancel' });
+        cancel.addEventListener('click', () => { editingPromptId = null; renderPromptCards(); });
+        body.append(
+          el('div', { class: 'rc-prompt-editor' }, [
+            el('p', { class: 'rc-msg', text: 'This is the exact prompt the next batch will run, word for word. Edit it, then save.' }),
+            ta, lists,
+            el('div', { class: 'rc-row' }, [save, reset, cancel]),
+            msg,
+          ]),
+        );
+      } else {
+        body.append(el('button', {
+          class: 'rc-btn', type: 'button', text: 'Edit prompt',
+          onclick: () => { editingPromptId = p.id; renderPromptCards(); },
+        }));
+      }
+      box.append(card);
+    }
+    // Coming soon: no prompt exists yet, so there is nothing to edit.
+    // Plain text, no button — same as the picker, they cannot be run.
+    for (const s of plannedPromptStyles) {
+      box.append(el('div', { class: 'rc-prompt-card' }, [
+        el('div', { class: 'rc-prompt-body' }, [
+          el('b', { text: s.name + ' — ' + s.category }),
+          el('p', { class: 'rc-prompt-status', text: 'No prompt yet — this style isn\'t built yet.' }),
+        ]),
+      ]));
+    }
+  }
+  async function loadPrompts() {
+    try {
+      const data = await api('prompts');
+      promptCards = data.prompts || [];
+      plannedPromptStyles = data.plannedStyles || [];
+      renderPromptCards();
+    } catch (e) { $('rc-prompt-cards').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Could not load prompts: ' + e.message })); }
+  }
   function showRecipeNote() {
     const r = recipes.find(x => x.id === $('rc-recipe').value);
     if (!r) return;
@@ -269,7 +370,7 @@ function client() {
         landscapedApproved: $('rc-landscaped').checked, onlyFirst, images,
       });
       lastRun = { batchId: out.batchId, images, results: out.results };
-      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Check each one below, then save the ones you approve.`);
+      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Ran with ${out.promptSource === 'override' ? 'your edited prompt' : 'the pack default prompt'}. Check each one below, then save the ones you approve.`);
       renderResults();
       loadBatches();
     } catch (e) { err(e); status(''); }
@@ -327,7 +428,7 @@ function client() {
     } catch (e) { $('rc-batches').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Loading batches failed: ' + e.message })); }
   }
 
-  loadRecipes(); loadKeyStatus(); loadBatches();
+  loadRecipes(); loadKeyStatus(); loadBatches(); loadPrompts();
 }
 
 module.exports = { css, html, script: `(${client.toString()})();` };
