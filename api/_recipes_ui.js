@@ -42,6 +42,19 @@ const css = `
     .rc-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
     .rc-card.rc-soon:hover { border-color: #cfc8b8; }
     .rc-step { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
+    .rc-step-num { display: inline-block; min-width: 2rem; text-align: center; font-weight: 700; color: #fff; background: var(--accent, #0c7a8c); border-radius: 999px; padding: 0.1rem 0.45rem; margin-right: 0.4rem; }
+    .rc-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 1rem; align-items: start; }
+    @media (max-width: 900px) { .rc-layout { grid-template-columns: 1fr; } }
+    .rc-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
+    .rc-result-card { border: 1px solid var(--card-border, #e5e0d5); border-radius: 12px; background: var(--card, #fff); padding: 0.75rem; }
+    .rc-result-card h3 { margin: 0 0 0.5rem; font-size: 0.95rem; overflow-wrap: anywhere; }
+    .rc-shot { position: relative; }
+    .rc-badge { position: absolute; top: 0.4rem; left: 0.4rem; background: #1d1d1d; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
+    .rc-badge.after { background: var(--accent, #0c7a8c); }
+    .rc-result-meta { font-size: 0.85rem; color: var(--muted, #555); margin: 0.5rem 0; }
+    .rc-style-badge { background: #007fff; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 0.1rem 0.55rem; border-radius: 999px; }
+    .rc-run-head { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
+    .rc-run + .rc-run { border-top: 1px solid var(--card-border, #e5e0d5); margin-top: 0.75rem; padding-top: 0.5rem; }
     .rc-prompt-card { display: flex; gap: 0.75rem; align-items: flex-start; border: 1px solid #cfc8b8; border-radius: 12px; padding: 0.75rem; margin: 0.5rem 0; background: #fff; }
     .rc-prompt-card img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; flex: none; }
     .rc-prompt-card .rc-prompt-body { flex: 1 1 auto; min-width: 0; }
@@ -61,7 +74,10 @@ const css = `
 const html = `
     <section class="dash-section" id="recipe-studio">
       <h2>Recipe Studio — batch edits, one space at a time</h2>
+      <p class="rc-msg">Batch first: one space, every angle together — same anchor, same prompt, one batch. No one-photo-at-a-time.</p>
       <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
+      <div class="rc-layout">
+        <div class="rc-controls">
       <div id="rc-settings-door">
         <button class="rc-btn ghost" id="rc-settings-open" type="button">Recipe settings — advanced</button>
         <div id="rc-settings-warning" hidden>
@@ -90,19 +106,11 @@ const html = `
         </div>
       </div>
       <div class="rc-box">
-        <p class="rc-step">Step 1 — Interior or Exterior?</p>
-        <div class="rc-pick" id="rc-pick-category"><p class="rc-msg">Loading recipes…</p></div>
-        <div id="rc-pick-styles" hidden>
-          <p class="rc-step" id="rc-step2-title">Step 2 — pick a style</p>
-          <div class="rc-pick" id="rc-style-cards"></div>
-          <button class="rc-btn ghost" id="rc-pick-back" type="button">← Back to Interior / Exterior</button>
-        </div>
-        <input type="hidden" id="rc-recipe" value="">
+        <p class="rc-step"><span class="rc-step-num">01</span> Upload — anchor + angles of the same space</p>
         <div class="rc-row" style="margin-top:.5rem">
           <input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug" style="flex:1 1 280px">
           <input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space" style="flex:1 1 160px">
         </div>
-        <p class="rc-msg" id="rc-recipe-note"></p>
         <div class="rc-row" style="margin-top:.5rem">
           <label>Anchor (finished look)<br><input id="rc-anchor" type="file" accept="image/jpeg,image/png,image/webp"></label>
           <label>Angle 2<br><input class="rc-angle" type="file" accept="image/jpeg,image/png,image/webp"></label>
@@ -110,16 +118,33 @@ const html = `
           <label>Angle 4<br><input class="rc-angle" type="file" accept="image/jpeg,image/png,image/webp"></label>
         </div>
         <p class="rc-msg">Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
+        <p class="rc-step"><span class="rc-step-num">02</span> Choose style</p>
+        <div class="rc-pick" id="rc-pick-category"><p class="rc-msg">Loading recipes…</p></div>
+        <div id="rc-pick-styles" hidden>
+          <p class="rc-msg" id="rc-step2-title">Pick a style</p>
+          <div class="rc-pick" id="rc-style-cards"></div>
+          <button class="rc-btn ghost" id="rc-pick-back" type="button">← Back to Interior / Exterior</button>
+        </div>
+        <input type="hidden" id="rc-recipe" value="">
+        <p class="rc-msg" id="rc-recipe-note"></p>
+        <p class="rc-step"><span class="rc-step-num">03</span> Run batch</p>
         <label><input type="checkbox" id="rc-landscaped"> This anchor is an approved Virtually-Landscaped image (required for twilight — landscape first, twilight second)</label>
         <div class="rc-row" style="margin-top:.5rem">
-          <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first</button>
-          <button class="rc-btn pink" id="rc-run" type="button">Run full batch</button>
+          <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first — $35</button>
+          <button class="rc-btn pink" id="rc-run" type="button">Run batch — $35 per photo</button>
         </div>
         <p class="rc-msg" id="rc-status" role="status"></p>
         <p class="rc-msg rc-err" id="rc-error" role="alert"></p>
       </div>
-      <div id="rc-results"></div>
-      <div class="rc-box"><h3 style="margin-top:0">Recent batches</h3><div id="rc-batches"><p class="rc-msg">Loading…</p></div></div>
+        </div>
+        <div class="rc-results-col">
+          <div class="rc-box">
+            <p class="rc-step"><span class="rc-step-num">04</span> Review &amp; download</p>
+            <div id="rc-results"><p class="rc-msg">No results yet — run a batch and each angle appears here, beside the form.</p></div>
+          </div>
+          <div class="rc-box"><h3 style="margin-top:0">Recent batches</h3><div id="rc-batches"><p class="rc-msg">Loading…</p></div></div>
+        </div>
+      </div>
     </section>
 `;
 
@@ -148,7 +173,7 @@ function client() {
   let recipes = [];
   let plannedStyles = [];
   let pickedCategory = null;
-  // Step 1 photo: a real photo from the tests — the first live recipe in
+  // Step 02 photo: a real photo from the tests — the first live recipe in
   // that category (kitchen for Interior, lush lawn for Exterior).
   function categoryPhoto(category) {
     const r = recipes.find(x => x.category === category && x.button_image);
@@ -177,7 +202,7 @@ function client() {
     $('rc-recipe').value = '';
     $('rc-recipe-note').textContent = '';
     $('rc-pick-styles').hidden = false;
-    $('rc-step2-title').textContent = 'Step 2 — pick a ' + category + ' style';
+    $('rc-step2-title').textContent = 'Pick a ' + category + ' style';
     renderCategoryStep();
     renderStyleCards();
   }
@@ -411,7 +436,24 @@ function client() {
     return [await downscale(anchorFile), ...await Promise.all(angles.map(downscale))];
   }
 
-  let lastRun = null;
+  // $35 per edited photo — Listing Pixl pricing for staging, landscape
+  // and twilight alike. The Run button always shows the batch total so
+  // the cost is visible before anything is sent.
+  const PRICE_PER_PHOTO = 35;
+  function angleCount() { return [...document.querySelectorAll('.rc-angle')].map(i => i.files[0]).filter(Boolean).length; }
+  function updateRunLabel() {
+    const n = angleCount();
+    $('rc-run').textContent = n > 0
+      ? `Run batch — ${n} angle${n === 1 ? '' : 's'} × $35 = $${n * PRICE_PER_PHOTO}`
+      : 'Run batch — $35 per photo';
+    $('rc-test-one').textContent = 'Test one angle first — $35';
+  }
+  [...document.querySelectorAll('.rc-angle')].forEach(i => i.addEventListener('change', updateRunLabel));
+  updateRunLabel();
+
+  // Results accumulate in the grid beside the form — a new run never
+  // wipes the previous one. Each run remembers its space, style and time.
+  let runs = [];
   async function run(onlyFirst) {
     const recipe = recipes.find(x => x.id === $('rc-recipe').value);
     if (!recipe) return err(new Error('Pick a recipe first.'));
@@ -428,8 +470,8 @@ function client() {
         recipeId: recipe.id, shootSlug: $('rc-shoot').value.trim(), space: $('rc-space').value.trim() || 'space',
         landscapedApproved: $('rc-landscaped').checked, onlyFirst, images,
       });
-      lastRun = { batchId: out.batchId, images, results: out.results };
-      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Ran with ${out.promptSource === 'override' ? 'your edited prompt' : 'the pack default prompt'}. Check each one below, then save the ones you approve.`);
+      runs.unshift({ batchId: out.batchId, images, results: out.results, space: $('rc-space').value.trim() || 'space', recipeName: recipe.name, ranAt: new Date().toISOString() });
+      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Ran with ${out.promptSource === 'override' ? 'your edited prompt' : 'the pack default prompt'}. Check each one in step 04, then save the ones you approve.`);
       renderResults();
       loadBatches();
     } catch (e) { err(e); status(''); }
@@ -440,44 +482,66 @@ function client() {
   function renderResults() {
     const box = $('rc-results');
     box.replaceChildren();
-    if (!lastRun) return;
-    const originals = {};
-    lastRun.images.forEach(i => { originals[i.name] = i.dataUrl; });
-    lastRun.results.forEach(r => {
-      const cb = el('input', { type: 'checkbox', 'aria-label': 'Approve ' + r.angleName });
-      cb.checked = true;
-      cb.setAttribute('data-angle', r.angleName);
-      const card = el('div', { class: 'rc-box' }, [
-        el('h3', { text: r.angleName + ' → ' + r.editedFilename }),
-        el('div', { class: 'rc-compare' }, [
-          el('figure', {}, [el('img', { src: originals[r.angleName], alt: 'Original: ' + r.angleName }), el('figcaption', { text: 'Original' })]),
-          el('figure', {}, [el('img', { src: r.dataUrl, alt: 'Edited: ' + r.angleName }), el('figcaption', { text: 'Edited — ' + r.editedFilename })]),
-        ]),
-        el('label', {}, [cb, el('span', { text: ' Approve this angle' })]),
+    if (!runs.length) {
+      box.append(el('p', { class: 'rc-msg', text: 'No results yet — run a batch and each angle appears here, beside the form.' }));
+      return;
+    }
+    for (const entry of runs) {
+      const originals = {};
+      entry.images.forEach(i => { originals[i.name] = i.dataUrl; });
+      const when = new Date(entry.ranAt).toLocaleString();
+      const runEl = el('div', { class: 'rc-run' }, [
+        el('p', { class: 'rc-run-head', text: `${entry.space} · ${entry.recipeName} · ${when}` }),
       ]);
-      box.append(card);
-    });
-    const save = el('button', { class: 'rc-btn pink', type: 'button', text: 'Save approved set' });
-    const msg = el('p', { class: 'rc-msg', role: 'status' });
-    save.addEventListener('click', async () => {
-      save.disabled = true;
-      try {
-        const approvals = lastRun.results.filter(x => box.querySelector(`input[data-angle="${CSS.escape(x.angleName)}"]`).checked)
-          .map(x => ({ angleName: x.angleName, dataUrl: x.dataUrl }));
-        if (!approvals.length) throw new Error('Approve at least one angle.');
-        const out = await api('approve', { batchId: lastRun.batchId, approvals });
-        msg.textContent = `Saved ${out.saved.length} approved file${out.saved.length === 1 ? '' : 's'}. The approved set is now the anchor for this space.`;
-        const slug = $('rc-shoot').value.trim();
-        if (slug) {
-          for (const f of out.saved) {
-            await fetch(location.origin + '/staff/delivery?action=addFile', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Staff': '1' }, body: JSON.stringify({ slug, url: f.url, filename: f.filename }) }).catch(() => {});
+      const grid = el('div', { class: 'rc-results-grid' });
+      for (const r of entry.results) {
+        const cb = el('input', { type: 'checkbox', 'aria-label': 'Approve ' + r.angleName });
+        cb.checked = true;
+        cb.setAttribute('data-angle', r.angleName);
+        const card = el('div', { class: 'rc-result-card' }, [
+          el('h3', { text: r.angleName + ' → ' + r.editedFilename }),
+          el('div', { class: 'rc-compare' }, [
+            el('figure', {}, [
+              el('div', { class: 'rc-shot' }, [el('img', { src: originals[r.angleName], alt: 'Original: ' + r.angleName }), el('span', { class: 'rc-badge', text: 'Before' })]),
+              el('figcaption', { text: 'Original' }),
+            ]),
+            el('figure', {}, [
+              el('div', { class: 'rc-shot' }, [el('img', { src: r.dataUrl, alt: 'Edited: ' + r.angleName }), el('span', { class: 'rc-badge after', text: 'After' })]),
+              el('figcaption', { text: 'Edited — ' + r.editedFilename }),
+            ]),
+          ]),
+          el('p', { class: 'rc-result-meta' }, [
+            el('span', { class: 'rc-style-badge', text: entry.recipeName }),
+            el('span', { text: ' ' + entry.space + ' · ' + when }),
+          ]),
+          el('label', {}, [cb, el('span', { text: ' Approve this angle' })]),
+        ]);
+        grid.append(card);
+      }
+      runEl.append(grid);
+      const save = el('button', { class: 'rc-btn pink', type: 'button', text: 'Save approved set' });
+      const msg = el('p', { class: 'rc-msg', role: 'status' });
+      save.addEventListener('click', async () => {
+        save.disabled = true;
+        try {
+          const approvals = entry.results.filter(x => runEl.querySelector(`input[data-angle="${CSS.escape(x.angleName)}"]`).checked)
+            .map(x => ({ angleName: x.angleName, dataUrl: x.dataUrl }));
+          if (!approvals.length) throw new Error('Approve at least one angle.');
+          const out = await api('approve', { batchId: entry.batchId, approvals });
+          msg.textContent = `Saved ${out.saved.length} approved file${out.saved.length === 1 ? '' : 's'}. The approved set is now the anchor for this space.`;
+          const slug = $('rc-shoot').value.trim();
+          if (slug) {
+            for (const f of out.saved) {
+              await fetch(location.origin + '/staff/delivery?action=addFile', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Staff': '1' }, body: JSON.stringify({ slug, url: f.url, filename: f.filename }) }).catch(() => {});
+            }
+            msg.textContent += ' Added to the delivery shoot record.';
           }
-          msg.textContent += ' Added to the delivery shoot record.';
-        }
-        loadBatches();
-      } catch (e) { msg.textContent = e.message; msg.classList.add('rc-err'); save.disabled = false; }
-    });
-    box.append(el('div', { class: 'rc-box' }, [save, msg]));
+          loadBatches();
+        } catch (e) { msg.textContent = e.message; msg.classList.add('rc-err'); save.disabled = false; }
+      });
+      runEl.append(el('div', { class: 'rc-box' }, [save, msg]));
+      box.append(runEl);
+    }
   }
 
   async function loadBatches() {

@@ -434,3 +434,58 @@ test('recipe settings live behind a closed door: warning + confirm first, prompt
   assert.match(ui.script, /ta\.value = p\.prompt/);
   assert.match(ui.script, /api\('savePrompt', \{ recipeId: p\.id, prompt: ta\.value \}\)/);
 });
+
+test('Recipe Studio restyle: two columns, numbered steps 01–04, batch first, priced Run button, labelled results', () => {
+  const ui = require('../api/_recipes_ui');
+  // One screen, two columns on wide screens: narrow controls on the left,
+  // persistent results on the right; stacked on narrow screens.
+  assert.match(ui.css, /\.rc-layout \{[^}]*grid-template-columns: 340px minmax\(0, 1fr\)/);
+  assert.match(ui.css, /@media \(max-width: 900px\) \{ \.rc-layout \{ grid-template-columns: 1fr; \}/);
+  const layoutAt = ui.html.indexOf('class="rc-layout"');
+  assert.ok(layoutAt > -1);
+  assert.ok(ui.html.indexOf('class="rc-controls"', layoutAt) > layoutAt);
+  assert.ok(ui.html.indexOf('class="rc-results-col"', layoutAt) > layoutAt);
+  assert.ok(ui.html.indexOf('id="rc-results"', layoutAt) > ui.html.indexOf('class="rc-results-col"', layoutAt));
+  // The batch is the point, not one photo at a time — one line under the heading.
+  assert.match(ui.html, /Batch first: one space, every angle together — same anchor, same prompt, one batch\. No one-photo-at-a-time\./);
+  // Numbered steps in order: 01 Upload, 02 Choose style, 03 Run batch,
+  // 04 Review & download. Upload comes before the style picker.
+  for (const [num, label] of [['01', 'Upload'], ['02', 'Choose style'], ['03', 'Run batch'], ['04', 'Review']]) {
+    assert.match(ui.html, new RegExp(`<span class="rc-step-num">${num}</span> ${label}`));
+  }
+  const order = ['>01<', '>02<', '>03<', '>04<'].map(t => ui.html.indexOf(t));
+  assert.ok(order.every(i => i > -1) && order[0] < order[1] && order[1] < order[2] && order[2] < order[3]);
+  assert.ok(ui.html.indexOf('id="rc-anchor"') < ui.html.indexOf('id="rc-pick-category"'));
+  // Step 02 keeps the photo-tile picker: Interior / Exterior first, then
+  // style tiles — no dropdown.
+  assert.match(ui.script, /rc-pick-category/);
+  assert.match(ui.script, /rc-style-cards/);
+  assert.doesNotMatch(ui.html, /<select[^>]*rc-recipe/);
+  // Cost visible where the user commits: $35 per photo × angles.
+  assert.match(ui.script, /const PRICE_PER_PHOTO = 35;/);
+  assert.match(ui.script, /Run batch — \$\{n\} angle\$\{n === 1 \? '' : 's'\} × \$35 = \$\$\{n \* PRICE_PER_PHOTO\}/);
+  assert.match(ui.html, /Run batch — \$35 per photo/);
+  assert.match(ui.script, /Test one angle first — \$35/);
+  assert.doesNotMatch(ui.script, /PRICE_PER_PHOTO = (?!35)\d+/);
+  // Results accumulate beside the form instead of replacing it, each card
+  // a Before/After pair labelled with space, style badge and run time.
+  assert.match(ui.script, /let runs = \[\];/);
+  assert.match(ui.script, /runs\.unshift\(\{ batchId: out\.batchId, images, results: out\.results, space:.*recipeName: recipe\.name, ranAt: new Date\(\)\.toISOString\(\) \}\)/);
+  assert.doesNotMatch(ui.script, /lastRun/);
+  assert.match(ui.script, /class: 'rc-results-grid'/);
+  assert.match(ui.script, /class: 'rc-result-card'/);
+  assert.match(ui.script, /class: 'rc-shot'/);
+  assert.match(ui.script, /class: 'rc-badge', text: 'Before'/);
+  assert.match(ui.script, /class: 'rc-badge after', text: 'After'/);
+  assert.match(ui.script, /class: 'rc-style-badge', text: entry\.recipeName/);
+  assert.match(ui.script, /class: 'rc-result-meta'/);
+  // Per-card Approve control and per-run Save stay as they were.
+  assert.match(ui.script, /Approve this angle/);
+  assert.match(ui.script, /text: 'Save approved set'/);
+  // Listing Pixl's own palette: teal step numbers, pink run button,
+  // electric-blue style badge. No orange, no purple/magenta theme.
+  assert.match(ui.css, /\.rc-step-num \{[^}]*background: var\(--accent, #0c7a8c\)/);
+  assert.match(ui.css, /\.rc-style-badge \{[^}]*background: #007fff/);
+  assert.doesNotMatch(ui.css, /orange|#f97316|#ff6b35|purple|#7c3aed|#a855f7|magenta/i);
+  assert.match(ui.html, /class="rc-btn pink" id="rc-run"/);
+});
