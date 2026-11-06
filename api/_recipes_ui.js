@@ -49,6 +49,9 @@ const css = `
     .rc-prompt-status { font-size: 0.9rem; margin: 0.2rem 0 0.5rem; }
     .rc-prompt-status.rc-edited { color: #7a4d00; font-weight: 700; }
     .rc-prompt-editor textarea { width: 100%; min-height: 220px; font: inherit; font-size: 0.9rem; line-height: 1.45; }
+    .rc-prompt-editor details { margin: 0.5rem 0; }
+    .rc-prompt-editor summary { cursor: pointer; font-size: 0.9rem; color: var(--muted, #555); }
+    .rc-linklike { background: none; border: 0; padding: 0; font: inherit; font-size: 0.9rem; color: var(--accent-pink, #d63384); text-decoration: underline; cursor: pointer; }
     .rc-prompt-lists { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
     .rc-prompt-lists h4 { margin: 0.6rem 0 0.2rem; font-size: 0.9rem; color: #1d1d1d; }
 `;
@@ -65,9 +68,10 @@ const html = `
       <div class="rc-box">
         <p class="rc-msg" id="rc-key-status" role="status">Checking the image API key…</p>
         <div class="rc-row" id="rc-key-form">
-          <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px">
-          <button class="rc-btn" id="rc-key-save" type="button">Save key</button>
-          <button class="rc-btn ghost" id="rc-key-delete" type="button">Remove saved key</button>
+          <input id="rc-key-input" type="password" placeholder="OpenAI API key (sk-…)" autocomplete="off" aria-label="OpenAI API key" style="flex:1 1 280px" hidden>
+          <button class="rc-btn" id="rc-key-save" type="button" hidden>Save key</button>
+          <button class="rc-btn ghost" id="rc-key-delete" type="button" hidden>Remove saved key</button>
+          <button class="rc-linklike" id="rc-key-change" type="button" hidden>Change key…</button>
         </div>
         <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
       </div>
@@ -230,13 +234,21 @@ function client() {
       if (editingPromptId === p.id) {
         const ta = el('textarea', { rows: '12', 'aria-label': 'Prompt for ' + p.name });
         ta.value = p.prompt;
-        const lists = el('div', {}, []);
+        // The reference lists repeat what the prompt above already says in
+        // prose — keep them behind a closed toggle so the editor does not
+        // read as if the prompt is written out twice. The box itself and
+        // what Save stores are unchanged.
+        const listsInner = el('div', {}, []);
         for (const [title, items] of [['KEEP — do not change', p.keep], ['CHANGE ONLY', p.change_only], ['DO NOT', p.do_not]]) {
-          lists.append(el('h4', { text: title }));
+          listsInner.append(el('h4', { text: title }));
           const ul = el('ul', { class: 'rc-prompt-lists' });
           (items || []).forEach(t => ul.append(el('li', { text: t })));
-          lists.append(ul);
+          listsInner.append(ul);
         }
+        const lists = el('details', {}, [
+          el('summary', { text: 'Show the KEEP / CHANGE ONLY / DO NOT lists' }),
+          listsInner,
+        ]);
         const msg = el('p', { class: 'rc-msg', role: 'status' });
         const save = el('button', { class: 'rc-btn pink', type: 'button', text: 'Save prompt' });
         save.addEventListener('click', async () => {
@@ -313,10 +325,35 @@ function client() {
       $('rc-key-status').textContent = s.configured
         ? `Image API key: configured (${s.source === 'env' ? 'Vercel environment' : 'saved in Staff Settings'}). It is never shown.`
         : 'Image API key: NOT configured — batch runs are disabled until a key is saved.';
+      // The form only shows what can actually be done. When the key comes
+      // from the Vercel env var there is nothing to save or remove here —
+      // the empty input and both buttons used to sit under the "configured"
+      // line and read as if a key still had to be entered. So: env key →
+      // status plus a "Change key" link that reveals the field; saved
+      // fallback key → status, "Remove saved key" (it can remove that one)
+      // and the same "Change key" link; no key anywhere → field + Save.
+      const showForm = !s.configured;
+      $('rc-key-input').hidden = !showForm;
+      $('rc-key-save').hidden = !showForm;
+      $('rc-key-delete').hidden = s.source !== 'staff-settings';
+      $('rc-key-change').hidden = !s.configured;
       $('rc-run').disabled = !s.configured;
       $('rc-test-one').disabled = !s.configured;
-    } catch (e) { $('rc-key-status').textContent = 'Could not check the key status: ' + e.message; }
+    } catch (e) {
+      $('rc-key-status').textContent = 'Could not check the key status: ' + e.message;
+      // Status unknown — leave the field open so a key can still be saved.
+      $('rc-key-input').hidden = false;
+      $('rc-key-save').hidden = false;
+      $('rc-key-delete').hidden = true;
+      $('rc-key-change').hidden = true;
+    }
   }
+  $('rc-key-change').addEventListener('click', () => {
+    $('rc-key-input').hidden = false;
+    $('rc-key-save').hidden = false;
+    $('rc-key-change').hidden = true;
+    $('rc-key-input').focus();
+  });
   $('rc-key-save').addEventListener('click', async () => {
     const key = $('rc-key-input').value.trim();
     if (!key) return err(new Error('Paste the key first.'));

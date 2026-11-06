@@ -330,3 +330,90 @@ test('Modern Beach Interior is a live Interior recipe, distinct from the farmhou
     { name: 'angle.jpg', mime: 'image/jpeg', bytes: 100 },
   ]));
 });
+
+test('a plain browser visit to /staff/recipes redirects to the Recipe Studio section, never a JSON error', async () => {
+  const oldPass = process.env.STAFF_PASSWORD;
+  process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
+  try {
+    const authed = response();
+    await handler({ method: 'GET', url: '/staff/recipes', headers: headers({ authorization: basic() }) }, authed);
+    assert.equal(authed.statusCode, 302);
+    assert.equal(authed.getHeader('location'), '/staff#recipe-studio');
+    assert.doesNotMatch(authed.body, /Unknown action/);
+
+    // Same for a visitor who is not signed in yet — /staff sends them to
+    // the login page; they never see a JSON error either.
+    const anon = response();
+    await handler({ method: 'GET', url: '/staff/recipes', headers: headers() }, anon);
+    assert.equal(anon.statusCode, 302);
+    assert.equal(anon.getHeader('location'), '/staff#recipe-studio');
+
+    // An unknown action is still a JSON error — only the bare visit redirects.
+    const bad = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=nope', headers: headers({ authorization: basic() }) }, bad);
+    assert.equal(bad.statusCode, 400);
+    assert.match(bad.body, /Unknown action/);
+  } finally {
+    if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
+  }
+});
+
+test('settingsStatus reports where the key comes from, and deleting cannot remove the env key', async () => {
+  const restoreStore = memoryStore();
+  const oldPass = process.env.STAFF_PASSWORD;
+  const oldKey = process.env.OPENAI_API_KEY;
+  process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
+  delete process.env.OPENAI_API_KEY;
+  const authed = extra => headers({ authorization: basic(), ...extra });
+  try {
+    const none = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=settingsStatus', headers: authed() }, none);
+    assert.equal(none.statusCode, 200);
+    assert.deepEqual(JSON.parse(none.body), { configured: false, source: null, note: 'No OpenAI key configured — batch runs are disabled.' });
+
+    const saved = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=saveKey', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ key: 'sk-test-' + 'x'.repeat(30) }) }, saved);
+    assert.equal(saved.statusCode, 200);
+    const staffSettings = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=settingsStatus', headers: authed() }, staffSettings);
+    assert.deepEqual(JSON.parse(staffSettings.body), { configured: true, source: 'staff-settings', note: 'Key was saved in Staff Settings.' });
+
+    // The env var wins over the saved key, and deleting the saved key
+    // leaves the env key in place — so Remove must never be offered for it.
+    process.env.OPENAI_API_KEY = 'sk-env-' + 'x'.repeat(30);
+    const env = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=settingsStatus', headers: authed() }, env);
+    assert.deepEqual(JSON.parse(env.body), { configured: true, source: 'env', note: 'Key is set in Vercel environment variables.' });
+    const deleted = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=deleteKey', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({}) }, deleted);
+    assert.equal(deleted.statusCode, 200);
+    assert.deepEqual(JSON.parse(deleted.body), { ok: true, configured: true, source: 'env' });
+  } finally {
+    restoreStore();
+    if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
+    if (oldKey === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = oldKey;
+  }
+});
+
+test('key form only shows what can be done, and the prompt reference lists sit behind a closed toggle', () => {
+  const ui = require('../api/_recipes_ui');
+  // A "Change key" control exists; the field and both buttons start
+  // hidden and are only revealed by the status check or the link.
+  assert.match(ui.html, /id="rc-key-change"/);
+  assert.match(ui.html, /Change key/);
+  assert.match(ui.html, /id="rc-key-input"[^>]*hidden/);
+  assert.match(ui.html, /id="rc-key-save"[^>]*hidden/);
+  assert.match(ui.html, /id="rc-key-delete"[^>]*hidden/);
+  // The client shows the field + Save only with no key, shows Remove
+  // only for a Blob-saved key, and shows Change key when one is set.
+  assert.match(ui.script, /\$\('rc-key-delete'\)\.hidden = s\.source !== 'staff-settings'/);
+  assert.match(ui.script, /\$\('rc-key-change'\)\.hidden = !s\.configured/);
+  assert.match(ui.script, /rc-key-change.*addEventListener\('click'/s);
+  // The reference lists are a closed <details>, not open text under the box.
+  assert.match(ui.script, /el\('details', \{\}, \[/);
+  assert.match(ui.script, /Show the KEEP \/ CHANGE ONLY \/ DO NOT lists/);
+  assert.doesNotMatch(ui.script, /el\('details', \{[^}]*open/);
+  // The editor still edits the exact prompt in the box and saves it verbatim.
+  assert.match(ui.script, /ta\.value = p\.prompt/);
+  assert.match(ui.script, /api\('savePrompt', \{ recipeId: p\.id, prompt: ta\.value \}\)/);
+});

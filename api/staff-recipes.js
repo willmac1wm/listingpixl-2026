@@ -206,11 +206,20 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   const send = (status, data) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(data)); };
+  const action = new URL(req.url, 'http://x').searchParams.get('action');
+  // A plain browser visit to /staff/recipes has no action: it is a person,
+  // not an API call, so send them to the Recipe Studio section of the
+  // /staff dashboard instead of a blank JSON error page. /staff itself
+  // sends unauthenticated visitors to the login page.
+  if (!action && req.method === 'GET') {
+    res.statusCode = 302;
+    res.setHeader('Location', '/staff#recipe-studio');
+    return res.end();
+  }
   if (!await authorized(req, res)) {
     res.setHeader('WWW-Authenticate', 'Basic realm="Listing Pixl team", charset="UTF-8"');
     return send(401, { error: 'Team login required.' });
   }
-  const action = new URL(req.url, 'http://x').searchParams.get('action');
   const isPost = POSTS.has(action);
   if (!actions[action] || (isPost !== (req.method === 'POST'))) return send(400, { error: 'Unknown action.' });
   if (isPost && req.headers['x-staff'] !== '1') return send(403, { error: 'Missing X-Staff header.' });
