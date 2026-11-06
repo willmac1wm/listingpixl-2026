@@ -131,3 +131,55 @@ test('writes without the X-Staff header are rejected', async () => {
     if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
   }
 });
+
+test('photo picker: recipes split Interior / Exterior, each with a real button photo in the repo', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  assert.deepEqual(recipes.recipesByCategory('interior').map(r => r.id), ['vs-modern-farmhouse-kitchen']);
+  assert.deepEqual(recipes.recipesByCategory('exterior').map(r => r.id), ['vl-lush-lawn-autumn', 'vt-virtual-twilight']);
+  assert.throws(() => recipes.recipesByCategory('attic'), /Interior or Exterior/);
+  for (const r of recipes.listRecipes()) {
+    assert.match(r.button_image, /^\/images\/recipes\/[a-z0-9-]+\.jpg$/, `${r.id} button image path`);
+    const onDisk = path.join(__dirname, '..', r.button_image);
+    assert.ok(fs.existsSync(onDisk), `${r.button_image} exists in the repo`);
+    const buf = fs.readFileSync(onDisk);
+    assert.equal(buf[0], 0xff); assert.equal(buf[1], 0xd8); // real JPEG, not a placeholder
+    assert.ok(buf.length > 10000, `${r.button_image} is a real photo, not an empty file`);
+  }
+  // The step-1 buttons use the same real photos: kitchen for Interior,
+  // lush lawn for Exterior.
+  assert.equal(recipes.recipesByCategory('interior')[0].button_image, '/images/recipes/modern-farmhouse-kitchen.jpg');
+  assert.equal(recipes.recipesByCategory('exterior')[0].button_image, '/images/recipes/lush-lawn-autumn.jpg');
+});
+
+test('coming-soon styles are names only: planned, no recipe, no photo, never selectable', () => {
+  const planned = recipes.listPlannedStyles();
+  assert.deepEqual(planned.map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+  for (const s of planned) {
+    assert.equal(s.status, 'planned');
+    assert.equal(s.category, 'interior');
+    assert.equal(s.button_image, undefined);
+    assert.equal(s.prompt_chatgpt, undefined);
+    assert.equal(recipes.getRecipe(s.name), null); // no recipe behind the name
+    assert.throws(() => recipes.validateBatch(s.name, [{ name: 'a.jpg', mime: 'image/jpeg', bytes: 100 }, { name: 'b.jpg', mime: 'image/jpeg', bytes: 100 }]), /Unknown recipe/);
+  }
+  assert.deepEqual(recipes.plannedStylesByCategory('interior').map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+  assert.deepEqual(recipes.plannedStylesByCategory('exterior'), []);
+  assert.throws(() => recipes.plannedStylesByCategory('attic'), /Interior or Exterior/);
+});
+
+test('recipes API returns categories, button images and planned styles for the picker', async () => {
+  const oldPass = process.env.STAFF_PASSWORD;
+  process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
+  try {
+    const res = response();
+    await handler({ method: 'GET', url: '/staff/recipes?action=recipes', headers: headers({ authorization: basic() }) }, res);
+    assert.equal(res.statusCode, 200);
+    const out = JSON.parse(res.body);
+    assert.equal(out.recipes.length, 3);
+    for (const r of out.recipes) assert.ok(['interior', 'exterior'].includes(r.category) && r.button_image.startsWith('/images/recipes/'));
+    assert.deepEqual(out.plannedStyles.map(s => s.name), ['Minimal', 'Classic', 'Victorian', 'Modern Beach']);
+  } finally {
+    if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
+  }
+});

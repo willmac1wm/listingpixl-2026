@@ -31,6 +31,17 @@ const css = `
     .rc-compare img { width: 100%; height: auto; border-radius: 8px; display: block; }
     .rc-compare figcaption { font-size: 0.85rem; color: var(--muted, #666); margin-top: 0.25rem; }
     .rc-qc { font-size: 0.9rem; color: var(--muted, #555); padding-left: 1.2rem; }
+    .rc-pick { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin: 0.5rem 0; }
+    .rc-pick-btn, .rc-card { font: inherit; text-align: left; border: 2px solid #cfc8b8; border-radius: 12px; background: #fff; color: #1d1d1d; padding: 0; cursor: pointer; overflow: hidden; }
+    .rc-pick-btn img, .rc-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+    .rc-pick-btn span, .rc-card span { display: block; padding: 0.55rem 0.75rem; }
+    .rc-pick-btn b, .rc-card b { display: block; font-size: 1rem; }
+    .rc-pick-btn small, .rc-card small { display: block; font-size: 0.85rem; color: var(--muted, #555); margin-top: 0.2rem; }
+    .rc-pick-btn:hover, .rc-card:hover { border-color: var(--accent-pink, #d63384); }
+    .rc-pick-btn.rc-selected, .rc-card.rc-selected { border-color: var(--accent-pink, #d63384); box-shadow: 0 0 0 2px var(--accent-pink, #d63384); }
+    .rc-card.rc-soon { opacity: 0.55; cursor: not-allowed; background: #f4f1ea; border-style: dashed; }
+    .rc-card.rc-soon:hover { border-color: #cfc8b8; }
+    .rc-step { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0 0; }
 `;
 
 const html = `
@@ -46,8 +57,15 @@ const html = `
         <p class="rc-msg">The key is never shown again and never leaves the server. Best place for it is the OPENAI_API_KEY variable in Vercel — this form is the fallback. No key = no batch runs, no spend.</p>
       </div>
       <div class="rc-box">
-        <div class="rc-row">
-          <select id="rc-recipe" aria-label="Recipe"><option>Loading recipes…</option></select>
+        <p class="rc-step">Step 1 — Interior or Exterior?</p>
+        <div class="rc-pick" id="rc-pick-category"><p class="rc-msg">Loading recipes…</p></div>
+        <div id="rc-pick-styles" hidden>
+          <p class="rc-step" id="rc-step2-title">Step 2 — pick a style</p>
+          <div class="rc-pick" id="rc-style-cards"></div>
+          <button class="rc-btn ghost" id="rc-pick-back" type="button">← Back to Interior / Exterior</button>
+        </div>
+        <input type="hidden" id="rc-recipe" value="">
+        <div class="rc-row" style="margin-top:.5rem">
           <input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug" style="flex:1 1 280px">
           <input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space" style="flex:1 1 160px">
         </div>
@@ -95,13 +113,82 @@ function client() {
   const status = t => { $('rc-status').textContent = t; $('rc-error').textContent = ''; };
 
   let recipes = [];
+  let plannedStyles = [];
+  let pickedCategory = null;
+  // Step 1 photo: a real photo from the tests — the first live recipe in
+  // that category (kitchen for Interior, lush lawn for Exterior).
+  function categoryPhoto(category) {
+    const r = recipes.find(x => x.category === category && x.button_image);
+    return r ? r.button_image : null;
+  }
+  function renderCategoryStep() {
+    const box = $('rc-pick-category');
+    box.replaceChildren();
+    for (const category of ['interior', 'exterior']) {
+      const photo = categoryPhoto(category);
+      const label = category === 'interior' ? 'Interior' : 'Exterior';
+      const caption = category === 'interior' ? 'Staging inside the house' : 'Landscaping and twilight outside the house';
+      box.append(el('button', {
+        type: 'button',
+        class: 'rc-pick-btn' + (pickedCategory === category ? ' rc-selected' : ''),
+        'aria-pressed': pickedCategory === category ? 'true' : 'false',
+        onclick: () => pickCategory(category),
+      }, [
+        photo ? el('img', { src: photo, alt: label + ' — example photo' }) : null,
+        el('span', {}, [el('b', { text: label }), el('small', { text: caption })]),
+      ]));
+    }
+  }
+  function pickCategory(category) {
+    pickedCategory = category;
+    $('rc-recipe').value = '';
+    $('rc-recipe-note').textContent = '';
+    $('rc-pick-styles').hidden = false;
+    $('rc-step2-title').textContent = 'Step 2 — pick a ' + category + ' style';
+    renderCategoryStep();
+    renderStyleCards();
+  }
+  function renderStyleCards() {
+    const box = $('rc-style-cards');
+    box.replaceChildren();
+    for (const r of recipes.filter(x => x.category === pickedCategory)) {
+      box.append(el('button', {
+        type: 'button',
+        class: 'rc-card' + ($('rc-recipe').value === r.id ? ' rc-selected' : ''),
+        'aria-pressed': $('rc-recipe').value === r.id ? 'true' : 'false',
+        onclick: () => pickRecipe(r.id),
+      }, [
+        r.button_image ? el('img', { src: r.button_image, alt: r.name }) : null,
+        el('span', {}, [el('b', { text: r.name }), el('small', { text: r.price_anchor })]),
+      ]));
+    }
+    // Coming soon: a name only — no photo, no recipe, no prompt behind it.
+    // A plain div, never a button, so it cannot be selected or run.
+    for (const s of plannedStyles.filter(s => s.category === pickedCategory)) {
+      box.append(el('div', { class: 'rc-card rc-soon', 'aria-disabled': 'true' }, [
+        el('span', {}, [el('b', { text: s.name }), el('small', { text: 'Coming soon — not built yet' })]),
+      ]));
+    }
+  }
+  function pickRecipe(id) {
+    $('rc-recipe').value = id;
+    renderStyleCards();
+    showRecipeNote();
+  }
+  $('rc-pick-back').addEventListener('click', () => {
+    pickedCategory = null;
+    $('rc-recipe').value = '';
+    $('rc-recipe-note').textContent = '';
+    $('rc-pick-styles').hidden = true;
+    renderCategoryStep();
+  });
   async function loadRecipes() {
     try {
       const data = await api('recipes');
-      recipes = data.recipes;
-      $('rc-recipe').replaceChildren(...recipes.map(r => el('option', { value: r.id, text: `${r.name} — ${r.price_anchor}` })));
-      showRecipeNote();
-    } catch (e) { $('rc-recipe').replaceChildren(el('option', { text: 'Could not load recipes' })); err(e); }
+      recipes = data.recipes || [];
+      plannedStyles = data.plannedStyles || [];
+      renderCategoryStep();
+    } catch (e) { $('rc-pick-category').replaceChildren(el('p', { class: 'rc-msg rc-err', text: 'Could not load recipes: ' + e.message })); err(e); }
   }
   function showRecipeNote() {
     const r = recipes.find(x => x.id === $('rc-recipe').value);
@@ -116,7 +203,8 @@ function client() {
     $('rc-recipe-note').after(box);
     if (old && old.tagName === 'DIV' && old.querySelector('.rc-qc')) old.remove();
   }
-  $('rc-recipe').addEventListener('change', showRecipeNote);
+  // (Recipe selection calls showRecipeNote() directly — the picker sets
+  // the hidden #rc-recipe value, it is not a user-changed select.)
 
   async function loadKeyStatus() {
     try {

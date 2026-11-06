@@ -63,7 +63,7 @@ async function saveSettings(key) {
 }
 
 const actions = {
-  async recipes() { return { version: recipes.RECIPES.version, recipes: recipes.listRecipes() }; },
+  async recipes() { return { version: recipes.RECIPES.version, recipes: recipes.listRecipes(), plannedStyles: recipes.listPlannedStyles() }; },
 
   async settingsStatus() {
     const { source } = await resolveKey();

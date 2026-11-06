@@ -92,6 +92,8 @@
         "No river rocks, no extra shrubs, no plants in the middle of the lawn, no plants along the driveway"
       ],
       "name": "Virtual Landscape \u2014 Lush Lawn, Autumn Farmhouse",
+      "category": "exterior",
+      "button_image": "/images/recipes/lush-lawn-autumn.jpg",
       "output_naming": "114-E-Anna-St-NN-<View>-Virtually-Landscaped.jpg \u2014 e.g. 114-E-Anna-St-01-Front-Exterior-Virtually-Landscaped.jpg. Keep the real Auto HDR original with the same NN and no suffix.",
       "price_anchor": "Virtual landscape is a $35/photo add-on in Listing Pixl pricing (same as twilight / staging per photo). Charge per edited angle, not per batch.",
       "prompt_chatgpt": "Image 1 is the anchor \u2014 the finished look every other angle must match. Images 2-4 are other angles of the SAME house and yard. Apply the exact same SIMPLE landscaping from Image 1 to Images 2-4. Less is more \u2014 the lawn is the hero.\n\nKEEP EXACTLY THE SAME ON EVERY IMAGE: white horizontal-siding farmhouse, dark charcoal-grey shingle roof, natural wood front porch/deck with wood steps and railing, black front door, light grey gravel driveway in the same shape and position, existing autumn woodland trees in the same positions with green/yellow/orange/red autumn colour, bright blue sky with wispy white clouds, late-morning sun.\n\nCHANGE ONLY: replace the bare dirt yard with a lush emerald-green lawn, full coverage, freshly mowed with subtle mow stripes, no dirt or bare patches. The clean open lawn should be at least 80% of the yard. Add ONE thin dark-brown mulch bed along the house foundation only, narrow, not wide. Inside that bed only, add a maximum of 5 plantings total: 2 white hydrangea clusters by the porch, 1 small red Japanese maple, and 2 ornamental grasses. That is all.\n\nDO NOT add a bed along the driveway, do not add a bed in the foreground, do not add river rocks, do not add extra shrubs, do not put plants in the middle of the lawn. Do not change the house, roof, porch, deck, door, windows, or driveway. Do not add a pool, fence, patio, pergola, fire pit, shed, or walkway. Do not change the season. Do not add people, cars, animals, or text. Photorealistic real-estate photo, same camera look as the anchor, no cartoon look, no oversaturated colour. Simple, clean, calm \u2014 like Jason's renders, not a garden centre.",
@@ -162,6 +164,8 @@
         "Kitchen counter d\u00e9cor, same every angle: light wood cutting board leaning at the backsplash, white ceramic vase with greenery, small bowl of lemons on the island-side counter \u2014 no clutter, no dishes, no food mess"
       ],
       "name": "Virtual Staging \u2014 Modern Farmhouse Kitchen / Dining-Living",
+      "category": "interior",
+      "button_image": "/images/recipes/modern-farmhouse-kitchen.jpg",
       "output_naming": "114-E-Anna-St-NN-<Room>-Virtually-Staged.jpg. Keep the real Auto HDR original with the same NN and no suffix.",
       "price_anchor": "Virtual staging $35/photo in Listing Pixl pricing. Charge per edited angle.",
       "prompt_chatgpt": "Image 1 is the anchor \u2014 the finished staged look every other angle must match. Images 2-4 are other angles of the SAME kitchen and open-plan dining-living room. Stage them with the EXACT same furniture and d\u00e9cor as Image 1.\n\nKEEP EXACTLY THE SAME ON EVERY IMAGE: white shaker cabinets in the same layout with black bar pulls, black gooseneck faucet, white quartz counters, stainless steel appliances in the same positions, light oak plank flooring, black 5-light chandelier with white shades, sliding glass door and window views with autumn trees outside, white walls, room shape and window/door positions unchanged.\n\nCHANGE ONLY \u2014 add this exact furniture, same items, same colours, same positions on every angle: light natural-wood rectangular dining table with 4 light grey upholstered chairs with light wood legs, beige woven runner and a wooden bowl with decorative spheres in the centre; light grey fabric 3-seat sofa; 2 cognac/tan leather armchairs; round brushed-silver coffee table with 2 stacked books and a small white vase with greenery; textured off-white/light grey rug under the coffee table; tall fiddle-leaf fig in a woven basket in the corner; slim white floor lamp beside the sofa. On the kitchen counter only: light wood cutting board, white ceramic vase with greenery, small bowl of lemons.\n\nDO NOT add a kitchen island or bar stools \u2014 there is no island. Do not change cabinets, counters, appliances, faucet, flooring, or light fixtures. Do not move walls, windows, or doors. Do not use different furniture on different angles. Do not add people, pets, text, or logos. Photorealistic real-estate photo, bright daylight, same camera look as the anchor.",
@@ -228,6 +232,8 @@
         "Lawn and plantings: same emerald lawn and same beds as the landscaped anchor, just in dusk light \u2014 do not re-invent the landscaping"
       ],
       "name": "Virtual Twilight \u2014 Exterior Dusk",
+      "category": "exterior",
+      "button_image": "/images/recipes/virtual-twilight.jpg",
       "output_naming": "114-E-Anna-St-NN-<View>-Virtually-Landscaped-Twilight.jpg",
       "price_anchor": "Twilight $35/photo in Listing Pixl pricing. Charge per edited angle, on top of the landscape charge if both were done.",
       "prompt_chatgpt": "Image 1 is the anchor \u2014 the approved landscaped daytime exterior. Apply a virtual twilight / dusk look to the SAME image, keeping everything else identical.\n\nKEEP EXACTLY THE SAME: white farmhouse, dark charcoal roof, wood porch/deck, black front door, gravel driveway, emerald lawn, dark mulch beds, white hydrangeas, red Japanese maple, ornamental grasses, river rocks, and autumn trees in the same positions.\n\nCHANGE ONLY: sky to deep blue dusk with a warm orange band at the horizon; warm golden light glowing from every window; porch light on warm by the front door; low warm landscape lights glowing in the mulch beds. Dusk light, long soft shadows, house lit warm against a blue evening.\n\nDO NOT make it full night \u2014 house and yard must still be clearly visible. Do not change the house, lawn, plantings, driveway, or trees. Do not add string lights, a fire pit, or a pool. Photorealistic real-estate twilight photo, no cartoon look.",
@@ -254,5 +260,27 @@
   "version": "1.1",
   "why_batch_not_one_off": "One-off edits re-invent the room/yard every time. A recipe locks one anchor image, one materials list, one KEEP list and one CHANGE-ONLY list, and all angles of the same space are sent in ONE batch with the same prompt. That is what made Jason's two renders match.",
   "worked_example_property": "114 E Anna St, Whitesboro, NJ 08210 \u2014 white farmhouse, dark charcoal roof, wood front porch/deck, gravel drive, dirt yard in the real photos. That dirt yard is why this property is the perfect test case.",
-  "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere."
+  "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere.",
+  "planned_styles": [
+    {
+      "name": "Minimal",
+      "category": "interior",
+      "status": "planned"
+    },
+    {
+      "name": "Classic",
+      "category": "interior",
+      "status": "planned"
+    },
+    {
+      "name": "Victorian",
+      "category": "interior",
+      "status": "planned"
+    },
+    {
+      "name": "Modern Beach",
+      "category": "interior",
+      "status": "planned"
+    }
+  ]
 }
