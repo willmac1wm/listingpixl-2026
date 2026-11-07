@@ -22,8 +22,7 @@
 // With no key anywhere the endpoints answer 503 "No OpenAI key configured"
 // and the Studio UI shows that instead of a run button. No key = no calls,
 // no spend. OpenAI image calls are pay-per-image on William's OpenAI
-// billing; the Studio shows the recipe's $35/photo price anchor and asks
-// for a confirm on every run.
+// billing; the Studio asks for a confirm on every run.
 const { authorized } = require('./_auth');
 const store = require('../lib/private-store');
 const { put } = require('@vercel/blob');
