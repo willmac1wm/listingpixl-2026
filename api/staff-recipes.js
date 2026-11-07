@@ -23,6 +23,9 @@ const store = require('../lib/private-store');
 const { put } = require('@vercel/blob');
 const recipes = require('../lib/recipes');
 const delivery = require('../lib/delivery');
+// AI Clips share this function: Vercel's Hobby plan allows only 12
+// functions per deployment, so /staff/clips is routed here (mode=clips).
+const clipsApi = require('./_clips_api');
 
 const SETTINGS_PATH = 'staff/recipe-settings.json';
 const OPENAI_URL = 'https://api.openai.com/v1/images/edits';
@@ -206,7 +209,9 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   const send = (status, data) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(data)); };
-  const action = new URL(req.url, 'http://x').searchParams.get('action');
+  const params = new URL(req.url, 'http://x').searchParams;
+  if (params.get('mode') === 'clips') return clipsApi(req, res);
+  const action = params.get('action');
   // A plain browser visit to /staff/recipes has no action: it is a person,
   // not an API call, so send them to the Recipe Studio section of the
   // /staff dashboard instead of a blank JSON error page. /staff itself

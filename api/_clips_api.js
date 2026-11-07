@@ -1,4 +1,5 @@
-// AI Clips API for /staff: turn a finished listing photo (or two, for a
+// AI Clips API for /staff (served through api/staff-recipes.js, mode=clips,
+// to stay inside Vercel's 12-function Hobby limit): turn a finished listing photo (or two, for a
 // transition) into a short camera-move video on fal.ai. Same team login
 // as /staff; writes need the X-Staff header.
 //

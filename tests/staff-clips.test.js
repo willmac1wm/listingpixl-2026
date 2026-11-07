@@ -1,7 +1,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const clips = require('../lib/clips');
-const handler = require('../api/staff-clips');
+const handler = require('../api/_clips_api');
+const recipesHandler = require('../api/staff-recipes');
 const ui = require('../api/_clips_ui');
 
 const headers = extra => ({ host: 'www.listingpixl.com', ...extra });
@@ -180,4 +181,18 @@ test('Clips panel is on /staff below the Recipe Studio, with the price on the bu
   assert.match(ui.script, /confirm\(/, 'every clip is confirmed before it is paid for');
   const src = require('node:fs').readFileSync(require.resolve('../api/staff.js'), 'utf8');
   assert.ok(src.indexOf('${recipeStudio.html}') < src.indexOf('${aiClips.html}'));
+});
+
+test('clips ride on the Recipe Studio function: /staff/clips routes there and api/ stays within 12 functions', async () => {
+  const fs = require('node:fs');
+  const functions = fs.readdirSync(require('node:path').join(__dirname, '../api')).filter(f => f.endsWith('.js') && !f.startsWith('_'));
+  assert.ok(functions.length <= 12, `Vercel Hobby allows 12 functions per deployment; api/ has ${functions.length}`);
+  const routes = JSON.parse(fs.readFileSync(require('node:path').join(__dirname, '../vercel.json'), 'utf8')).routes;
+  assert.ok(routes.some(r => r.src === '/staff/clips' && r.dest === '/api/staff-recipes?mode=clips'));
+  await withEnv({ STAFF_PASSWORD: 'LOCAL-TEST-ONLY-not-an-account-password', FAL_KEY: undefined }, async () => {
+    const res = response();
+    await recipesHandler({ method: 'GET', url: '/api/staff-recipes?mode=clips&action=status', headers: headers({ authorization: basic() }) }, res);
+    assert.equal(res.statusCode, 200);
+    assert.equal(JSON.parse(res.body).configured, false);
+  });
 });
