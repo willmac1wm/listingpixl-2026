@@ -45,22 +45,35 @@ const needKey = () => { if (!process.env.FAL_KEY) throw new HttpError(503, 'No f
 
 const actions = {
   async status() {
-    return { configured: Boolean(process.env.FAL_KEY), model: clips.MODEL, cost: clips.COST, moves: clips.listMoves() };
+    return { configured: Boolean(process.env.FAL_KEY), models: { fast: clips.MODELS.fast.label, keyframes: clips.MODELS.keyframes.label }, cost: clips.costTable(), maxMiddles: clips.MAX_MIDDLES, maxExtra: clips.MAX_EXTRA, moves: clips.listMoves() };
+  },
+
+  // The exact prompt a clip will send, so the page can show it before
+  // anything is paid for.
+  async prompt(body, query) {
+    const move = String(query.get('move') || '');
+    if (!clips.MOVES[move]) throw new HttpError(400, 'Pick a camera move.');
+    try { return { prompt: clips.buildPrompt(move, query.get('extra') || '') }; }
+    catch (e) { throw new HttpError(400, e.message); }
   },
 
   async make(body) {
     const start = decode(body.start, 'Start photo');
+    const middles = (Array.isArray(body.middles) ? body.middles : []).map((m, i) => decode(m, `Middle photo ${i + 1}`));
     const end = decode(body.end, 'End photo');
     const duration = Number(body.duration);
-    try { clips.validateClip({ move: body.move, duration, start, end }); }
+    try { clips.validateClip({ move: body.move, duration, start, middles, end, extra: body.extra }); }
     catch (e) { throw new HttpError(400, e.message); }
     needKey();
     const startUrl = await upload(start);
+    const middleUrls = [];
+    for (const m of middles) middleUrls.push(await upload(m));
     const endUrl = end ? await upload(end) : null;
-    const input = clips.buildInput({ move: body.move, duration, startUrl, endUrl });
-    const queued = await fal(`https://queue.fal.run/${clips.MODEL}`, { method: 'POST', body: JSON.stringify(input) });
+    const model = clips.MODELS[clips.modelKey(middles.length)];
+    const input = clips.buildInput({ move: body.move, duration, extra: body.extra, startUrl, middleUrls, endUrl });
+    const queued = await fal(`https://queue.fal.run/${model.id}`, { method: 'POST', body: JSON.stringify(input) });
     if (!clips.REQUEST_ID.test(String(queued.request_id || ''))) throw new HttpError(502, 'fal.ai did not queue the clip.');
-    return { ok: true, requestId: queued.request_id, cost: clips.cost(duration) };
+    return { ok: true, requestId: queued.request_id, model: model.label, cost: clips.cost(duration, middles.length) };
   },
 
   async check(body, query) {
