@@ -1,7 +1,7 @@
 // Clients page (/staff/clients): one table built from delivery shoots
 // and HD Photo Hub sites. Client creation stays in HD Photo Hub.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const clients = require('./_clients_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const clients = require('../_clients_ui');
 
 function page() {
   return staffPage({

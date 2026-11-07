@@ -2,8 +2,8 @@
 // the old single-page dashboard. Same per-shoot records, statuses,
 // Stripe links, tour/video URLs, gallery links and draft texts.
 // Drafts only — nothing on this page sends anything.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const delivery = require('./_delivery_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const delivery = require('../_delivery_ui');
 
 function page() {
   return staffPage({

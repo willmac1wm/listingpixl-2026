@@ -1,8 +1,8 @@
 // Sites page (/staff/sites): HD Photo Hub sites as HD-style cards.
 // Search, sort, and a link out to HD for creating a new site — site
 // creation is not rebuilt here.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const sites = require('./_sites_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const sites = require('../_sites_ui');
 
 function page() {
   return staffPage({

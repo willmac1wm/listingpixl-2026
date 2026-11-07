@@ -39,35 +39,35 @@
     },
     {
       "src": "/staff/sites/?",
-      "dest": "/api/staff-sites"
+      "dest": "/api/staff-pages?page=sites"
     },
     {
       "src": "/staff/studio/?",
-      "dest": "/api/staff-studio"
+      "dest": "/api/staff-pages?page=studio"
     },
     {
       "src": "/staff/posts/?",
-      "dest": "/api/staff-posts"
+      "dest": "/api/staff-pages?page=posts"
     },
     {
       "src": "/staff/clients/?",
-      "dest": "/api/staff-clients"
+      "dest": "/api/staff-pages?page=clients"
     },
     {
       "src": "/staff/crm/?",
-      "dest": "/api/staff-crm"
+      "dest": "/api/staff-pages?page=crm"
     },
     {
       "src": "/staff/business/?",
-      "dest": "/api/staff-business"
+      "dest": "/api/staff-pages?page=business"
     },
     {
       "src": "/staff/account/?",
-      "dest": "/api/staff-account"
+      "dest": "/api/staff-pages?page=account"
     },
     {
       "src": "/staff/?",
-      "dest": "/api/staff"
+      "dest": "/api/staff-pages?page=dashboard"
     },
     {
       "src": "/staff/shoots",
@@ -122,28 +122,10 @@
     "api/book.js": {
       "maxDuration": 30
     },
+    "api/staff-pages.js": {
+      "maxDuration": 30
+    },
     "api/staff-auth.js": {
-      "maxDuration": 30
-    },
-    "api/staff-sites.js": {
-      "maxDuration": 30
-    },
-    "api/staff-studio.js": {
-      "maxDuration": 30
-    },
-    "api/staff-posts.js": {
-      "maxDuration": 30
-    },
-    "api/staff-clients.js": {
-      "maxDuration": 30
-    },
-    "api/staff-crm.js": {
-      "maxDuration": 30
-    },
-    "api/staff-business.js": {
-      "maxDuration": 30
-    },
-    "api/staff-account.js": {
       "maxDuration": 30
     },
     "api/inquiries.js": {

@@ -1,7 +1,7 @@
 // Account page (/staff/account): basic information, read-only. No
 // password or driver's-license management — that lives in HD Photo Hub.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const account = require('./_account_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const account = require('../_account_ui');
 
 function page() {
   return staffPage({

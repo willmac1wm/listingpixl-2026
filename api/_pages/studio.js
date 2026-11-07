@@ -2,8 +2,8 @@
 // old single-page dashboard. Same four steps, same chain-anchor run,
 // same model grid, same closed-door settings — only the page it lives
 // on changed.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const studio = require('./_recipes_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const studio = require('../_recipes_ui');
 
 function page() {
   return staffPage({

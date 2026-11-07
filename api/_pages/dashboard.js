@@ -19,8 +19,8 @@
 // stays a dash instead of showing a wrong number. Where HD shows a stat
 // we cannot compute (lifetime hits, scheduled sites, average site life),
 // we leave it out rather than inventing it.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const guides = require('./_guides_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const guides = require('../_guides_ui');
 
 const css = `
     .dash-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; }

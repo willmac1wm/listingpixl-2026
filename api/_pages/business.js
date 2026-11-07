@@ -2,8 +2,8 @@
 // domains, stat panels from real data only, and Team Members. The
 // other 19 HD Business sidebar items are not built — no data or
 // function behind them here.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const business = require('./_business_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const business = require('../_business_ui');
 
 function page() {
   return staffPage({

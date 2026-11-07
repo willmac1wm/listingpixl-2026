@@ -17,14 +17,15 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { NAV, FOOTER_LINKS, staffPage } = require('../api/_staff_shell');
-const home = require('../api/staff');
-const sites = require('../api/staff-sites');
-const studio = require('../api/staff-studio');
-const posts = require('../api/staff-posts');
-const clients = require('../api/staff-clients');
-const crm = require('../api/staff-crm');
-const business = require('../api/staff-business');
-const account = require('../api/staff-account');
+const home = require('../api/_pages/dashboard');
+const sites = require('../api/_pages/sites');
+const studio = require('../api/_pages/studio');
+const posts = require('../api/_pages/posts');
+const clients = require('../api/_pages/clients');
+const crm = require('../api/_pages/crm');
+const business = require('../api/_pages/business');
+const account = require('../api/_pages/account');
+const dispatcher = require('../api/staff-pages');
 const { mergeClients } = require('../api/_clients_ui');
 
 const PAGES = [
@@ -259,28 +260,53 @@ test('account page is read-only basic info, with no password or driver\'s-licens
   assert.doesNotMatch(html, /id="delivery"/);
 });
 
-test('vercel routes serve every staff page, and the old guessed routes are gone', () => {
+test('one function serves all eight staff pages: the Hobby plan allows 12 functions per deployment', () => {
+  // Commit 17cb876 put one function per page (19 total) and the build
+  // failed with exceeded_serverless_functions_per_deployment. The eight
+  // page modules now live in api/_pages/ (underscore-prefixed, not
+  // functions) behind the single staff-pages dispatcher.
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js') && !f.startsWith('_'));
+  assert.ok(apiFiles.length <= 12, `too many serverless functions: ${apiFiles.length} (${apiFiles.join(', ')}) — the Hobby plan allows 12`);
+  assert.ok(apiFiles.includes('staff-pages.js'), 'dispatcher missing');
+  for (const name of ['staff.js', 'staff-sites.js', 'staff-studio.js', 'staff-posts.js', 'staff-clients.js', 'staff-crm.js', 'staff-business.js', 'staff-account.js']) {
+    assert.ok(!apiFiles.includes(name), `page handler is still its own function: ${name}`);
+  }
+});
+
+test('dispatcher picks the page from ?page= or from the request path, and 404s unknown pages', () => {
+  assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=sites' }), 'sites');
+  assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=dashboard' }), 'dashboard');
+  assert.equal(dispatcher.pageName({ url: '/staff/sites' }), 'sites');
+  assert.equal(dispatcher.pageName({ url: '/staff/sites/' }), 'sites');
+  assert.equal(dispatcher.pageName({ url: '/staff' }), 'dashboard');
+  assert.equal(dispatcher.pageName({ url: '/staff/' }), 'dashboard');
+  assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=nope' }), null);
+  assert.equal(dispatcher.pageName({ url: '/staff/photos' }), null);
+  assert.equal(dispatcher.pageName({ url: '/staff/recipes' }), null);
+});
+
+test('vercel routes serve every staff page through the dispatcher, and the old per-page routes are gone', () => {
   const vercel = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
   const routes = new Map(vercel.routes.map(r => [r.src, r.dest]));
   for (const [src, dest] of [
-    ['/staff/?', '/api/staff'],
-    ['/staff/sites/?', '/api/staff-sites'],
-    ['/staff/studio/?', '/api/staff-studio'],
-    ['/staff/posts/?', '/api/staff-posts'],
-    ['/staff/clients/?', '/api/staff-clients'],
-    ['/staff/crm/?', '/api/staff-crm'],
-    ['/staff/business/?', '/api/staff-business'],
-    ['/staff/account/?', '/api/staff-account'],
+    ['/staff/?', '/api/staff-pages?page=dashboard'],
+    ['/staff/sites/?', '/api/staff-pages?page=sites'],
+    ['/staff/studio/?', '/api/staff-pages?page=studio'],
+    ['/staff/posts/?', '/api/staff-pages?page=posts'],
+    ['/staff/clients/?', '/api/staff-pages?page=clients'],
+    ['/staff/crm/?', '/api/staff-pages?page=crm'],
+    ['/staff/business/?', '/api/staff-pages?page=business'],
+    ['/staff/account/?', '/api/staff-pages?page=account'],
     ['/staff/shoots', '/api/shoots'],
     ['/staff/recipes', '/api/staff-recipes'],
     ['/staff/delivery', '/api/staff-delivery'],
   ]) assert.equal(routes.get(src), dest, `missing route: ${src} -> ${dest}`);
   for (const src of ['/staff/photos/?', '/staff/guides/?']) assert.equal(routes.get(src), undefined, `guessed route still present: ${src}`);
   const fns = vercel.functions || {};
-  for (const name of ['api/staff-sites.js', 'api/staff-clients.js', 'api/staff-business.js', 'api/staff-account.js']) {
-    assert.ok(fns[name], `missing function config: ${name}`);
+  assert.ok(fns['api/staff-pages.js'], 'missing function config: api/staff-pages.js');
+  for (const name of ['api/staff.js', 'api/staff-sites.js', 'api/staff-studio.js', 'api/staff-posts.js', 'api/staff-clients.js', 'api/staff-crm.js', 'api/staff-business.js', 'api/staff-account.js', 'api/staff-photos.js', 'api/staff-guides.js']) {
+    assert.equal(fns[name], undefined, `per-page function config still present: ${name}`);
   }
-  for (const name of ['api/staff-photos.js', 'api/staff-guides.js']) assert.equal(fns[name], undefined, `guessed function config still present: ${name}`);
 });
 
 test('signed-out visitors to a staff page are sent to sign-in, back to that page', async () => {
@@ -301,6 +327,37 @@ test('signed-out visitors to a staff page are sent to sign-in, back to that page
       assert.equal(res.statusCode, 303, `${label} should redirect to sign-in`);
       assert.equal(res.getHeader('location'), '/staff/login?next=' + encodeURIComponent(href), `${label} should return to its own page after sign-in`);
     }
+  } finally {
+    if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
+  }
+});
+
+test('dispatcher sends signed-out visitors to sign-in, back to the page they asked for', async () => {
+  const oldPass = process.env.STAFF_PASSWORD;
+  process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
+  const response = () => {
+    const saved = new Map();
+    return { statusCode: 200, body: '',
+      setHeader(key, value) { saved.set(key.toLowerCase(), value); },
+      getHeader(key) { return saved.get(key.toLowerCase()); },
+      end(value = '') { this.body = value; },
+    };
+  };
+  try {
+    // Original page URL (as Vercel passes it through the rewrite)…
+    const viaPath = response();
+    await dispatcher({ method: 'GET', url: '/staff/sites', headers: { host: 'www.listingpixl.com', accept: 'text/html' } }, viaPath);
+    assert.equal(viaPath.statusCode, 303);
+    assert.equal(viaPath.getHeader('location'), '/staff/login?next=' + encodeURIComponent('/staff/sites'));
+    // …and the rewritten URL with ?page=.
+    const viaQuery = response();
+    await dispatcher({ method: 'GET', url: '/api/staff-pages?page=crm', headers: { host: 'www.listingpixl.com', accept: 'text/html' } }, viaQuery);
+    assert.equal(viaQuery.statusCode, 303);
+    assert.equal(viaQuery.getHeader('location'), '/staff/login?next=' + encodeURIComponent('/staff/crm'));
+    // Unknown page: plain 404, not a sign-in redirect.
+    const unknown = response();
+    await dispatcher({ method: 'GET', url: '/staff/photos', headers: { host: 'www.listingpixl.com', accept: 'text/html' } }, unknown);
+    assert.equal(unknown.statusCode, 404);
   } finally {
     if (oldPass === undefined) delete process.env.STAFF_PASSWORD; else process.env.STAFF_PASSWORD = oldPass;
   }

@@ -1,8 +1,8 @@
 // Blog/social drafts page (/staff/posts): the "New shoots" section
 // moved whole from the old single-page dashboard. Same draft cards,
 // per-channel blocks, Google hand-post steps and Approve area.
-const { serveStaffPage, staffPage } = require('./_staff_shell');
-const shoots = require('./_shoots_ui');
+const { serveStaffPage, staffPage } = require('../_staff_shell');
+const shoots = require('../_shoots_ui');
 
 function page() {
   return staffPage({
