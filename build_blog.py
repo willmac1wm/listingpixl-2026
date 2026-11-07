@@ -51,6 +51,29 @@ FB = "https://www.facebook.com/listing.pixl.media/"
 # (door number "101" visible; Street View confirms 301 E Pacific is a
 # different white cottage). That post was removed; its photos live here.
 SHOOTS = [
+    dict(slug='114-e-anna-st-whitesboro-nj',
+         address='114 E Anna St',
+         town='Whitesboro',
+         zip='08210',
+         agent='Jason Ruffenach',
+         brokerage='eXp Realty',
+         date='November 2026',
+         photos=[('114-e-anna-st-whitesboro-nj-front-exterior.jpg', 'White ranch home with covered front porch on a freshly graded wooded lot in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-drone-aerial.jpg', 'Drone aerial of a white ranch home surrounded by fall color trees in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-top-down-drone.jpg', 'Top-down drone view of the cleared lot, roof and neighboring streets in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-kitchen.jpg', 'White shaker kitchen with black hardware, chandelier and sliding glass door in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-kitchen-sink.jpg', 'Kitchen sink with black pull-down faucet, white veined countertop and window in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-entry-hallway.jpg', 'Entry hallway with double closet, plank floors and front door in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-bedroom.jpg', 'Bedroom with three windows onto the trees and a ceiling fan in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-second-bedroom.jpg', 'Bedroom with double closet doors and ceiling fan in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-shower-bath.jpg', 'Bathroom with walk-in shower stall and white vanity in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-bathroom.jpg', 'Bathroom with tub and shower combo and white vanity in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-front-porch.jpg', 'Covered front porch with wood railings, steps and dark front door in Whitesboro NJ'),
+('114-e-anna-st-whitesboro-nj-rear-exterior.jpg', 'Rear of a white ranch home with sliding door and fall trees in Whitesboro NJ')],
+         blurb='A white ranch home on a wooded Whitesboro lot, photographed inside and out with drone views over the fall trees.',
+         intro='This white ranch home on E Anna St in Whitesboro sits on a freshly graded lot ringed by trees in full fall color, with a covered front porch and wood railings. Inside, the shoot covered the open kitchen with white shaker cabinets, black hardware, a chandelier and a sliding glass door, along with the entry hall, bright bedrooms with ceiling fans and two bathrooms. The drone captured the house from the front and straight overhead, showing the cleared lot and the streets around it.',
+         highlights=['Front exterior and covered porch', 'Drone and top-down aerials with fall color', 'White shaker kitchen with sliding glass door', 'Bedrooms with ceiling fans and big windows', 'Two bathrooms, one shower and one tub'],
+         tags=['Drone aerials', 'HDR interiors', 'Fall color']),
     dict(slug='112-central-ave-cape-may-court-house-nj',
          address='112 Central Ave',
          town='Cape May Court House',
@@ -1045,7 +1068,9 @@ SHOOTS = [
          tags=['HDR interiors', 'Drone aerials', 'Edited & MLS-ready']),
 ]
 
-TOWNS = {'Buena': ('Buena in Atlantic County is a rural borough with roomy lots and family homes, a short drive from Vineland and Hammonton. Drone '
+TOWNS = {'Whitesboro': ('Whitesboro is a small, tree-lined community in Middle Township, just off Route 9 between Cape May Court House and Rio Grande, founded in the early 1900s by former Congressman George Henry White. Homes here often sit on deep, wooded lots, so drone shots that show the land, the tree line and the quiet side streets help buyers understand what they are getting. Bright, clean interior photos round it out for buyers comparing year-round homes across the county.',
+           ['Burleigh', 'Rio Grande', 'Cape May Court House', 'Wildwood', 'Villas']),
+ 'Buena': ('Buena in Atlantic County is a rural borough with roomy lots and family homes, a short drive from Vineland and Hammonton. Drone '
            'shots that show the whole backyard are especially useful here, where outdoor space is a big part of the appeal.',
            ['Vineland', 'Millville', 'Hammonton', 'Newfield', 'Franklinville']),
  'Cape May': ('Cape May is the southern tip of New Jersey and one of the most recognizable shore towns on the East Coast. Beyond the '
