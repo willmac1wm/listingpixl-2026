@@ -44,7 +44,12 @@ test('a new editing job starts to-edit with a hex id, and the assignee can be Wi
   assert.match(job.id, /^[a-f0-9]{16}$/);
   assert.equal(job.status, 'to-edit');
   assert.equal(job.assignee, 'William');
-  assert.equal(job.due, '2026-11-07T18:00:00.000Z');
+  // A naive datetime-local value is William's wall time in America/New_York:
+  // 6pm Eastern on 2026-11-07 (EST) is 23:00Z — and it must stay 23:00Z no
+  // matter what timezone the server runs in. An explicit offset passes
+  // through unchanged.
+  assert.equal(job.due, '2026-11-07T23:00:00.000Z');
+  assert.equal(editing.newEditingJob({ slug: '114-e-anna-st-whitesboro-nj', assignee: 'William', due: '2026-11-07T18:00:00-05:00' }).due, '2026-11-07T23:00:00.000Z');
   assert.equal(job.space, 'front yard');
   for (const assignee of ['AutoHDR', 'Aura']) {
     assert.equal(editing.newEditingJob({ slug: '114-e-anna-st-whitesboro-nj', assignee }).assignee, assignee);
