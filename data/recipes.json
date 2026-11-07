@@ -106,7 +106,7 @@
         "Does it look calm and simple like Jason's, not busy?"
       ],
       "settings": {
-        "batch": "Anchor + up to 3 target angles in one call/message",
+        "batch": "Angle 1 first with the recipe prompt only; up to 3 more angles matched to its finished result",
         "input_fidelity": "high where offered",
         "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time \u2014 check current name, gpt-image-1 is retired)",
         "quality": "high"
@@ -177,11 +177,11 @@
         "Room still reads as the same house, not a different kitchen?",
         "Table long axis points toward the sliding door on every angle \u2014 not parallel to the back kitchen wall?",
         "On living-end angles, is the rug in the foreground at the bottom of the frame?",
-        "Sofa, armchairs, coffee table and rug in the same place in the room as the anchor?",
+        "Sofa, armchairs, coffee table and rug in the same place in the room as the first finished angle?",
         "Living group square to the walls \u2014 rug edges parallel to walls, sofa straight, armchairs facing sofa, nothing diagonal or off-centre?"
       ],
       "settings": {
-        "batch": "Anchor + up to 3 target angles in one call/message",
+        "batch": "Angle 1 first with the recipe prompt only; up to 3 more angles matched to its finished result",
         "input_fidelity": "high where offered",
         "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
         "quality": "high"
@@ -229,7 +229,7 @@
         "Sky: deep blue dusk, warm orange horizon glow, a few early stars only \u2014 no purple cartoon sky",
         "Window light: warm golden yellow, same on every window, no white or blue light",
         "Porch light: one warm wall light by the front door, on",
-        "Lawn and plantings: same emerald lawn and same beds as the landscaped anchor, just in dusk light \u2014 do not re-invent the landscaping"
+        "Lawn and plantings: same emerald lawn and same beds as the finished landscaped photo, just in dusk light \u2014 do not re-invent the landscaping"
       ],
       "name": "Virtual Twilight \u2014 Exterior Dusk",
       "category": "exterior",
@@ -244,12 +244,12 @@
         "House still readable \u2014 roof, porch, door all visible?"
       ],
       "settings": {
-        "batch": "One angle at a time for twilight \u2014 approve the ground hero first, then use it as the anchor for the aerial",
+        "batch": "One angle at a time for twilight \u2014 approve the ground hero first, then match the aerial to its finished result",
         "input_fidelity": "high where offered",
         "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
         "quality": "high"
       },
-      "source": "Companion to vl-lush-lawn-autumn. Same 114 E Anna St house, same anchor discipline.",
+      "source": "Companion to vl-lush-lawn-autumn. Same 114 E Anna St house; first angle sets the look, the rest match it.",
       "target_angles": [
         "Ground front exterior (landscaped version)",
         "Aerial front (landscaped version) \u2014 only if the ground twilight is approved first"
@@ -263,7 +263,7 @@
       "button_image": "/images/recipes/modern-beach-interior.jpg",
       "price_anchor": "Virtual staging $35/photo in Listing Pixl pricing. Charge per edited angle.",
       "use_when": "Empty living room / open-plan living area in a Cape May County shore house \u2014 new-build or resale. The 114 E Anna St open-plan living area is the worked example.",
-      "source": "Built from the real 114 E Anna St open-plan living area (114-E-Anna-St-37-Kitchen-Living.jpg \u2014 empty, white shaker kitchen on the left, big empty living area with windows and a sliding glass door to the deck, light oak plank floor). First approved angle (Test 4, #37) is the anchor for all other angles. Distinct from Recipe 2's farmhouse kitchen: no dark wood, no black metal furniture, no cognac leather \u2014 light linen, rattan, whitewash, sand and soft sea-blue only.",
+      "source": "Built from the real 114 E Anna St open-plan living area (114-E-Anna-St-37-Kitchen-Living.jpg \u2014 empty, white shaker kitchen on the left, big empty living area with windows and a sliding glass door to the deck, light oak plank floor). First approved angle (Test 4, #37) sets the look the other angles are matched to. Distinct from Recipe 2's farmhouse kitchen: no dark wood, no black metal furniture, no cognac leather \u2014 light linen, rattan, whitewash, sand and soft sea-blue only.",
       "anchor": "First angle: stage one hero living angle first \u2014 Test 4 output from 114-E-Anna-St-37-Kitchen-Living.jpg. Approve it, then its finished result is the reference the other living angles are matched to. All angles must match the first angle's furniture exactly.",
       "target_angles": [
         "Living room wide (kitchen side)",
@@ -326,7 +326,7 @@
         "Living group square to the walls \u2014 rug edges parallel to walls, sofa straight, armchairs facing sofa, nothing diagonal or off-centre?"
       ],
       "settings": {
-        "batch": "Anchor + up to 3 target angles in one call/message",
+        "batch": "Angle 1 first with the recipe prompt only; up to 3 more angles matched to its finished result",
         "input_fidelity": "high where offered",
         "model": "Current GPT Image model (gpt-image-1.5 / gpt-image-2.5 at run time)",
         "quality": "high"
