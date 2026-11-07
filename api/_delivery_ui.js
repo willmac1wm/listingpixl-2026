@@ -20,16 +20,32 @@ const css = `
     .dv-btn.pink { background: var(--accent-pink, #d63384); }
     .dv-btn.ghost { background: transparent; color: #1d1d1d; border: 1px solid #cfc8b8; }
     .dv-btn:disabled { opacity: 0.5; cursor: wait; }
-    .dv-msg { font-size: 0.9rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
+    .dv-msg { font-size: 0.95rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
     .dv-err { color: #b00020; }
-    .dv-warn { background: #fff7e0; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; margin: 0.5rem 0; }
+    .dv-warn { background: #fff2f7; border: 1px solid #f4a9c8; border-radius: 10px; padding: 0.65rem 0.85rem; font-size: 0.95rem; margin: 0 0 0.75rem; }
     .dv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.5rem; }
     .dv-thumb { width: 100%; height: auto; border-radius: 8px; display: block; }
+    /* Sub-cards: one white card per job inside the pink panel, each with a
+       bold heading, so the shoot, tours, gallery, files and drafts each
+       read as their own section instead of one long form. */
+    .dv-sub { background: #fff; border: 1px solid #f4a9c8; border-radius: 12px; padding: 1rem 1.1rem; margin: 0 0 0.75rem; }
+    .dv-sub select, .dv-sub input, .dv-sub textarea { font: inherit; padding: 0.45rem 0.6rem; border: 1px solid #cfc8b8; border-radius: 8px; background: #fff; color: #1d1d1d; max-width: 100%; }
+    .dv-sub textarea { width: 100%; min-height: 4.5rem; box-sizing: border-box; }
+    .dv-sub label { font-size: 0.9rem; display: block; margin: 0.4rem 0 0.15rem; }
+    .dv-sub h3 { margin: 0 0 0.25rem; font-size: 1.25rem; font-weight: 800; line-height: 1.2; text-align: left; }
+    .dv-sub-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .dv-sub-head h3 { margin: 0; font-size: 1.05rem; }
+    .dv-sub-head label { margin: 0; font-size: 1.05rem; font-weight: 800; }
+    .dv-toggle { font: inherit; font-size: 0.85rem; border: 1px solid #cfc8b8; border-radius: 999px; padding: 0.3rem 0.8rem; cursor: pointer; background: transparent; color: #1d1d1d; }
+    .dv-draft-card { background: #fff; border: 1px solid #cfd6d7; border-radius: 12px; padding: 0.85rem 1rem; margin: 0.5rem 0; }
+    .dv-draft-card textarea { margin-top: 0.5rem; }
+    .dv-pill { display: inline-block; background: #d71266; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 999px; }
 `;
 
 const html = `
-    <section class="dash-section" id="delivery">
-      <h2>Delivery — shoots, gallery links, and what to send</h2>
+    <section class="dash-panel dash-panel-pink" id="delivery">
+      <div class="dash-panel-head"><h2>Delivery</h2><p class="dash-panel-sub">Shoots, gallery links, and what to send.</p></div>
+      <div class="dash-panel-body">
       <p class="dv-warn"><strong>Drafts only.</strong> Nothing on this panel sends anything. Copy the text, show William the exact final wording in chat, and only then send it by hand. HD Photo Hub stays the fallback for ordering, pricing, and checkout.</p>
       <div class="dv-box">
         <div class="dv-row">
@@ -37,6 +53,8 @@ const html = `
           <button class="dv-btn" id="dv-new" type="button">New shoot</button>
         </div>
         <div id="dv-create" hidden>
+          <h3>New shoot</h3>
+          <div class="dv-grid">
           <label>Address <input id="dv-address" placeholder="114 E Anna St"></label>
           <label>City / town <input id="dv-city" placeholder="Whitesboro"></label>
           <label>Agent name <input id="dv-agent" placeholder="Jason Ruffenach"></label>
@@ -44,12 +62,14 @@ const html = `
             <select id="dv-package"><option>Essential</option><option>Standard</option><option>Marketing</option><option>Luxury</option><option>Signature</option><option>Vacation Rental</option></select>
           </label>
           <label>HD Photo Hub site id <input id="dv-hdph" placeholder="3531912" inputmode="numeric"></label>
+          </div>
           <div class="dv-row" style="margin-top:.5rem"><button class="dv-btn pink" id="dv-create-go" type="button">Create shoot record</button></div>
         </div>
         <p class="dv-msg" id="dv-status" role="status"></p>
         <p class="dv-msg dv-err" id="dv-error" role="alert"></p>
       </div>
       <div id="dv-detail"></div>
+      </div>
     </section>
 `;
 
@@ -194,30 +214,47 @@ function client() {
       ]));
     });
 
-    const draftSection = el('div', {}, [
+    const draftCard = (k, ta) => {
+      const label = { text: 'Delivery text', emailSubject: 'Email subject', emailBody: 'Delivery email', followUp: 'Follow-up (2 days)', reviewAsk: 'Review ask' }[k];
+      const body = el('div', {}, [ta]);
+      const toggle = el('button', { class: 'dv-toggle', type: 'button', text: 'Hide' });
+      toggle.addEventListener('click', () => { body.hidden = !body.hidden; toggle.textContent = body.hidden ? 'Show' : 'Hide'; });
+      return el('div', { class: 'dv-draft-card' }, [
+        el('div', { class: 'dv-sub-head' }, [el('label', { text: label }), el('div', { class: 'dv-row' }, [copyButton(() => ta.value), toggle])]),
+        body,
+      ]);
+    };
+    const draftSection = el('div', { class: 'dv-sub' }, [
       el('h3', { text: 'What to send — drafts only, nothing sends from here' }),
-      ...Object.entries(draftInputs).map(([k, ta]) => el('div', {}, [
-        el('label', { text: { text: 'Delivery text', emailSubject: 'Email subject', emailBody: 'Delivery email', followUp: 'Follow-up (2 days)', reviewAsk: 'Review ask' }[k] }),
-        ta, el('div', { class: 'dv-row' }, [copyButton(() => ta.value)]),
-      ])),
+      el('p', { class: 'dv-msg', text: 'One card per text. Edit the wording, copy it, and send it by hand.' }),
+      ...Object.entries(draftInputs).map(([k, ta]) => draftCard(k, ta)),
     ]);
 
-    box.append(el('div', { class: 'dv-box' }, [
-      el('h3', { text: `${s.address}, ${s.city}` }),
-      el('p', { class: 'dv-msg', text: `Agent: ${s.agentName || '—'}${s.brokerage ? ' · ' + s.brokerage : ''} · Shot ${s.shotDate} · ${s.photoCount || 0} photos${s.hdphSiteId ? ' · HD Photo Hub site ' + s.hdphSiteId : ''}` }),
-      el('label', { text: 'Status' }), statusSel,
-      el('label', { text: 'Stripe Payment Link' }), stripe,
-      el('h3', { text: 'Tours & video — paste the share link, no API key' }),
-      ...Object.entries(tourInputs).map(([k, inp]) => el('div', {}, [el('label', { text: k }), inp])),
-      el('h3', { text: 'Client gallery link' }),
-      el('p', { class: 'dv-msg', text: s.expired ? 'This link has expired — make a new one.' : `Expires ${(s.galleryExpiresAt || '').slice(0, 10)}.` }),
-      galleryLink,
-      el('div', { class: 'dv-row' }, [copyButton(() => galleryLink.value), regen, el('a', { class: 'dv-btn ghost', href: s.galleryUrl, target: '_blank', rel: 'noopener', text: 'Preview gallery' })]),
-      el('h3', { text: 'Approved files' }),
-      (s.files?.edited || []).length ? files : el('p', { class: 'dv-msg', text: 'No approved files yet — they land here from the Recipe Studio.' }),
+    box.append(
+      el('div', { class: 'dv-sub' }, [
+        el('h3', { text: `${s.address}, ${s.city}` }),
+        el('p', { class: 'dv-msg', text: `Agent: ${s.agentName || '—'}${s.brokerage ? ' · ' + s.brokerage : ''} · Shot ${s.shotDate} · ${s.photoCount || 0} photos${s.hdphSiteId ? ' · HD Photo Hub site ' + s.hdphSiteId : ''}` }),
+        el('p', { class: 'dv-msg' }, [el('span', { class: 'dv-pill', text: s.status })]),
+        el('label', { text: 'Status' }), statusSel,
+        el('label', { text: 'Stripe Payment Link' }), stripe,
+      ]),
+      el('div', { class: 'dv-sub' }, [
+        el('h3', { text: 'Tours & video — paste the share link, no API key' }),
+        ...Object.entries(tourInputs).map(([k, inp]) => el('div', {}, [el('label', { text: k }), inp])),
+      ]),
+      el('div', { class: 'dv-sub' }, [
+        el('h3', { text: 'Client gallery link' }),
+        el('p', { class: 'dv-msg', text: s.expired ? 'This link has expired — make a new one.' : `Expires ${(s.galleryExpiresAt || '').slice(0, 10)}.` }),
+        galleryLink,
+        el('div', { class: 'dv-row' }, [copyButton(() => galleryLink.value), regen, el('a', { class: 'dv-btn ghost', href: s.galleryUrl, target: '_blank', rel: 'noopener', text: 'Preview gallery' })]),
+      ]),
+      el('div', { class: 'dv-sub' }, [
+        el('h3', { text: 'Approved files' }),
+        (s.files?.edited || []).length ? files : el('p', { class: 'dv-msg', text: 'No approved files yet — they land here from the Recipe Studio.' }),
+      ]),
       draftSection,
       el('div', { class: 'dv-row' }, [save]), msg,
-    ]));
+    );
   }
 
   loadShoots();

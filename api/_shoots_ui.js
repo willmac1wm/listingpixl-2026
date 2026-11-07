@@ -12,13 +12,26 @@ const css = `
     .sh-btn.pink { background: var(--accent-pink, #d63384); }
     .sh-btn.ghost { background: transparent; color: #1d1d1d; border: 1px solid #cfc8b8; }
     .sh-btn:disabled { opacity: 0.5; cursor: wait; }
-    .sh-msg { font-size: 0.9rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
+    .sh-msg { font-size: 0.95rem; color: var(--muted, #555); margin: 0.4rem 0 0; }
     .sh-err { color: #b00020; }
     .sh-pre { white-space: pre-wrap; background: #faf8f3; border-radius: 8px; padding: 0.6rem 0.75rem; }
-    .sh-draft h3 { margin: 0 0 0.25rem; font-size: 1.1rem; text-align: left; }
-    .sh-note { background: #fff7e0; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; margin: 0.5rem 0; }
+    .sh-draft h3 { margin: 0; font-size: 1.3rem; font-weight: 800; line-height: 1.2; text-align: left; }
+    .sh-draft-head { background: #d6e7ff; border-bottom: 1px solid #a3caff; padding: 0.9rem 1.1rem; }
+    .sh-draft-head .sh-msg { margin-top: 0.15rem; }
+    .sh-draft-body { padding: 1rem 1.1rem 1.1rem; }
+    .sh-pill { display: inline-block; margin-top: 0.45rem; background: #0060cc; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 999px; }
+    .sh-pill.green { background: #0c7a8c; }
+    .sh-note { background: #fff2f7; border: 1px solid #f4a9c8; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.95rem; margin: 0.5rem 0; }
     .sh-chan { border-top: 1px solid #eee; padding-top: 0.75rem; margin-top: 0.75rem; }
-    .sh-chan h4 { margin: 0 0 0.4rem; font-size: 0.98rem; text-align: left; display: flex; gap: 0.5rem; align-items: center; }
+    .sh-chan-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .sh-chan-head h4 { margin: 0; font-size: 1.05rem; font-weight: 800; text-align: left; display: flex; gap: 0.5rem; align-items: center; }
+    .sh-toggle { padding: 0.3rem 0.8rem; font-size: 0.85rem; }
+    .sh-chan-body { margin-top: 0.5rem; }
+    .sh-approve { background: #fff2f7; border: 1px solid #f4a9c8; border-radius: 12px; padding: 0.9rem 1rem; margin-top: 0.75rem; }
+    .sh-approve h4 { margin: 0 0 0.4rem; font-size: 1.05rem; font-weight: 800; text-align: left; }
+    .sh-steps { list-style: none; padding: 0; margin: 0.5rem 0 0; display: grid; gap: 0.4rem; }
+    .sh-steps li { display: flex; gap: 0.6rem; font-size: 0.95rem; color: var(--muted, #4f5b5e); }
+    .sh-steps li b { flex: none; color: #0060cc; }
     .sh-thumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0; }
     .sh-thumbs label { position: relative; display: block; cursor: pointer; }
     .sh-thumbs img { width: 112px; height: 75px; object-fit: cover; border-radius: 6px; display: block; }
@@ -26,23 +39,30 @@ const css = `
     .sh-thumbs label.off img { opacity: 0.3; }
     .sh-story { width: 108px; height: 192px; object-fit: cover; border-radius: 8px; }
     .sh-count { font-size: 0.8rem; color: var(--muted, #666); font-weight: normal; }
+    .sh-draft { overflow: hidden; }
 `;
 
 const html = `
-    <section class="dash-section" id="shoots">
-      <h2>New shoots: blog, Google, Facebook and Instagram</h2>
+    <section class="dash-panel dash-panel-blue" id="shoots">
+      <div class="dash-panel-head"><h2>New shoots</h2><p class="dash-panel-sub">Blog, Google, Facebook and Instagram — drafts to check, nothing publishes until you approve.</p></div>
+      <div class="dash-panel-body">
       <div class="sh-box">
         <div class="sh-row">
           <select id="sh-site" aria-label="Shoot from HD Photo Hub"><option>Loading shoots from HD Photo Hub…</option></select>
           <button class="sh-btn pink" id="sh-go" type="button" disabled>Write the posts</button>
         </div>
-        <p class="sh-msg">Pick a shoot. In about 5 minutes the draft blog post and social posts appear below for you to check. Nothing is published until you press Approve.</p>
+        <ol class="sh-steps">
+          <li><b>1.</b><span>Pick a shoot.</span></li>
+          <li><b>2.</b><span>In about 5 minutes the draft blog post and social posts appear below for you to check.</span></li>
+          <li><b>3.</b><span>Check the photos and wording, edit anything, then press Approve. Nothing is published until you press Approve.</span></li>
+        </ol>
         <p class="sh-msg sh-err" id="sh-load-err" role="alert"></p>
         <p class="sh-msg" id="sh-status" role="status"></p>
       </div>
       <div id="sh-working"></div>
       <div id="sh-drafts"></div>
       <div id="sh-pending"></div>
+      </div>
     </section>
 `;
 
@@ -127,7 +147,10 @@ function client() {
   function channel(title, on, kids) {
     const cb = el('input', { type: 'checkbox', 'aria-label': 'Post to ' + title });
     cb.checked = on;
-    return { cb, node: el('div', { class: 'sh-chan' }, [el('h4', {}, [cb, el('span', { text: title })]), ...kids]) };
+    const body = el('div', { class: 'sh-chan-body' }, kids);
+    const toggle = el('button', { class: 'sh-btn ghost sh-toggle', type: 'button', text: 'Hide' });
+    toggle.addEventListener('click', () => { body.hidden = !body.hidden; toggle.textContent = body.hidden ? 'Show' : 'Hide'; });
+    return { cb, node: el('div', { class: 'sh-chan' }, [el('div', { class: 'sh-chan-head' }, [el('h4', {}, [cb, el('span', { text: title })]), toggle]), body]) };
   }
 
   function draftCard(d) {
@@ -144,14 +167,26 @@ function client() {
     const fb = channel('Facebook page post', chans.includes('facebook'), [fbText, fbPhotos]);
     const ig = channel('Instagram post', chans.includes('instagram'), [el('div', {}, [igCount]), igText, igPhotos, el('p', { class: 'sh-msg', text: 'Up to 10 photos. The first one is the cover.' })]);
     const st = channel('Instagram story', chans.includes('story'), [el('img', { class: 'sh-story', src: d.photoBase + d.story.photo, alt: 'Story image' })]);
-    const google = el('div', { class: 'sh-chan' }, [
-      el('h4', { text: 'Google Business post (post it by hand for now)' }), el('div', {}, [gCount]), gText,
+    const googleBody = el('div', { class: 'sh-chan-body' }, [
+      el('div', {}, [gCount]), gText,
       el('div', { class: 'sh-row' }, [
         copyButton(() => gText.value, 'Copy text'), copyButton(() => d.google.link, 'Copy button link'),
         el('a', { class: 'sh-btn ghost', href: d.photoBase + d.google.photo, download: d.google.photo, target: '_blank', rel: 'noopener', text: 'Photo' }),
         el('a', { class: 'sh-btn ghost', href: 'https://business.google.com/locations', target: '_blank', rel: 'noopener', text: 'Open Google profile' }),
       ]),
-      el('p', { class: 'sh-msg', text: 'On the profile: Add update, paste the text, add the photo, button "Learn more" with the copied link. Do it after you approve, once the blog post is live.' }),
+      el('ol', { class: 'sh-steps' }, [
+        el('li', {}, [el('b', { text: '1.' }), el('span', { text: 'On the profile: Add update.' })]),
+        el('li', {}, [el('b', { text: '2.' }), el('span', { text: 'Paste the text.' })]),
+        el('li', {}, [el('b', { text: '3.' }), el('span', { text: 'Add the photo.' })]),
+        el('li', {}, [el('b', { text: '4.' }), el('span', { text: 'Button "Learn more" with the copied link.' })]),
+        el('li', {}, [el('b', { text: '5.' }), el('span', { text: 'Do it after you approve, once the blog post is live.' })]),
+      ]),
+    ]);
+    const googleToggle = el('button', { class: 'sh-btn ghost sh-toggle', type: 'button', text: 'Hide' });
+    googleToggle.addEventListener('click', () => { googleBody.hidden = !googleBody.hidden; googleToggle.textContent = googleBody.hidden ? 'Show' : 'Hide'; });
+    const google = el('div', { class: 'sh-chan' }, [
+      el('div', { class: 'sh-chan-head' }, [el('h4', { text: 'Google Business post (post it by hand for now)' }), googleToggle]),
+      googleBody,
     ]);
     const when = el('input', { type: 'datetime-local', 'aria-label': 'When to post to Facebook and Instagram' });
     when.value = nextEvening();
@@ -176,8 +211,12 @@ function client() {
       return b;
     };
     const card = el('div', { class: 'sh-box sh-draft' }, [
-      el('h3', { text: `${d.address}, ${d.town}` }),
-      el('p', { class: 'sh-msg', text: `Shot ${d.shot}${d.agent ? ' for ' + d.agent : ''} · ${d.photos.length} photos picked · drafted ${new Date(d.drafted).toLocaleString()}` }),
+      el('div', { class: 'sh-draft-head' }, [
+        el('h3', { text: `${d.address}, ${d.town}` }),
+        el('p', { class: 'sh-msg', text: `Shot ${d.shot}${d.agent ? ' for ' + d.agent : ''} · ${d.photos.length} photos picked · drafted ${new Date(d.drafted).toLocaleString()}` }),
+        el('span', { class: 'sh-pill', text: 'Draft — not published' }),
+      ]),
+      el('div', { class: 'sh-draft-body' }, [
       el('div', { class: 'sh-row' }, [
         d.preview ? el('a', { class: 'sh-btn', href: d.preview + d.blog, target: '_blank', rel: 'noopener', text: 'See the blog post (preview)' })
           : el('span', { class: 'sh-msg', text: 'Preview is still building; reload in a minute.' }),
@@ -185,7 +224,7 @@ function client() {
       d.notes_for_review && d.notes_for_review !== 'None' ? el('p', { class: 'sh-note', text: 'Claude says: ' + d.notes_for_review }) : null,
       d.left_out ? el('p', { class: 'sh-msg', text: 'Left out: ' + d.left_out }) : null,
       fb.node, ig.node, st.node, google,
-      el('div', { class: 'sh-chan' }, [
+      el('div', { class: 'sh-approve' }, [
         el('h4', { text: 'Approve' }),
         el('div', { class: 'sh-row' }, [
           el('label', { text: 'Post to Facebook and Instagram at ' }), when,
@@ -204,6 +243,7 @@ function client() {
         ]),
         msg,
       ]),
+      ]),
     ]);
     return card;
   }
@@ -219,9 +259,15 @@ function client() {
       p.status === 'approved' ? `Social posts go out ${new Date(p.post_at).toLocaleString()}.` : '',
       Object.keys(p.posted || {}).length ? `Posted: ${Object.keys(p.posted).join(', ')}.` : '',
     ].filter(Boolean).join(' ');
-    const kids = [el('h3', { text: `${p.address}, ${p.town}` }), status ? el('p', { class: 'sh-msg', text: status }) : null];
+    const posted = Object.keys(p.posted || {}).length > 0;
+    const kids = [el('div', { class: 'sh-draft-head' }, [
+      el('h3', { text: `${p.address}, ${p.town}` }),
+      status ? el('p', { class: 'sh-msg', text: status }) : null,
+      el('span', { class: 'sh-pill' + (posted ? ' green' : ''), text: posted ? 'Posted' : 'Approved — waiting to post' }),
+    ])];
+    const bodyKids = [];
     if (Object.keys(p.errors || {}).length) {
-      kids.push(el('p', { class: 'sh-msg sh-err', text: 'Problems: ' + Object.entries(p.errors).map(([k, v]) => `${k}: ${v}`).join('; ') }));
+      bodyKids.push(el('p', { class: 'sh-msg sh-err', text: 'Problems: ' + Object.entries(p.errors).map(([k, v]) => `${k}: ${v}`).join('; ') }));
     }
     if (p.google && !p.google.posted_at) {
       const msg = el('p', { class: 'sh-msg', role: 'status' });
@@ -230,18 +276,30 @@ function client() {
         done.disabled = true;
         try { await api('googleDone', { slug: p.slug }); refresh(); } catch (e) { msg.textContent = e.message; msg.classList.add('sh-err'); done.disabled = false; }
       });
-      kids.push(el('div', { class: 'sh-chan' }, [
-        el('h4', { text: 'Google Business post (post it by hand)' }),
+      const gBody = el('div', { class: 'sh-chan-body' }, [
         el('p', { class: 'sh-msg sh-pre', text: p.google.text }),
         el('div', { class: 'sh-row' }, [
           copyButton(() => p.google.text, 'Copy text'), copyButton(() => p.google.link, 'Copy button link'),
           el('a', { class: 'sh-btn ghost', href: p.photoBase + p.google.photo, download: p.google.photo, target: '_blank', rel: 'noopener', text: 'Photo' }),
           el('a', { class: 'sh-btn ghost', href: 'https://business.google.com/locations', target: '_blank', rel: 'noopener', text: 'Open Google profile' }),
         ]),
-        el('p', { class: 'sh-msg', text: 'On the profile: Add update, paste the text, add the photo, button "Learn more" with the copied link. Then press the pink button so this goes away.' }),
+        el('ol', { class: 'sh-steps' }, [
+          el('li', {}, [el('b', { text: '1.' }), el('span', { text: 'On the profile: Add update.' })]),
+          el('li', {}, [el('b', { text: '2.' }), el('span', { text: 'Paste the text.' })]),
+          el('li', {}, [el('b', { text: '3.' }), el('span', { text: 'Add the photo.' })]),
+          el('li', {}, [el('b', { text: '4.' }), el('span', { text: 'Button "Learn more" with the copied link.' })]),
+          el('li', {}, [el('b', { text: '5.' }), el('span', { text: 'Then press the pink button so this goes away.' })]),
+        ]),
         el('div', { class: 'sh-row' }, [done]), msg,
+      ]);
+      const gToggle = el('button', { class: 'sh-btn ghost sh-toggle', type: 'button', text: 'Hide' });
+      gToggle.addEventListener('click', () => { gBody.hidden = !gBody.hidden; gToggle.textContent = gBody.hidden ? 'Show' : 'Hide'; });
+      bodyKids.push(el('div', { class: 'sh-chan' }, [
+        el('div', { class: 'sh-chan-head' }, [el('h4', { text: 'Google Business post (post it by hand)' }), gToggle]),
+        gBody,
       ]));
     }
+    kids.push(el('div', { class: 'sh-draft-body' }, bodyKids));
     return el('div', { class: 'sh-box sh-draft' }, kids);
   }
 
