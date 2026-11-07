@@ -568,7 +568,7 @@ test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batc
   // Step 01 has no anchor upload at all — only the three angle tiles,
   // and the copy says the first photo sets the look.
   assert.doesNotMatch(ui.html, /rc-anchor/);
-  assert.equal(ui.html.match(/class="rc-slot-input rc-angle" type="file"/g).length, 3);
+  assert.equal(ui.html.match(/class="rc-slot-input rc-angle" multiple type="file"/g).length, 3);
   assert.match(ui.html, /Upload the photos that need fixing\./);
   assert.match(ui.html, /The first photo sets the look: it is edited first, and the rest are matched to it/);
   // [hidden] must keep working on restyled buttons (settings door, key delete).
@@ -620,4 +620,46 @@ test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batc
   assert.match(ui.css, /\.rc-style-badge \{[^}]*background: var\(--rc-blue-deep\)/);
   assert.doesNotMatch(ui.css, /orange|#f97316|#ff6b35|purple|#7c3aed|#a855f7|magenta|#fff7e0|#7a4d00/i);
   assert.match(ui.html, /class="rc-btn pink" id="rc-run"/);
+});
+
+test('Step 01 upload: one group drop zone — pick all three at once, or drop one at a time', () => {
+  const ui = require('../api/_recipes_ui');
+  // One dashed group border around the three tiles — no fourth upload box.
+  assert.match(ui.html, /<div class="rc-slot-group" id="rc-slot-group">/);
+  assert.ok(ui.html.indexOf('rc-slot-group') < ui.html.indexOf('class="rc-slots"'));
+  assert.ok(ui.html.indexOf('class="rc-slots"') < ui.html.indexOf('Angle 3'));
+  assert.equal(ui.html.match(/class="rc-slot-input rc-angle" multiple type="file"/g).length, 3);
+  // Helper text says plainly: pick all three at once, or drop one at a time.
+  assert.match(ui.html, /Pick all three photos at once — click any box and select them together — or drop them in one at a time\./);
+  // The old copy stays: first photo sets the look, 1536px working copies,
+  // originals never overwritten.
+  assert.match(ui.html, /The first photo sets the look: it is edited first, and the rest are matched to it/);
+  assert.match(ui.html, /Working copies are downscaled in your browser to 1536px/);
+  assert.match(ui.html, /Full-res originals stay where they are — nothing here overwrites them/);
+  // Group drop-zone styling: one dashed border around the tiles, and a
+  // visible drag-over state on the tile and on the group.
+  assert.match(ui.css, /\.rc-slot-group \{[^}]*border: 2px dashed/);
+  assert.match(ui.css, /\.rc-slot-group\.rc-dragover \{/);
+  assert.match(ui.css, /\.rc-slot\.rc-dragover \.rc-slot-face \{/);
+  // Multi-select fill: picked files are spread across the slots in order
+  // with DataTransfer, starting at the clicked tile — or the first empty
+  // slot if it was already filled — and all full means replace from Angle 1.
+  assert.match(ui.script, /function fillSlots\(files, startAt, startWasFilled\)/);
+  assert.match(ui.script, /function setSlot\(index, file\)/);
+  assert.match(ui.script, /new DataTransfer\(\)/);
+  assert.match(ui.script, /slotInputs\.findIndex\(i => !i\.files\.length\)/);
+  assert.match(ui.script, /picked\.length > 1/);
+  assert.match(ui.script, /fillSlots\(picked, index, slotFilled\[index\]\)/);
+  // Group drop fills from Angle 1; one file on the group takes the first
+  // empty slot. A drop on a tile fills that tile.
+  assert.match(ui.script, /document\.getElementById\('rc-slot-group'\)/);
+  assert.match(ui.script, /trackDragOver\(slotGroup, 'rc-dragover'/);
+  assert.match(ui.script, /trackDragOver\(slot, 'rc-dragover', files => fillSlots\(files, index\)\)/);
+  // Drops are intercepted (so they land where intended, not natively on
+  // one input) and drag-over is highlighted.
+  assert.match(ui.script, /addEventListener\('dragover', e => e\.preventDefault\(\)\)/);
+  assert.match(ui.script, /addEventListener\('drop', e => \{/);
+  assert.match(ui.script, /e\.stopPropagation\(\)/);
+  // Three slots, three thumbnails, three × buttons — unchanged.
+  assert.equal(ui.html.match(/class="rc-slot-clear"/g).length, 3);
 });

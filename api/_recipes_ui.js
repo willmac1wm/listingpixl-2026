@@ -84,6 +84,9 @@ const css = `
     .rc-slot-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.3rem 0.5rem; background: rgba(20, 38, 43, 0.85); color: #fff; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .rc-slot-role { position: absolute; top: 0.45rem; left: 0.45rem; background: var(--rc-teal); color: #fff; font-size: 0.78rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
     .rc-slot-clear { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 2; width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: rgba(20, 38, 43, 0.85); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+    .rc-slot-group { border: 2px dashed #6fb9c3; border-radius: 14px; padding: 0.75rem; background: #f6fbfc; }
+    .rc-slot-group.rc-dragover { border-color: var(--rc-teal); background: #e4f4f6; }
+    .rc-slot.rc-dragover .rc-slot-face { border-color: var(--rc-teal); background: #e4f4f6; outline: 3px solid var(--rc-blue); outline-offset: 2px; }
 
     .rc-segment { display: flex; gap: 0.25rem; background: #fff; border: 1px solid var(--rc-edge); border-radius: 14px; padding: 0.3rem; margin: 0 0 var(--rc-space); max-width: 460px; }
     .rc-seg-btn { flex: 1 1 0; font: inherit; font-size: 1.05rem; font-weight: 700; min-height: 48px; border: 0; border-radius: 10px; background: transparent; color: var(--rc-ink); cursor: pointer; }
@@ -228,9 +231,11 @@ const html = `
               <label class="rc-field">Shoot<input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug"></label>
               <label class="rc-field">Space<input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space"></label>
             </div>
-            <div class="rc-slots">${slot('class="rc-slot-input rc-angle"', 'Angle 1', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 2', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 3', 'Click or drop')}
+            <div class="rc-slot-group" id="rc-slot-group">
+              <div class="rc-slots">${slot('class="rc-slot-input rc-angle" multiple', 'Angle 1', 'Click or drop')}${slot('class="rc-slot-input rc-angle" multiple', 'Angle 2', 'Click or drop')}${slot('class="rc-slot-input rc-angle" multiple', 'Angle 3', 'Click or drop')}
+              </div>
             </div>
-            <p class="rc-msg">You only upload the photos that need fixing. The first photo sets the look: it is edited first, and the rest are matched to it, so the whole set comes out the same. Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
+            <p class="rc-msg">Pick all three photos at once — click any box and select them together — or drop them in one at a time. You only upload the photos that need fixing. The first photo sets the look: it is edited first, and the rest are matched to it, so the whole set comes out the same. Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
           </div>
         </div>
 
@@ -600,20 +605,82 @@ function client() {
     return await Promise.all(angles.map(downscale));
   }
 
-  // Upload slots: the real file input covers the tile (so clicking and
-  // dropping both work natively); this only shows what was picked. The
-  // inputs themselves are what collectImages() reads.
-  document.querySelectorAll('.rc-slot').forEach(slot => {
-    const input = slot.querySelector('.rc-slot-input');
+  // Upload slots: one group drop zone around the three tiles. Clicking
+  // any tile opens the picker with multiple selection, so all three
+  // photos can be picked at once; dropping works on a tile or anywhere
+  // on the group. The inputs themselves are what collectImages() reads.
+  const slotEls = [...document.querySelectorAll('.rc-slot')];
+  const slotInputs = slotEls.map(s => s.querySelector('.rc-slot-input'));
+  const slotGroup = document.getElementById('rc-slot-group');
+  // Whether each slot held a photo before the latest pick — the picker
+  // fills the clicked input natively before 'change' fires, so this is
+  // how fillSlots knows if the clicked tile was already filled.
+  const slotFilled = slotInputs.map(i => i.files.length > 0);
+  function imageFiles(list) { return [...list].filter(f => f.type.startsWith('image/')); }
+  function setSlot(index, file) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    slotInputs[index].files = dt.files;
+    slotInputs[index].dispatchEvent(new Event('change'));
+  }
+  // Spread files across the slots in order. One file lands exactly
+  // where it was dropped or picked; several files start at that slot if
+  // it was empty, otherwise at the first empty slot — and if every slot
+  // is full, they replace from Angle 1.
+  function fillSlots(files, startAt, startWasFilled) {
+    const imgs = imageFiles(files);
+    if (!imgs.length) return;
+    let at = startAt;
+    if (imgs.length === 1) { setSlot(at, imgs[0]); return; }
+    const filled = startWasFilled !== undefined ? startWasFilled : slotInputs[at].files.length > 0;
+    if (filled) {
+      const firstEmpty = slotInputs.findIndex(i => !i.files.length);
+      at = firstEmpty === -1 ? 0 : firstEmpty;
+    }
+    for (const f of imgs) {
+      if (at >= slotInputs.length) break;
+      setSlot(at, f);
+      at++;
+    }
+  }
+  // Drag-over highlight: the tile (or the group) being dragged over
+  // shows where the files will land. A counter per element keeps the
+  // highlight steady while the drag moves between a tile and its children.
+  function trackDragOver(el, cls, onDrop) {
+    let depth = 0;
+    el.addEventListener('dragenter', e => {
+      e.preventDefault();
+      if (el === slotGroup && e.target.closest('.rc-slot')) return;
+      depth++;
+      el.classList.add(cls);
+    });
+    el.addEventListener('dragleave', () => {
+      depth = Math.max(0, depth - 1);
+      if (!depth) el.classList.remove(cls);
+    });
+    el.addEventListener('dragover', e => e.preventDefault());
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      depth = 0;
+      el.classList.remove(cls);
+      const files = imageFiles(e.dataTransfer.files);
+      if (files.length) onDrop(files);
+    });
+  }
+  slotEls.forEach((slot, index) => {
+    trackDragOver(slot, 'rc-dragover', files => fillSlots(files, index));
+    const input = slotInputs[index];
     const face = slot.querySelector('.rc-slot-face');
     const clear = slot.querySelector('.rc-slot-clear');
     const title = face.querySelector('b').textContent;
     const blank = [...face.children];
     let thumbUrl = '';
-    input.addEventListener('change', () => {
+    function updateSlot() {
       if (thumbUrl) URL.revokeObjectURL(thumbUrl);
       thumbUrl = '';
       const file = input.files[0];
+      slotFilled[index] = !!file;
       clear.hidden = !file;
       if (!file) { face.replaceChildren(...blank); return; }
       thumbUrl = URL.createObjectURL(file);
@@ -622,11 +689,34 @@ function client() {
         el('span', { class: 'rc-slot-role', text: title }),
         el('span', { class: 'rc-slot-name', text: file.name }),
       );
+    }
+    input.addEventListener('change', () => {
+      // The picker can let non-image files through; keep only images.
+      const picked = imageFiles(input.files);
+      if (picked.length !== input.files.length) {
+        const dt = new DataTransfer();
+        picked.forEach(f => dt.items.add(f));
+        input.files = dt.files;
+        if (!picked.length) { updateSlot(); return; }
+      }
+      if (picked.length > 1) { fillSlots(picked, index, slotFilled[index]); return; }
+      updateSlot();
     });
     clear.addEventListener('click', () => {
       input.value = '';
       input.dispatchEvent(new Event('change'));
     });
+  });
+  // A drop on the group itself (the gaps around the tiles) fills from
+  // Angle 1: several files fill 1, 2, 3 in order; one file takes the
+  // first empty slot.
+  trackDragOver(slotGroup, 'rc-dragover', files => {
+    if (files.length === 1) {
+      const firstEmpty = slotInputs.findIndex(i => !i.files.length);
+      fillSlots(files, firstEmpty === -1 ? 0 : firstEmpty);
+    } else {
+      fillSlots(files, 0);
+    }
   });
 
   // The Run buttons are plain labels — no price on them. The Studio is
