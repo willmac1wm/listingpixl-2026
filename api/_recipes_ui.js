@@ -1,18 +1,24 @@
 // Recipe Studio panel on the team dashboard (/staff). Plain browser JS;
 // every value from the API is put on the page as text, never as HTML.
 //
-// Flow: pick a recipe (from data/recipes.json via the API) → upload an
-// anchor + up to 3 angles of the SAME space → run as one batch (same prompt
-// + same anchor for every angle; the API makes one call per angle because
-// OpenAI returns one image per call) → preview each angle side by side
-// with its original → approve per angle → approved set is saved to public
-// Blob and becomes the new anchor for that space.
+// Flow: pick a recipe (from data/recipes.json via the API) → upload the
+// angles of the SAME space that need fixing → run as one batch, chained:
+// angle 1 is edited with the recipe prompt only, and its finished result
+// becomes the reference the rest are matched to (each remaining angle is
+// sent with the finished angle 1 + the raw angle). The API makes one call
+// per angle because OpenAI returns one image per call → preview each
+// angle side by side with its original → approve per angle → approved
+// set is saved to public Blob.
+//
+// There is no anchor from the user and no pre-built anchor: the anchor
+// is created by the app itself, from his own first photo, inside the
+// batch. The first photo sets the look; the rest are matched to it.
 //
 // Originals are never uploaded at full size and never overwritten: the
 // browser downscales working copies to 1536px for the API call. The
 // full-res originals stay with William / in HD Photo Hub.
-// Twilight is gated: it only runs on an approved Virtually-Landscaped
-// anchor — landscape first, twilight second.
+// Twilight is gated: it only runs on approved Virtually-Landscaped
+// photos — landscape first, twilight second.
 const css = `
     /* Every rule is scoped to .rc-studio / .rc-*, so the rest of /staff is untouched.
        Each numbered step sets --rc-tone (strong colour), --rc-tint (panel) and
@@ -66,7 +72,7 @@ const css = `
     .rc-err { color: #b00020; font-weight: 600; }
     .rc-warn { background: #fff2f7; border: 1px solid #f4a9c8; border-radius: 10px; padding: 0.65rem 0.85rem; font-size: 0.95rem; margin: 0 0 0.6rem; }
 
-    .rc-slots { display: grid; grid-template-columns: 1.5fr repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+    .rc-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
     .rc-slot { position: relative; min-height: 168px; }
     .rc-slot-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; }
     .rc-slot-face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; padding: 0.75rem; text-align: center; background: #fff; border: 2px dashed #6fb9c3; border-radius: 12px; overflow: hidden; }
@@ -74,8 +80,6 @@ const css = `
     .rc-slot-input:focus-visible + .rc-slot-face { outline: 3px solid var(--rc-blue); outline-offset: 2px; }
     .rc-slot-face b { font-size: 1rem; }
     .rc-slot-face small { font-size: 0.85rem; color: var(--rc-muted); }
-    .rc-slot-anchor .rc-slot-face { background: #fff; border-style: solid; border-color: var(--rc-teal); }
-    .rc-slot-anchor .rc-slot-face b { font-size: 1.15rem; color: var(--rc-teal); }
     .rc-slot-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .rc-slot-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.3rem 0.5rem; background: rgba(20, 38, 43, 0.85); color: #fff; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .rc-slot-role { position: absolute; top: 0.45rem; left: 0.45rem; background: var(--rc-teal); color: #fff; font-size: 0.78rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
@@ -102,6 +106,7 @@ const css = `
     .rc-model-card.rc-model-disabled { cursor: not-allowed; background: #f4f5f5; }
     .rc-model-card.rc-model-disabled img { filter: grayscale(0.7); opacity: 0.7; }
     .rc-model-note { color: var(--rc-pink) !important; font-weight: 700; }
+    .rc-chain-note { color: var(--rc-teal) !important; font-weight: 700; }
     .rc-recipe-detail { margin-top: var(--rc-space); }
     .rc-qc { font-size: 0.95rem; color: var(--rc-muted); padding-left: 1.2rem; margin: 0.35rem 0 0; }
 
@@ -143,7 +148,6 @@ const css = `
     @media (max-width: 860px) {
       .rc-model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .rc-slots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .rc-slot-anchor { grid-column: 1 / -1; min-height: 200px; }
       .rc-slot { min-height: 130px; }
     }
     @media (max-width: 560px) {
@@ -179,7 +183,7 @@ const html = `
     <section class="dash-section rc-studio" id="recipe-studio">
       <div class="rc-hero">
         <h2>Recipe Studio — batch edits, one space at a time</h2>
-        <p class="rc-hero-sub">Batch first: one space, every angle together — same anchor, same prompt, one batch. No one-photo-at-a-time.</p>
+        <p class="rc-hero-sub">Batch first: one space, every angle together — same recipe, same prompt, one batch. No one-photo-at-a-time.</p>
       </div>
       <div class="rc-toolbar">
         <p class="rc-key-status" id="rc-key-status" role="status">Checking the image API key…</p>
@@ -216,7 +220,7 @@ const html = `
           <div class="rc-panel-head">
             <div class="rc-panel-title">
               <h3 class="rc-step"><span class="rc-step-num">01</span> Upload</h3>
-              <p class="rc-step-sub">Anchor + angles of the same space.</p>
+              <p class="rc-step-sub">Upload the photos that need fixing.</p>
             </div>
           </div>
           <div class="rc-panel-body">
@@ -224,9 +228,9 @@ const html = `
               <label class="rc-field">Shoot<input id="rc-shoot" placeholder="Shoot slug, e.g. 114-e-anna-st-whitesboro-nj" aria-label="Shoot slug"></label>
               <label class="rc-field">Space<input id="rc-space" placeholder="Space, e.g. front yard" aria-label="Space"></label>
             </div>
-            <div class="rc-slots">${slot('id="rc-anchor" class="rc-slot-input"', 'Anchor', 'Finished look — click or drop a photo', ' rc-slot-anchor')}${slot('class="rc-slot-input rc-angle"', 'Angle 2', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 3', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 4', 'Click or drop')}
+            <div class="rc-slots">${slot('class="rc-slot-input rc-angle"', 'Angle 1', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 2', 'Click or drop')}${slot('class="rc-slot-input rc-angle"', 'Angle 3', 'Click or drop')}
             </div>
-            <p class="rc-msg">Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
+            <p class="rc-msg">You only upload the photos that need fixing. The first photo sets the look: it is edited first, and the rest are matched to it, so the whole set comes out the same. Working copies are downscaled in your browser to 1536px for the API call. Full-res originals stay where they are — nothing here overwrites them. Edited files get -Virtually-Staged / -Virtually-Landscaped / -Virtually-Landscaped-Twilight in the name.</p>
           </div>
         </div>
 
@@ -234,7 +238,7 @@ const html = `
           <div class="rc-panel-head">
             <div class="rc-panel-title">
               <h3 class="rc-step"><span class="rc-step-num">02</span> Select Model</h3>
-              <p class="rc-step-sub">Pick the model to mimic — the batch runs every angle of the space in that one look.</p>
+              <p class="rc-step-sub">Pick the look you want — the first photo sets it, the rest are matched to it.</p>
             </div>
           </div>
           <div class="rc-panel-body">
@@ -256,7 +260,7 @@ const html = `
             </div>
           </div>
           <div class="rc-panel-body">
-            <label class="rc-gate"><input type="checkbox" id="rc-landscaped"> <span>This anchor is an approved Virtually-Landscaped image (required for twilight — landscape first, twilight second)</span></label>
+            <label class="rc-gate"><input type="checkbox" id="rc-landscaped"> <span>These photos are approved Virtually-Landscaped images (required for twilight — landscape first, twilight second)</span></label>
             <div class="rc-run-actions">
               <button class="rc-btn pink" id="rc-run" type="button">Run batch — $35 per photo</button>
               <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first — $35</button>
@@ -332,7 +336,7 @@ function client() {
     const old = $('rc-recipe-note').nextElementSibling;
     if (old && old.tagName === 'DIV' && old.querySelector('.rc-qc')) old.remove();
   }
-  // Twilight only runs on an approved Virtually-Landscaped anchor, so
+  // Twilight only runs on approved Virtually-Landscaped photos, so
   // until the step 03 box is ticked its card is shown disabled with the
   // reason — never hidden, never runnable.
   function twilightBlocked(recipeId) {
@@ -353,9 +357,10 @@ function client() {
         d.variant ? el('span', { class: 'rc-variant-pill', text: d.variant }) : null,
         selected ? el('span', { class: 'rc-model-default', text: 'Default' }) : null,
         el('small', { text: d.tagline }),
+        el('small', { class: 'rc-chain-note', text: 'First photo sets the look — the rest are matched to it.' }),
       ];
       if (twilightBlocked(r.id)) {
-        bodyKids.push(el('small', { class: 'rc-model-note', text: 'Needs a landscaped anchor first — tick the box in step 03.' }));
+        bodyKids.push(el('small', { class: 'rc-model-note', text: 'Needs approved landscaped photos first — tick the box in step 03.' }));
         box.append(el('div', { class: 'rc-model-card rc-model-disabled', 'aria-disabled': 'true' }, [
           r.button_image ? el('img', { src: r.button_image, alt: r.name }) : null,
           el('span', { class: 'rc-model-body' }, bodyKids),
@@ -504,7 +509,7 @@ function client() {
   function showRecipeNote() {
     const r = recipes.find(x => x.id === $('rc-recipe').value);
     if (!r) return;
-    $('rc-recipe-note').textContent = `${r.use_when} Anchor: ${r.anchor}`;
+    $('rc-recipe-note').textContent = r.use_when;
     const box = el('div', { class: 'rc-box rc-recipe-detail' });
     box.append(el('p', { class: 'rc-msg', text: 'QC — check the set side by side:' }));
     const ul = el('ul', { class: 'rc-qc' });
@@ -587,12 +592,12 @@ function client() {
       img.src = URL.createObjectURL(file);
     });
   }
+  // Angles only — the photos that need fixing. There is no anchor to
+  // pick: the look lives in the recipe you picked in step 02.
   async function collectImages() {
-    const anchorFile = $('rc-anchor').files[0];
-    if (!anchorFile) throw new Error('Pick an anchor image first.');
     const angles = [...document.querySelectorAll('.rc-angle')].map(i => i.files[0]).filter(Boolean);
     if (!angles.length) throw new Error('Pick at least one angle of the same space.');
-    return [await downscale(anchorFile), ...await Promise.all(angles.map(downscale))];
+    return await Promise.all(angles.map(downscale));
   }
 
   // Upload slots: the real file input covers the tile (so clicking and
@@ -646,20 +651,20 @@ function client() {
     const recipe = recipes.find(x => x.id === $('rc-recipe').value);
     if (!recipe) return err(new Error('Pick a recipe first.'));
     if (recipe.id === 'vt-virtual-twilight' && !$('rc-landscaped').checked) {
-      return err(new Error('Twilight runs only on an approved Virtually-Landscaped image. Tick the box only if the anchor is one — landscape first, twilight second.'));
+      return err(new Error('Twilight runs only on approved Virtually-Landscaped photos. Tick the box only if the photos are approved Virtually-Landscaped images — landscape first, twilight second.'));
     }
     const count = [...document.querySelectorAll('.rc-angle')].map(i => i.files[0]).filter(Boolean).length;
     const costNote = `This sends ${onlyFirst ? 1 : count} paid OpenAI image call${(onlyFirst ? 1 : count) === 1 ? '' : 's'} (${recipe.price_anchor} per edited photo). Run it?`;
     if (!confirm(costNote)) return;
     try {
-      status(onlyFirst ? 'Running one angle…' : 'Running the batch — one API call per angle, same prompt and anchor…');
+      status(onlyFirst ? 'Running one angle…' : 'Running the batch — angle 1 first to set the look, then the rest matched to it…');
       const images = await collectImages();
       const out = await api('runBatch', {
         recipeId: recipe.id, shootSlug: $('rc-shoot').value.trim(), space: $('rc-space').value.trim() || 'space',
         landscapedApproved: $('rc-landscaped').checked, onlyFirst, images,
       });
       runs.unshift({ batchId: out.batchId, images, results: out.results, space: $('rc-space').value.trim() || 'space', recipeName: recipe.name, ranAt: new Date().toISOString() });
-      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Ran with ${out.promptSource === 'override' ? 'your edited prompt' : 'the pack default prompt'}. Check each one in step 04, then save the ones you approve.`);
+      status(`Done — ${out.results.length} angle${out.results.length === 1 ? '' : 's'} edited with ${out.model}. Ran with ${out.promptSource === 'override' ? 'your edited prompt' : 'the pack default prompt'}.${out.chained ? ' Angle 1 set the look and the rest were matched to it.' : ''} Check each one in step 04, then save the ones you approve.`);
       renderResults();
       loadBatches();
     } catch (e) { err(e); status(''); }
@@ -716,7 +721,7 @@ function client() {
             .map(x => ({ angleName: x.angleName, dataUrl: x.dataUrl }));
           if (!approvals.length) throw new Error('Approve at least one angle.');
           const out = await api('approve', { batchId: entry.batchId, approvals });
-          msg.textContent = `Saved ${out.saved.length} approved file${out.saved.length === 1 ? '' : 's'}. The approved set is now the anchor for this space.`;
+          msg.textContent = `Saved ${out.saved.length} approved file${out.saved.length === 1 ? '' : 's'}. The approved set is saved for this space.`;
           const slug = $('rc-shoot').value.trim();
           if (slug) {
             for (const f of out.saved) {

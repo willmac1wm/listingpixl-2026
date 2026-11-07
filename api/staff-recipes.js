@@ -3,10 +3,16 @@
 // need the X-Staff header (see api/shoots.js).
 //
 // How a batch actually runs: the Images API returns ONE image per call, so
-// "one batch" means one run, same recipe prompt + same anchor, one call per
-// target angle (anchor + that angle). That is the method the 2026-11-06
-// tests used. The tool runs one angle first on request, so the first live
-// run can be checked before the rest.
+// "one batch" means one run, one call per angle — chained. Angle 1 is
+// edited with the recipe prompt only, and its finished result becomes the
+// reference the rest are matched to: each remaining angle is sent with
+// TWO images (finished angle 1 first, the raw angle second) and the
+// recipe prompt with the chain prefix in front. The rest run in parallel
+// with each other once angle 1 is done; angle 1 must finish first. There
+// is no anchor from the user and no pre-built anchor — the anchor is
+// created by the app itself, from his own first photo, inside the batch.
+// "Test one angle first" is the same as step 1 of a batch: one angle,
+// prompt only, and its result is the look the rest would be matched to.
 //
 // API key: NEVER in the repo, NEVER in code, NEVER returned by any endpoint
 // and NEVER logged. Resolution order:
@@ -80,6 +86,16 @@ async function savePromptOverride(recipe, prompt) {
   if (existing) await store.write(path, value, existing.etag);
   else await store.create(path, value);
   return value;
+}
+
+async function editOne(key, model, prompt, images) {
+  const form = recipes.buildEditFormData({ model, prompt, images });
+  const r = await fetch(OPENAI_URL, { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: form, signal: AbortSignal.timeout(120000) });
+  if (!r.ok) throw new HttpError(502, `OpenAI images/edits: ${r.status} ${(await r.text()).slice(0, 300)}`);
+  const data = await r.json();
+  const b64 = data?.data?.[0]?.b64_json;
+  if (!b64) throw new HttpError(502, 'OpenAI returned no image.');
+  return b64;
 }
 
 const actions = {
@@ -157,23 +173,30 @@ const actions = {
     if (shootSlug && !delivery.SLUG.test(shootSlug)) throw new HttpError(400, 'Bad shoot slug.');
     const space = String(body.space || 'space').slice(0, 80);
     const onlyFirst = body.onlyFirst === true;
-    const targets = onlyFirst ? images.slice(1, 2) : images.slice(1);
-    const anchor = images[0];
-    const results = [];
-    // One API call per angle: anchor + that angle, same prompt every time.
-    for (const angle of targets) {
-      const form = recipes.buildEditFormData({ model, prompt, images: [anchor, angle] });
-      const r = await fetch(OPENAI_URL, { method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: form, signal: AbortSignal.timeout(120000) });
-      if (!r.ok) throw new HttpError(502, `OpenAI images/edits: ${r.status} ${(await r.text()).slice(0, 300)}`);
-      const data = await r.json();
-      const b64 = data?.data?.[0]?.b64_json;
-      if (!b64) throw new HttpError(502, 'OpenAI returned no image.');
-      results.push({ angleName: angle.name, editedFilename: recipes.editedFilename(angle.name, recipe.id), mime: 'image/png', dataUrl: `data:image/png;base64,${b64}` });
+    const targets = onlyFirst ? images.slice(0, 1) : images;
+    // Chain anchor, in order. Step 1: angle 1 is edited with the recipe
+    // prompt only — that finished photo sets the look for the batch.
+    const firstB64 = await editOne(key, model, prompt, [targets[0]]);
+    const first = { angleName: targets[0].name, editedFilename: recipes.editedFilename(targets[0].name, recipe.id), mime: 'image/png', dataUrl: `data:image/png;base64,${firstB64}` };
+    const results = [first];
+    let chained = false;
+    if (targets.length > 1) {
+      // Step 2: the finished angle 1 becomes the reference. Each remaining
+      // angle is edited with the reference + the raw angle, and the chained
+      // prompt. The rest run in parallel with each other — angle 1 is done.
+      chained = true;
+      const reference = { name: first.editedFilename, mime: 'image/png', buffer: Buffer.from(firstB64, 'base64') };
+      const chainedPrompt = recipes.chainedPrompt(prompt);
+      const rest = await Promise.all(targets.slice(1).map(async (angle) => {
+        const b64 = await editOne(key, model, chainedPrompt, [reference, angle]);
+        return { angleName: angle.name, editedFilename: recipes.editedFilename(angle.name, recipe.id), mime: 'image/png', dataUrl: `data:image/png;base64,${b64}` };
+      }));
+      results.push(...rest);
     }
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const record = { id, recipeId: recipe.id, shootSlug, space, createdAt: new Date().toISOString(), anchorName: anchor.name, angles: images.slice(1).map(i => i.name), status: 'ran', promptSource, results: results.map(r => ({ angleName: r.angleName, editedFilename: r.editedFilename })) };
+    const record = { id, recipeId: recipe.id, shootSlug, space, createdAt: new Date().toISOString(), angles: images.map(i => i.name), status: 'ran', promptSource, chained, referenceFilename: chained ? first.editedFilename : null, results: results.map(r => ({ angleName: r.angleName, editedFilename: r.editedFilename })) };
     await store.create(batchPath(id), record).catch(() => {});
-    return { ok: true, batchId: id, model, promptSource, results };
+    return { ok: true, batchId: id, model, promptSource, results, chained, referenceFilename: chained ? first.editedFilename : null };
   },
 
   async approve(body) {
@@ -193,7 +216,7 @@ const actions = {
       const blob = await put(path, Buffer.from(m[2], 'base64'), { access: 'public', contentType: m[1], addRandomSuffix: false, allowOverwrite: true });
       saved.push({ angleName: a.angleName, filename, url: blob.url });
     }
-    // The approved set becomes the new anchor for this space.
+    // The approved set is saved for this space.
     const updated = { ...batch, status: 'approved', approvedAt: new Date().toISOString(), approvedFiles: saved, anchorUrl: saved[0]?.url || null };
     await store.write(batchPath(id), updated, current.etag).catch(() => {});
     return { ok: true, batchId: id, saved };

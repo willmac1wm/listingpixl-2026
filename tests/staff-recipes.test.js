@@ -35,17 +35,19 @@ test('recipes list comes from data/recipes.json v1.2 with all four recipes', () 
   assert.match(recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt, /lawn is the hero/i);
 });
 
-test('twilight is gated: only on an approved landscaped anchor, never a dirt yard', () => {
-  const imgs = [{ name: 'a-Virtually-Landscaped.jpg', mime: 'image/jpeg', bytes: 100 }, { name: 'b.jpg', mime: 'image/jpeg', bytes: 100 }];
+test('twilight is gated: only on approved landscaped photos, never a dirt yard', () => {
+  const imgs = [{ name: 'a-Virtually-Landscaped.jpg', mime: 'image/jpeg', bytes: 100 }, { name: 'b-Virtually-Landscaped.jpg', mime: 'image/jpeg', bytes: 100 }];
   assert.throws(() => recipes.validateBatch('vt-virtual-twilight', imgs, { landscapedApproved: false }), /Landscape first/);
   assert.throws(() => recipes.validateBatch('vt-virtual-twilight', [{ name: 'a.jpg', mime: 'image/jpeg', bytes: 100 }, imgs[1]], { landscapedApproved: true }), /Virtually-Landscaped file/);
   assert.ok(recipes.validateBatch('vt-virtual-twilight', imgs, { landscapedApproved: true }));
+  assert.ok(recipes.validateBatch('vt-virtual-twilight', [imgs[0]], { landscapedApproved: true })); // one angle is enough
 });
 
-test('batch limits: anchor + at most 3 angles, 5 MB per image, JPEG/PNG/WebP only', () => {
+test('batch limits: 1–3 angles, 5 MB per image, JPEG/PNG/WebP only', () => {
   const img = { name: 'a.jpg', mime: 'image/jpeg', bytes: 100 };
-  assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img]), /at least one angle/);
-  assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img, img, img, img, img]), /at most 3 angles/);
+  assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', []), /at least one angle/);
+  assert.doesNotThrow(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img]));
+  assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img, img, img, img]), /at most 3 angles/);
   assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img, { ...img, bytes: 6 * 1024 * 1024 }]), /5 MB/);
   assert.throws(() => recipes.validateBatch('vs-modern-farmhouse-kitchen', [img, { ...img, mime: 'image/gif' }]), /Only JPEG, PNG or WebP/);
 });
@@ -63,18 +65,38 @@ test('gpt-image-1 is refused; the prompt is the recipe prompt verbatim', () => {
   assert.equal(recipes.buildPrompt(r), r.prompt_chatgpt);
 });
 
-test('edit form data puts the anchor first, then the angle, with the recipe prompt', () => {
+test('edit form data sends one angle with the recipe prompt — no anchor image', () => {
   const form = recipes.buildEditFormData({ model: 'gpt-image-1.5', prompt: 'PROMPT', images: [
-    { name: 'anchor.jpg', mime: 'image/jpeg', buffer: Buffer.from('a') },
     { name: 'angle.jpg', mime: 'image/jpeg', buffer: Buffer.from('b') },
   ] });
   assert.equal(form.get('model'), 'gpt-image-1.5');
   assert.equal(form.get('prompt'), 'PROMPT');
   assert.equal(form.getAll('image[0]').length, 1);
-  assert.equal(form.getAll('image[1]').length, 1);
+  assert.equal(form.getAll('image[1]').length, 0); // never a second image
 });
 
-test('run-batch needs team login, refuses with no key, and makes one OpenAI call per angle', async () => {
+test('chain anchor: the chained prompt puts the finished angle 1 first, then the recipe prompt verbatim', () => {
+  assert.equal(recipes.chainedPrompt('PROMPT'), 'Image 1 is the finished look from this same space — match it exactly. PROMPT');
+  for (const r of recipes.listRecipes()) {
+    const p = recipes.getRecipe(r.id).prompt_chatgpt;
+    // Both call shapes read correctly: angle 1 runs the prompt alone
+    // ("Edit this photo…"), the rest run the prefix + the same prompt.
+    assert.ok(recipes.chainedPrompt(p).startsWith(recipes.CHAIN_PREFIX));
+    assert.ok(recipes.chainedPrompt(p).endsWith(p));
+  }
+});
+
+test('no anchor anywhere in the run path: no recipe prompt references an anchor image', () => {
+  for (const r of recipes.listRecipes()) {
+    const p = recipes.getRecipe(r.id).prompt_chatgpt;
+    assert.doesNotMatch(p, /anchor image|Image 1 is the anchor|as the anchor/i, `${r.id} prompt must not reference an anchor image`);
+  }
+  // "anchors" in the Modern Beach DO NOT list is anchor-shaped beach
+  // décor, not an anchor image — that one stays.
+  assert.match(recipes.getRecipe('mb-modern-beach-interior').prompt_chatgpt, /nautical kitsch, anchors, rope/i);
+});
+
+test('run-batch needs team login, refuses with no key, and chains: angle 1 first, rest matched to it', async () => {
   const restoreStore = memoryStore();
   const oldPass = process.env.STAFF_PASSWORD;
   const oldKey = process.env.OPENAI_API_KEY;
@@ -91,27 +113,61 @@ test('run-batch needs team login, refuses with no key, and makes one OpenAI call
     assert.equal(noKey.statusCode, 503);
     assert.match(noKey.body, /No OpenAI key configured/);
 
-    // Save a key via the staff form, then run: 2 angles = 2 OpenAI calls.
+    // Save a key via the staff form, then run: 3 angles = 3 OpenAI calls,
+    // chained — angle 1 first (prompt only), then the rest matched to it.
     const saved = response();
     await handler({ method: 'POST', url: '/staff/recipes?action=saveKey', headers: headers({ authorization: basic(), 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ key: 'sk-test-' + 'x'.repeat(30) }) }, saved);
     assert.equal(saved.statusCode, 200);
     assert.doesNotMatch(saved.body, /sk-test/); // the key is never echoed back
 
     const calls = [];
+    const packPrompt = recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt;
     global.fetch = async (url, opts) => {
-      calls.push({ url, auth: opts.headers.Authorization });
-      return { ok: true, json: async () => ({ data: [{ b64_json: Buffer.from('edited').toString('base64') }] }) };
+      const n = calls.length;
+      calls.push({ url, auth: opts.headers.Authorization, body: opts.body });
+      return { ok: true, json: async () => ({ data: [{ b64_json: Buffer.from('edited-' + n).toString('base64') }] }) };
     };
     const run = response();
     await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: headers({ authorization: basic(), 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', shootSlug: '114-e-anna-st-whitesboro-nj', space: 'front yard', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }, { name: 'c.jpg', dataUrl: tinyPng }] }) }, run);
     assert.equal(run.statusCode, 200);
-    assert.equal(calls.length, 2); // one call per angle, anchor + angle each time
+    assert.equal(calls.length, 3); // one call per angle
     assert.equal(calls[0].url, 'https://api.openai.com/v1/images/edits');
     assert.ok(calls[0].auth.startsWith('Bearer sk-test-'));
+    // Angle 1 runs first, prompt only, one image — it sets the look.
+    assert.equal(calls[0].body.getAll('image[0]').length, 1);
+    assert.equal(calls[0].body.getAll('image[1]').length, 0);
+    assert.equal(calls[0].body.get('prompt'), packPrompt);
+    // The rest are matched to the finished angle 1: reference + raw angle,
+    // chained prompt. The reference is the first result, by bytes and name.
+    for (const call of calls.slice(1)) {
+      assert.equal(call.body.getAll('image[0]').length, 1);
+      assert.equal(call.body.getAll('image[1]').length, 1);
+      assert.equal(call.body.get('prompt'), recipes.chainedPrompt(packPrompt));
+      assert.equal(call.body.get('image[0]').name, 'a-Virtually-Landscaped.jpg');
+      assert.deepEqual(Buffer.from(await call.body.get('image[0]').arrayBuffer()), Buffer.from('edited-0'));
+    }
+    assert.equal(calls[1].body.get('image[1]').name, 'b.jpg');
+    assert.equal(calls[2].body.get('image[1]').name, 'c.jpg');
     const out = JSON.parse(run.body);
-    assert.equal(out.results.length, 2);
-    assert.equal(out.results[0].editedFilename, 'b-Virtually-Landscaped.jpg');
+    assert.equal(out.results.length, 3);
+    assert.equal(out.results[0].editedFilename, 'a-Virtually-Landscaped.jpg');
+    assert.equal(out.results[1].editedFilename, 'b-Virtually-Landscaped.jpg');
+    assert.equal(out.results[2].editedFilename, 'c-Virtually-Landscaped.jpg');
+    assert.equal(out.chained, true);
+    assert.equal(out.referenceFilename, 'a-Virtually-Landscaped.jpg');
     assert.doesNotMatch(run.body, /sk-test/);
+
+    // Test one angle first is the same as step 1 of a batch: one call,
+    // prompt only, and its result is the look the rest would be matched to.
+    calls.length = 0;
+    const one = response();
+    await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: headers({ authorization: basic(), 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }], onlyFirst: true }) }, one);
+    assert.equal(one.statusCode, 200);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].body.getAll('image[1]').length, 0);
+    assert.equal(calls[0].body.get('prompt'), packPrompt);
+    assert.equal(JSON.parse(one.body).chained, false);
+    assert.equal(JSON.parse(one.body).results.length, 1);
   } finally {
     global.fetch = oldFetch;
     restoreStore();
@@ -278,7 +334,7 @@ test('Recipe prompts in /staff: edit, save, run with the override, reset to pack
     await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }] }) }, run);
     assert.equal(run.statusCode, 200);
     assert.equal(JSON.parse(run.body).promptSource, 'override');
-    assert.deepEqual(sentPrompts, ['Edited lawn prompt — lawn is the hero']);
+    assert.deepEqual(sentPrompts, ['Edited lawn prompt — lawn is the hero', recipes.chainedPrompt('Edited lawn prompt — lawn is the hero')]);
 
     // Reset deletes the override: pack default again, in the UI and in runs.
     const reset = response();
@@ -294,7 +350,7 @@ test('Recipe prompts in /staff: edit, save, run with the override, reset to pack
     const run2 = response();
     await handler({ method: 'POST', url: '/staff/recipes?action=runBatch', headers: authed({ 'x-staff': '1', 'content-type': 'application/json' }), body: JSON.stringify({ recipeId: 'vl-lush-lawn-autumn', images: [{ name: 'a.jpg', dataUrl: tinyPng }, { name: 'b.jpg', dataUrl: tinyPng }] }) }, run2);
     assert.equal(JSON.parse(run2.body).promptSource, 'pack');
-    assert.deepEqual(sentPrompts, [recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt]);
+    assert.deepEqual(sentPrompts, [recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt, recipes.chainedPrompt(recipes.getRecipe('vl-lush-lawn-autumn').prompt_chatgpt)]);
   } finally {
     global.fetch = oldFetch;
     restoreStore();
@@ -326,8 +382,8 @@ test('Modern Beach Interior is a live Interior recipe, distinct from the farmhou
   // The batch gate still applies: a valid batch validates, and the
   // recipe is selectable like the other live recipes.
   assert.doesNotThrow(() => recipes.validateBatch('mb-modern-beach-interior', [
-    { name: 'anchor.jpg', mime: 'image/jpeg', bytes: 100 },
-    { name: 'angle.jpg', mime: 'image/jpeg', bytes: 100 },
+    { name: 'angle1.jpg', mime: 'image/jpeg', bytes: 100 },
+    { name: 'angle2.jpg', mime: 'image/jpeg', bytes: 100 },
   ]));
 });
 
@@ -477,7 +533,13 @@ test('Select Model picker: segmented toggle, photo model cards, selected state, 
   // never runnable. Unchecking the box clears a twilight pick.
   assert.match(ui.script, /function twilightBlocked\(recipeId\) \{\n    return recipeId === 'vt-virtual-twilight' && !\$\('rc-landscaped'\)\.checked;/);
   assert.match(ui.script, /class: 'rc-model-card rc-model-disabled', 'aria-disabled': 'true'/);
-  assert.match(ui.script, /text: 'Needs a landscaped anchor first — tick the box in step 03\.'/);
+  assert.match(ui.script, /text: 'Needs approved landscaped photos first — tick the box in step 03\.'/);
+  // Chain anchor, in the open: every model card says the first photo
+  // sets the look and the rest are matched to it. No anchor to upload,
+  // none shipped — the app makes it from the first photo.
+  assert.match(ui.html, /Pick the look you want — the first photo sets it, the rest are matched to it\./);
+  assert.match(ui.script, /class: 'rc-chain-note', text: 'First photo sets the look — the rest are matched to it\.'/);
+  assert.doesNotMatch(ui.script, /no anchor photo/i);
   assert.match(ui.script, /\$\('rc-landscaped'\)\.addEventListener\('change', \(\) => \{/);
   assert.match(ui.script, /if \(\$\('rc-recipe'\)\.value === 'vt-virtual-twilight' && twilightBlocked\('vt-virtual-twilight'\)\) \{/);
   // The server still enforces the gate — the card is only the UI half.
@@ -503,13 +565,16 @@ test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batc
   // Section titles are clearly bigger and bolder than body text.
   assert.match(ui.css, /\.rc-studio \.rc-step \{[^}]*font-size: 1\.4rem; font-weight: 800/);
   assert.ok(ui.html.indexOf('id="rc-results"') > ui.html.indexOf('id="rc-run"'));
-  // Hidden file inputs still cover the slots, and collectImages reads them.
-  assert.match(ui.html, /id="rc-anchor" class="rc-slot-input" type="file" accept="image\/jpeg,image\/png,image\/webp"/);
+  // Step 01 has no anchor upload at all — only the three angle tiles,
+  // and the copy says the first photo sets the look.
+  assert.doesNotMatch(ui.html, /rc-anchor/);
   assert.equal(ui.html.match(/class="rc-slot-input rc-angle" type="file"/g).length, 3);
+  assert.match(ui.html, /Upload the photos that need fixing\./);
+  assert.match(ui.html, /The first photo sets the look: it is edited first, and the rest are matched to it/);
   // [hidden] must keep working on restyled buttons (settings door, key delete).
   assert.match(ui.css, /\.rc-studio \[hidden\] \{ display: none !important; \}/);
   // The batch is the point, not one photo at a time — one line under the heading.
-  assert.match(ui.html, /Batch first: one space, every angle together — same anchor, same prompt, one batch\. No one-photo-at-a-time\./);
+  assert.match(ui.html, /Batch first: one space, every angle together — same recipe, same prompt, one batch\. No one-photo-at-a-time\./);
   // Numbered steps in order: 01 Upload, 02 Select Model, 03 Run batch,
   // 04 Review & download. Upload comes before the style picker.
   for (const [num, label] of [['01', 'Upload'], ['02', 'Select Model'], ['03', 'Run batch'], ['04', 'Review']]) {
@@ -517,7 +582,7 @@ test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batc
   }
   const order = ['>01<', '>02<', '>03<', '>04<'].map(t => ui.html.indexOf(t));
   assert.ok(order.every(i => i > -1) && order[0] < order[1] && order[1] < order[2] && order[2] < order[3]);
-  assert.ok(ui.html.indexOf('id="rc-anchor"') < ui.html.indexOf('id="rc-model-grid"'));
+  assert.ok(ui.html.indexOf('Angle 1') < ui.html.indexOf('id="rc-model-grid"'));
   // Step 02 is the Select Model grid (see the picker test below): a
   // segmented Interior / Exterior toggle filtering photo model cards —
   // no dropdown, no two-step back-and-forth.
