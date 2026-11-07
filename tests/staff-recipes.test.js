@@ -387,14 +387,14 @@ test('Modern Beach Interior is a live Interior recipe, distinct from the farmhou
   ]));
 });
 
-test('a plain browser visit to /staff/recipes redirects to the Recipe Studio section, never a JSON error', async () => {
+test('a plain browser visit to /staff/recipes redirects to the Recipe Studio page, never a JSON error', async () => {
   const oldPass = process.env.STAFF_PASSWORD;
   process.env.STAFF_PASSWORD = 'LOCAL-TEST-ONLY-not-an-account-password';
   try {
     const authed = response();
     await handler({ method: 'GET', url: '/staff/recipes', headers: headers({ authorization: basic() }) }, authed);
     assert.equal(authed.statusCode, 302);
-    assert.equal(authed.getHeader('location'), '/staff#recipe-studio');
+    assert.equal(authed.getHeader('location'), '/staff/studio');
     assert.doesNotMatch(authed.body, /Unknown action/);
 
     // Same for a visitor who is not signed in yet — /staff sends them to
@@ -402,7 +402,7 @@ test('a plain browser visit to /staff/recipes redirects to the Recipe Studio sec
     const anon = response();
     await handler({ method: 'GET', url: '/staff/recipes', headers: headers() }, anon);
     assert.equal(anon.statusCode, 302);
-    assert.equal(anon.getHeader('location'), '/staff#recipe-studio');
+    assert.equal(anon.getHeader('location'), '/staff/studio');
 
     // An unknown action is still a JSON error — only the bare visit redirects.
     const bad = response();

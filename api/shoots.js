@@ -77,12 +77,25 @@ async function hdphSites() {
   const r = await fetch('https://listingpixl.hd.pics/api/v1/sites', { headers: { api_key: process.env.HDPH_API_KEY } });
   if (!r.ok) throw new HttpError(502, `HD Photo Hub: ${r.status}`);
   const when = s => { const [d, t, ap] = s.created.split(' '); const [m, day, y] = d.split('/'); let [h, mi, se] = t.split(':').map(Number); if (ap === 'PM' && h < 12) h += 12; if (ap === 'AM' && h === 12) h = 0; return Date.UTC(y, m - 1, day, h, mi, se); };
+  // The HD media item's URL field is undocumented in this repo: probe the
+  // common key names and keep null when none matches, so a site card
+  // without a photo shows its photo count instead of a broken image.
+  // Never guess a URL pattern.
+  const photoUrl = m => {
+    if (!m || typeof m !== 'object') return null;
+    for (const key of ['url', 'src', 'image', 'imageUrl', 'photoUrl', 'link', 'file', 'path', 'thumbnail']) {
+      const v = m[key];
+      if (typeof v === 'string' && v.startsWith('http')) return v;
+    }
+    return null;
+  };
   return (await r.json()).map(s => ({
     sid: s.sid,
     created: new Date(when(s)).toISOString().slice(0, 10),
     address: s.address || '', city: s.city || '',
     agent: (s.user && s.user.name) || '',
     photos: s.media.filter(m => m.type === 'still' && !m.hidden).length,
+    photo: photoUrl((s.media || []).find(m => m.type === 'still' && !m.hidden)),
     slug: `${s.address || ''} ${s.city || ''} nj`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
   })).sort((a, b) => b.created.localeCompare(a.created));
 }

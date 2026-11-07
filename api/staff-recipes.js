@@ -230,12 +230,12 @@ module.exports = async (req, res) => {
   const send = (status, data) => { res.statusCode = status; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(data)); };
   const action = new URL(req.url, 'http://x').searchParams.get('action');
   // A plain browser visit to /staff/recipes has no action: it is a person,
-  // not an API call, so send them to the Recipe Studio section of the
-  // /staff dashboard instead of a blank JSON error page. /staff itself
-  // sends unauthenticated visitors to the login page.
+  // not an API call, so send them to the Recipe Studio page instead of a
+  // blank JSON error page. /staff itself sends unauthenticated visitors
+  // to the login page.
   if (!action && req.method === 'GET') {
     res.statusCode = 302;
-    res.setHeader('Location', '/staff#recipe-studio');
+    res.setHeader('Location', '/staff/studio');
     return res.end();
   }
   if (!await authorized(req, res)) {

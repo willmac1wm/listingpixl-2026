@@ -95,6 +95,10 @@ test('forged, expired and rotated sessions do not authorize; Basic access still 
 test('login rejects cross-site posts, missing CSRF and unsafe redirect destinations', () => withPassword(async () => {
   for (const next of ['https://example.com/', '//example.com/', '/\\example.com', '/api/shoots?action=approve', '/staff/../api/shoots']) assert.equal(auth.safeNext(next), '/staff');
   assert.equal(auth.safeNext('/staff/inquiries?cursor=abc'), '/staff/inquiries?cursor=abc');
+  // A bookmarked staff subpage survives sign-in; anything that is not a
+  // staff page still falls back to Home.
+  for (const next of ['/staff/sites', '/staff/studio', '/staff/posts', '/staff/clients', '/staff/crm', '/staff/business', '/staff/account', '/staff/inquiries', '/staff/studio/']) assert.equal(auth.safeNext(next), next);
+  for (const next of ['/staff/photos', '/staff/guides', '/staff/recipes', '/staff/delivery', '/staff/shoots', '/staff/unknown']) assert.equal(auth.safeNext(next), '/staff');
   const login = response();
   await handler({ method: 'GET', url: '/staff/login', headers: headers() }, login);
   for (const bad of [{ origin: 'https://example.com', csrf: csrf(login) }, { origin, csrf: 'forged' }]) {

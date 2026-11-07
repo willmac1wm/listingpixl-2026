@@ -62,7 +62,7 @@ function safeNext(value) {
   if (typeof value !== 'string' || value.length > 1200 || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/staff';
   try {
     const url = new URL(value, 'https://staff.invalid');
-    if (url.origin !== 'https://staff.invalid' || !/^\/staff(?:\/inquiries)?\/?$/.test(url.pathname)) return '/staff';
+    if (url.origin !== 'https://staff.invalid' || !/^\/staff(?:\/(?:sites|studio|posts|clients|crm|business|account|inquiries))?\/?$/.test(url.pathname)) return '/staff';
     const cursor = url.searchParams.get('cursor');
     return url.pathname + (cursor ? '?cursor=' + encodeURIComponent(cursor.slice(0, 1000)) : '');
   } catch { return '/staff'; }

@@ -38,6 +38,34 @@
       "dest": "/api/staff-auth?mode=logout"
     },
     {
+      "src": "/staff/sites/?",
+      "dest": "/api/staff-sites"
+    },
+    {
+      "src": "/staff/studio/?",
+      "dest": "/api/staff-studio"
+    },
+    {
+      "src": "/staff/posts/?",
+      "dest": "/api/staff-posts"
+    },
+    {
+      "src": "/staff/clients/?",
+      "dest": "/api/staff-clients"
+    },
+    {
+      "src": "/staff/crm/?",
+      "dest": "/api/staff-crm"
+    },
+    {
+      "src": "/staff/business/?",
+      "dest": "/api/staff-business"
+    },
+    {
+      "src": "/staff/account/?",
+      "dest": "/api/staff-account"
+    },
+    {
       "src": "/staff/?",
       "dest": "/api/staff"
     },
@@ -95,6 +123,27 @@
       "maxDuration": 30
     },
     "api/staff-auth.js": {
+      "maxDuration": 30
+    },
+    "api/staff-sites.js": {
+      "maxDuration": 30
+    },
+    "api/staff-studio.js": {
+      "maxDuration": 30
+    },
+    "api/staff-posts.js": {
+      "maxDuration": 30
+    },
+    "api/staff-clients.js": {
+      "maxDuration": 30
+    },
+    "api/staff-crm.js": {
+      "maxDuration": 30
+    },
+    "api/staff-business.js": {
+      "maxDuration": 30
+    },
+    "api/staff-account.js": {
       "maxDuration": 30
     },
     "api/inquiries.js": {
