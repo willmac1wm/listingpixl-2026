@@ -1,25 +1,25 @@
 {
   "api_example": {
-    "curl": "curl https://api.openai.com/v1/images/edits -H \"Authorization: Bearer $OPENAI_API_KEY\" -F model=\"gpt-image-1.5\" -F \"image[]=@anchor.png\" -F \"image[]=@angle-2.png\" -F \"image[]=@angle-3.png\" -F prompt=\"$(cat prompt.txt)\" -F quality=\"high\" -F size=\"1536x1024\"",
+    "curl": "curl https://api.openai.com/v1/images/edits -H \"Authorization: Bearer $OPENAI_API_KEY\" -F model=\"gpt-image-1.5\" -F \"image[]=@angle-1.png\" -F prompt=\"$(cat prompt.txt)\" -F quality=\"high\" -F size=\"1536x1024\"  # angle 1 first, prompt only \u2014 its finished result is the reference for the rest\ncurl https://api.openai.com/v1/images/edits -H \"Authorization: Bearer $OPENAI_API_KEY\" -F model=\"gpt-image-1.5\" -F \"image[]=@angle-1-finished.png\" -F \"image[]=@angle-2.png\" -F prompt=\"Image 1 is the finished look from this same space \u2014 match it exactly. $(cat prompt.txt)\" -F quality=\"high\" -F size=\"1536x1024\"  # angles 2+: finished angle 1 first, raw angle second",
     "note": "ChatGPT UI is $0 extra if you already have ChatGPT. The API is pay-per-image \u2014 test on one batch first. Endpoint and model names change; verify at run time."
   },
   "batch_inputs": {
-    "api": "POST /v1/images/edits \u2014 image[0] = anchor, image[1..n] = target angles (up to 16 images total). Same prompt for the whole batch. Model names change often \u2014 gpt-image-1 was shut down 2026-10-23; use the current gpt-image-1.5 / gpt-image-2.5 model at run time. Quality: high. Input fidelity: high where the model offers it.",
-    "chatgpt_ui": "Upload the anchor image FIRST, then upload the 2-4 target angles in the same message, then paste the recipe prompt. Do not start a new chat per angle.",
+    "api": "POST /v1/images/edits \u2014 one call per angle. Angle 1: one image (the raw angle) with the recipe prompt only. Angles 2+: two images \u2014 image[0] = the finished angle 1, image[1] = the raw angle \u2014 with the chain line 'Image 1 is the finished look from this same space \u2014 match it exactly.' in front of the recipe prompt. Up to 16 images total per call. Model names change often \u2014 gpt-image-1 was shut down 2026-10-23; use the current gpt-image-1.5 / gpt-image-2.5 model at run time. Quality: high. Input fidelity: high where the model offers it.",
+    "chatgpt_ui": "Upload the 2-4 angles of the same space in one message with the recipe prompt. Angle 1 is edited first with the prompt only; then, for each remaining angle, send the finished angle 1 first and the raw angle second, with the chain line 'Image 1 is the finished look from this same space \u2014 match it exactly.' in front of the prompt. Do not start a new chat per angle.",
     "max_angles_per_batch": 4,
     "output_size": "Match the input angle's aspect ratio. Do not let the model crop to square unless the input was square."
   },
   "batch_workflow": [
     "1. Shoot, then Auto HDR. Do not start AI edits on un-HDR'd originals.",
-    "2. Triage: pick the spaces that need extra \u2014 usually 1 exterior/yard set and 1-2 interior rooms. Pick the anchor angle for each space first.",
+    "2. Triage: pick the spaces that need extra \u2014 usually 1 exterior/yard set and 1-2 interior rooms. Pick which angle goes first for each space \u2014 that first photo sets the look for the rest.",
     "3. Pick the recipe. Do not write a fresh prompt. Copy the recipe prompt exactly.",
-    "4. Batch: upload anchor FIRST, then 2-3 target angles of the SAME space, in the SAME message/call, with the recipe prompt pasted once.",
-    "5. Review the whole set together, side by side. Check the QC list in the recipe. If one angle is off, fix ONLY that angle, with the anchor + the approved angles attached, and the full KEEP list repeated.",
-    "6. Approve, then save the approved set as the new anchor. Name files with -Virtually-Staged / -Virtually-Landscaped, keep originals untouched.",
+    "4. Batch: upload 2-4 angles of the SAME space, in the SAME message/call, with the recipe prompt pasted once. Angle 1 is edited first with the prompt only; its finished result is then the reference each remaining angle is matched to (finished angle 1 + raw angle, with the chain line 'Image 1 is the finished look from this same space \u2014 match it exactly.' in front of the prompt).",
+    "5. Review the whole set together, side by side. Check the QC list in the recipe. If one angle is off, fix ONLY that angle, with the finished first photo + the approved angles attached, and the full KEEP list repeated.",
+    "6. Approve, then save the approved set \u2014 it is the reference for any angle you add later. Name files with -Virtually-Staged / -Virtually-Landscaped, keep originals untouched.",
     "7. Push to gallery: MLS-ready export (2048px long edge, sRGB, under 2 MB), add Matterport / Kuula / video links as iframe fields, deliver with text + email, follow up, ask for a review. See DELIVERY-CHECKLIST in RECIPE-PACK.md."
   ],
   "blank_template": {
-    "anchor": "Best finished angle of that space \u2014 describe it",
+    "anchor": "First angle of that space \u2014 which angle is edited first; its finished result is the reference the rest are matched to",
     "change_only": [
       "List only what may change"
     ],
@@ -42,20 +42,20 @@
   },
   "created": "2026-11-06",
   "golden_rules": [
-    "Never edit one angle alone. Always send the anchor + all angles of that space together, in one batch, in one chat/session.",
-    "Anchor first. Image 1 is always the best finished angle of that space. Every other angle must match the anchor, not invent its own look.",
+    "Never edit one angle alone. Always run all angles of that space together, in one batch, in one run \u2014 angle 1 first, the rest matched to it.",
+    "First photo sets the look. Angle 1 is edited first with the recipe prompt only, and its finished result is the reference the rest are matched to. Every other angle must match that finished first photo, not invent its own look.",
     "KEEP list repeated every time. Say what must not change, in every prompt, every round. Drift builds up if you only say it once.",
     "CHANGE ONLY list. Name exactly what may change. Everything else is frozen.",
     "Materials are a closed list. Same lawn, same plants, same sofa, same table \u2014 exact items, exact colours. No synonyms, no 'similar'.",
     "One change per round. If a result is close but one thing is wrong, fix only that one thing, and repeat the full KEEP list.",
     "Never overwrite an original. Auto HDR originals stay untouched. Edited files get a new name with -Virtually-Staged or -Virtually-Landscaped.",
-    "Save the approved set as the new anchor. The next angle you add later must match the approved set, not the first draft."
+    "Keep the approved set as the reference. The next angle you add later must match the approved set, not the first draft."
   ],
   "owner": "Listing Pixl \u2014 William Macomber",
   "pack": "Listing Pixl Recipe Pack",
   "recipes": [
     {
-      "anchor": "Best ground front exterior after Auto HDR \u2014 for 114 E Anna St, 114-E-Anna-St-01-Front-Exterior.jpg. The aerial is a target angle, not the anchor.",
+      "anchor": "First angle: the best ground front exterior after Auto HDR \u2014 for 114 E Anna St, 114-E-Anna-St-01-Front-Exterior.jpg. It is edited first with the recipe prompt only, and its finished result is the reference the other angles are matched to. The aerial is a target angle, not the first angle.",
       "change_only": [
         "The bare dirt yard \u2192 lush lawn \u2014 the lawn is the hero, at least 80% of the yard",
         "Add ONE thin dark-mulch bed along the house foundation only, narrow, not wide",
@@ -121,7 +121,7 @@
       "use_when": "Exterior / yard / aerial where the real yard is dirt, patchy, or unfinished. The Jason look."
     },
     {
-      "anchor": "114-E-Anna-St-42-Dining-Living-Virtually-Staged.jpg \u2014 the finished open-plan look. For a kitchen-only job, stage one hero kitchen angle first, approve it, then use THAT as the anchor for the other kitchen angles.",
+      "anchor": "First angle: stage one hero angle first \u2014 for 114 E Anna St, the finished open-plan look is 114-E-Anna-St-42-Dining-Living-Virtually-Staged.jpg. For a kitchen-only job, stage one hero kitchen angle first, approve it, then its finished result is the reference the other kitchen angles are matched to.",
       "change_only": [
         "Add furniture and d\u00e9cor from the locked list below, in the same positions on every angle",
         "Add small counter d\u00e9cor only: cutting board, vase, fruit bowl"
@@ -202,7 +202,7 @@
       ]
     },
     {
-      "anchor": "The approved Virtually-Landscaped ground front exterior from recipe vl-lush-lawn-autumn. Twilight is a second pass on an approved landscaped image, not a fresh edit of the dirt-yard original.",
+      "anchor": "First angle: the approved Virtually-Landscaped ground front exterior from recipe vl-lush-lawn-autumn, edited first with the twilight prompt only. Twilight is a second pass on an approved landscaped image, not a fresh edit of the dirt-yard original \u2014 its finished ground shot is the reference the aerial is matched to.",
       "change_only": [
         "Sky: bright blue day sky \u2192 deep blue dusk sky with a warm orange band at the horizon",
         "Windows: warm golden light glowing from every window",
@@ -264,7 +264,7 @@
       "price_anchor": "Virtual staging $35/photo in Listing Pixl pricing. Charge per edited angle.",
       "use_when": "Empty living room / open-plan living area in a Cape May County shore house \u2014 new-build or resale. The 114 E Anna St open-plan living area is the worked example.",
       "source": "Built from the real 114 E Anna St open-plan living area (114-E-Anna-St-37-Kitchen-Living.jpg \u2014 empty, white shaker kitchen on the left, big empty living area with windows and a sliding glass door to the deck, light oak plank floor). First approved angle (Test 4, #37) is the anchor for all other angles. Distinct from Recipe 2's farmhouse kitchen: no dark wood, no black metal furniture, no cognac leather \u2014 light linen, rattan, whitewash, sand and soft sea-blue only.",
-      "anchor": "The first approved Modern Beach angle \u2014 Test 4 output from 114-E-Anna-St-37-Kitchen-Living.jpg. Stage one hero living angle first, approve it, then use THAT as the anchor for the other living angles. All angles must match the anchor's furniture exactly.",
+      "anchor": "First angle: stage one hero living angle first \u2014 Test 4 output from 114-E-Anna-St-37-Kitchen-Living.jpg. Approve it, then its finished result is the reference the other living angles are matched to. All angles must match the first angle's furniture exactly.",
       "target_angles": [
         "Living room wide (kitchen side)",
         "Living room wide (sliding-door end)",
@@ -340,7 +340,7 @@
     }
   ],
   "version": "1.2",
-  "why_batch_not_one_off": "One-off edits re-invent the room/yard every time. A recipe locks one anchor image, one materials list, one KEEP list and one CHANGE-ONLY list, and all angles of the same space are sent in ONE batch with the same prompt. That is what made Jason's two renders match.",
+  "why_batch_not_one_off": "One-off edits re-invent the room/yard every time. A recipe locks one materials list, one KEEP list and one CHANGE-ONLY list, and all angles of the same space run in ONE batch with the same prompt \u2014 angle 1 first, its finished result the reference the rest are matched to. That is what made Jason's two renders match.",
   "worked_example_property": "114 E Anna St, Whitesboro, NJ 08210 \u2014 white farmhouse, dark charcoal roof, wood front porch/deck, gravel drive, dirt yard in the real photos. That dirt yard is why this property is the perfect test case.",
   "changelog": "v1.1 2026-11-06: Recipe 1 simplified \u2014 William said v1.0 was way too busy. Lawn is now the hero, planting is a thin foundation edge only, max 5 plantings total, no foreground bed, no river rocks everywhere. v1.2 2026-11-06: Recipe 4 Modern Beach Interior added (William: do whats best \u2014 style first, most Cape May / shore-relevant). Modern Beach moved from planned_styles to a live recipe under Interior.",
   "planned_styles": [
