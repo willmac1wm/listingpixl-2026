@@ -1,11 +1,11 @@
 // Pages split (Nov 2026): the /staff dashboard is one page per job —
-// Dashboard, Sites, Photo Editing, Posts, Clients, CRM, Business,
-// Account — matching HD Photo Hub, instead of one long scroll. The only
-// addition to HD's map is Photo Editing (the Recipe Studio), in the
-// middle of the workflow: shoot -> edit -> deliver. Each page serves
-// only its own section, every page shares the same navigation, and
-// behaviour is unchanged: drafts stay drafts-only and nothing on any
-// page sends anything.
+// Dashboard, Sites, Photo Editing, Editing, Posts, Clients, CRM,
+// Business, Account — matching HD Photo Hub, instead of one long scroll.
+// The additions to HD's map are Photo Editing (the Recipe Studio) and
+// Editing (the light editing queue), both in the middle of the workflow:
+// shoot -> edit -> deliver. Each page serves only its own section, every
+// page shares the same navigation, and behaviour is unchanged: drafts
+// stay drafts-only and nothing on any page sends anything.
 //
 // Deliberately NOT built: a Groups page (empty in HD for William, no
 // group data here), a standalone Photos page (HD has none — photos live
@@ -20,6 +20,7 @@ const { NAV, FOOTER_LINKS, staffPage } = require('../api/_staff_shell');
 const home = require('../api/_pages/dashboard');
 const sites = require('../api/_pages/sites');
 const studio = require('../api/_pages/studio');
+const editing = require('../api/_pages/editing');
 const posts = require('../api/_pages/posts');
 const clients = require('../api/_pages/clients');
 const crm = require('../api/_pages/crm');
@@ -32,6 +33,7 @@ const PAGES = [
   ['Dashboard', '/staff', home],
   ['Sites', '/staff/sites', sites],
   ['Photo Editing', '/staff/studio', studio],
+  ['Editing', '/staff/editing', editing],
   ['Posts', '/staff/posts', posts],
   ['Clients', '/staff/clients', clients],
   ['CRM', '/staff/crm', crm],
@@ -44,6 +46,7 @@ test('shared navigation lists every staff page, exactly once each, HD order', ()
     ['Dashboard', '/staff'],
     ['Sites', '/staff/sites'],
     ['Photo Editing', '/staff/studio'],
+    ['Editing', '/staff/editing'],
     ['Posts', '/staff/posts'],
     ['Clients', '/staff/clients'],
     ['CRM', '/staff/crm'],
@@ -262,7 +265,7 @@ test('account page is read-only basic info, with no password or driver\'s-licens
 
 test('one function serves all eight staff pages: the Hobby plan allows 12 functions per deployment', () => {
   // Commit 17cb876 put one function per page (19 total) and the build
-  // failed with exceeded_serverless_functions_per_deployment. The eight
+  // failed with exceeded_serverless_functions_per_deployment. The nine
   // page modules now live in api/_pages/ (underscore-prefixed, not
   // functions) behind the single staff-pages dispatcher.
   const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js') && !f.startsWith('_'));
@@ -276,8 +279,11 @@ test('one function serves all eight staff pages: the Hobby plan allows 12 functi
 test('dispatcher picks the page from ?page= or from the request path, and 404s unknown pages', () => {
   assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=sites' }), 'sites');
   assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=dashboard' }), 'dashboard');
+  assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=editing' }), 'editing');
   assert.equal(dispatcher.pageName({ url: '/staff/sites' }), 'sites');
   assert.equal(dispatcher.pageName({ url: '/staff/sites/' }), 'sites');
+  assert.equal(dispatcher.pageName({ url: '/staff/editing' }), 'editing');
+  assert.equal(dispatcher.pageName({ url: '/staff/editing/' }), 'editing');
   assert.equal(dispatcher.pageName({ url: '/staff' }), 'dashboard');
   assert.equal(dispatcher.pageName({ url: '/staff/' }), 'dashboard');
   assert.equal(dispatcher.pageName({ url: '/api/staff-pages?page=nope' }), null);
@@ -292,6 +298,7 @@ test('vercel routes serve every staff page through the dispatcher, and the old p
     ['/staff/?', '/api/staff-pages?page=dashboard'],
     ['/staff/sites/?', '/api/staff-pages?page=sites'],
     ['/staff/studio/?', '/api/staff-pages?page=studio'],
+    ['/staff/editing/?', '/api/staff-pages?page=editing'],
     ['/staff/posts/?', '/api/staff-pages?page=posts'],
     ['/staff/clients/?', '/api/staff-pages?page=clients'],
     ['/staff/crm/?', '/api/staff-pages?page=crm'],

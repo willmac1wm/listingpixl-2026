@@ -1,9 +1,9 @@
 // Single entry point for every /staff page (Nov 2026): the dashboard is
-// one page per job — Dashboard, Sites, Photo Editing, Posts, Clients,
-// CRM, Business, Account — but Vercel's Hobby plan allows no more than
-// 12 Serverless Functions per deployment, and one function per page
-// pushed this project to 19 and broke the build
-// (exceeded_serverless_functions_per_deployment). So the eight page
+// one page per job — Dashboard, Sites, Photo Editing, Editing, Posts,
+// Clients, CRM, Business, Account — but Vercel's Hobby plan allows no
+// more than 12 Serverless Functions per deployment, and one function per
+// page pushed this project to 19 and broke the build
+// (exceeded_serverless_functions_per_deployment). So the nine page
 // modules live in api/_pages/ (underscore-prefixed, not functions) and
 // this one function dispatches to them by page name. Behaviour is
 // unchanged: each page module still renders its own section through
@@ -17,6 +17,7 @@ const PAGES = {
   dashboard: require('./_pages/dashboard'),
   sites: require('./_pages/sites'),
   studio: require('./_pages/studio'),
+  editing: require('./_pages/editing'),
   posts: require('./_pages/posts'),
   clients: require('./_pages/clients'),
   crm: require('./_pages/crm'),
@@ -28,6 +29,7 @@ const BY_PATH = {
   '/staff': 'dashboard',
   '/staff/sites': 'sites',
   '/staff/studio': 'studio',
+  '/staff/editing': 'editing',
   '/staff/posts': 'posts',
   '/staff/clients': 'clients',
   '/staff/crm': 'crm',

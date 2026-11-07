@@ -46,6 +46,10 @@
       "dest": "/api/staff-pages?page=studio"
     },
     {
+      "src": "/staff/editing/?",
+      "dest": "/api/staff-pages?page=editing"
+    },
+    {
       "src": "/staff/posts/?",
       "dest": "/api/staff-pages?page=posts"
     },

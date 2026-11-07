@@ -12,6 +12,7 @@
 const { authorized } = require('./_auth');
 const store = require('../lib/private-store');
 const delivery = require('../lib/delivery');
+const editing = require('../lib/editing');
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -31,6 +32,24 @@ async function readShoot(slug) {
 function present(req, shoot) {
   const drafts = shoot.drafts || delivery.deliveryDrafts({ ...shoot, galleryUrl: delivery.galleryUrlFor(req, shoot) });
   return { ...shoot, galleryUrl: delivery.galleryUrlFor(req, shoot), drafts, expired: delivery.galleryExpired(shoot) };
+}
+
+// Editing queue jobs (the little editing section, /staff/editing). Same
+// private-Blob pattern as the shoot records, one file per job. Creating
+// a job or moving its status starts nothing — this is a tracker only.
+function editingJobPath(id) {
+  if (!editing.ID.test(id || '')) throw new HttpError(400, 'Bad editing job id.');
+  return `editing/jobs/${id}.json`;
+}
+
+async function readEditingJob(id) {
+  const rec = await store.read(editingJobPath(id)).catch(() => null);
+  if (!rec) throw new HttpError(404, 'That editing job is not in the queue yet.');
+  return rec;
+}
+
+function presentEditingJob(job) {
+  return { ...job, late: editing.isLate(job) };
 }
 
 const actions = {
@@ -81,9 +100,34 @@ const actions = {
     await store.write(shootPath(next.slug), next, rec.etag);
     return present(req, next);
   },
+
+  async editingJobs() {
+    const list = await store.list('editing/jobs/', { limit: 50 }).catch(() => ({ items: [] }));
+    const out = [];
+    for (const item of list.items) {
+      const rec = await store.read(item.path).catch(() => null);
+      if (rec) out.push(presentEditingJob(rec.value));
+    }
+    return editing.sortJobs(out);
+  },
+
+  async createEditingJob(req, body) {
+    let job;
+    try { job = editing.newEditingJob(body); } catch (e) { throw new HttpError(400, e.message); }
+    await store.create(editingJobPath(job.id), job);
+    return presentEditingJob(job);
+  },
+
+  async moveEditingJob(req, body) {
+    const rec = await readEditingJob(String(body.id || ''));
+    let next;
+    try { next = editing.applyEditingJobEdits(rec.value, body); } catch (e) { throw new HttpError(400, e.message); }
+    await store.write(editingJobPath(next.id), next, rec.etag);
+    return presentEditingJob(next);
+  },
 };
 
-const POSTS = new Set(['createShoot', 'saveShoot', 'regenerateToken', 'addFile']);
+const POSTS = new Set(['createShoot', 'saveShoot', 'regenerateToken', 'addFile', 'createEditingJob', 'moveEditingJob']);
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

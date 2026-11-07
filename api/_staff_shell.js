@@ -1,12 +1,13 @@
 // Shared shell for every /staff page (Nov 2026): the dashboard is split
-// into one page per job — Dashboard, Sites, Photo Editing, Posts, Clients,
-// CRM, Business, Account — like HD Photo Hub, instead of one long scroll.
-// The shell follows HD's pattern: white header with the logo top-left and
-// the top nav top-right (current page underlined), a narrow left sidebar
-// on inner pages, and no sidebar on the Dashboard. The only addition to
-// HD's map is Photo Editing (the Recipe Studio), in the middle of the
-// workflow: shoot -> edit -> deliver. Support is an external link to HD
-// Photo Hub support (support@hdphotohub.com — the address HD itself
+// into one page per job — Dashboard, Sites, Photo Editing, Editing,
+// Posts, Clients, CRM, Business, Account — like HD Photo Hub, instead
+// of one long scroll. The shell follows HD's pattern: white header with
+// the logo top-left and the top nav top-right (current page underlined),
+// a narrow left sidebar on inner pages, and no sidebar on the
+// Dashboard. The additions to HD's map are Photo Editing (the Recipe
+// Studio) and Editing (the light editing queue), both in the middle of
+// the workflow: shoot -> edit -> deliver. Support is an external link to
+// HD Photo Hub support (support@hdphotohub.com — the address HD itself
 // publishes); there is no support page here.
 //
 // Every page gets the same panel design system as the Recipe Studio
@@ -26,6 +27,7 @@ const NAV = [
   ['Dashboard', '/staff'],
   ['Sites', '/staff/sites'],
   ['Photo Editing', '/staff/studio'],
+  ['Editing', '/staff/editing'],
   ['Posts', '/staff/posts'],
   ['Clients', '/staff/clients'],
   ['CRM', '/staff/crm'],
