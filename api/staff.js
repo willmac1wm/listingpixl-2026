@@ -13,6 +13,7 @@ const { requireStaff } = require('./_auth');
 const businessLinks = require('../config/business-links.json');
 const shoots = require('./_shoots_ui');
 const recipeStudio = require('./_recipes_ui');
+const aiClips = require('./_clips_ui');
 const deliveryCrm = require('./_delivery_ui');
 
 const SECTIONS = [
@@ -106,6 +107,7 @@ function page() {
     .dash-todo li { border: 1px dashed var(--card-border, #ccc); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.88rem; color: var(--muted, #666); }
 ${shoots.css}
 ${recipeStudio.css}
+${aiClips.css}
 ${deliveryCrm.css}
     .dash-foot { margin-top: 3rem; font-size: 0.85rem; color: var(--muted, #666); }
   </style>
@@ -118,6 +120,7 @@ ${deliveryCrm.css}
     </div>
 ${shoots.html}
 ${recipeStudio.html}
+${aiClips.html}
 ${deliveryCrm.html}
     ${sections}
     <section class="dash-section">
@@ -132,6 +135,7 @@ ${deliveryCrm.html}
   </main>
   <script>${shoots.script}
 ${recipeStudio.script}
+${aiClips.script}
 ${deliveryCrm.script}</script>
 </body>
 </html>`;

@@ -50,6 +50,10 @@
       "dest": "/api/staff-recipes"
     },
     {
+      "src": "/staff/clips",
+      "dest": "/api/staff-clips"
+    },
+    {
       "src": "/staff/delivery",
       "dest": "/api/staff-delivery"
     },
@@ -76,6 +80,9 @@
       "maxDuration": 60
     },
     "api/staff-recipes.js": {
+      "maxDuration": 60
+    },
+    "api/staff-clips.js": {
       "maxDuration": 60
     },
     "api/staff-delivery.js": {
