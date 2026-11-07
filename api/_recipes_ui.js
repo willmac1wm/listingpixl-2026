@@ -256,14 +256,14 @@ const html = `
           <div class="rc-panel-head">
             <div class="rc-panel-title">
               <h3 class="rc-step"><span class="rc-step-num">03</span> Run batch</h3>
-              <p class="rc-step-sub">$35 per edited photo. You confirm before anything is sent.</p>
+              <p class="rc-step-sub">You confirm before anything is sent.</p>
             </div>
           </div>
           <div class="rc-panel-body">
             <label class="rc-gate"><input type="checkbox" id="rc-landscaped"> <span>These photos are approved Virtually-Landscaped images (required for twilight — landscape first, twilight second)</span></label>
             <div class="rc-run-actions">
-              <button class="rc-btn pink" id="rc-run" type="button">Run batch — $35 per photo</button>
-              <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first — $35</button>
+              <button class="rc-btn pink" id="rc-run" type="button">Run batch</button>
+              <button class="rc-btn ghost" id="rc-test-one" type="button">Test one angle first</button>
             </div>
             <p class="rc-msg" id="rc-status" role="status"></p>
             <p class="rc-msg rc-err" id="rc-error" role="alert"></p>
@@ -629,21 +629,8 @@ function client() {
     });
   });
 
-  // $35 per edited photo — Listing Pixl pricing for staging, landscape
-  // and twilight alike. The Run button always shows the batch total so
-  // the cost is visible before anything is sent.
-  const PRICE_PER_PHOTO = 35;
-  function angleCount() { return [...document.querySelectorAll('.rc-angle')].map(i => i.files[0]).filter(Boolean).length; }
-  function updateRunLabel() {
-    const n = angleCount();
-    $('rc-run').textContent = n > 0
-      ? `Run batch — ${n} angle${n === 1 ? '' : 's'} × $35 = $${n * PRICE_PER_PHOTO}`
-      : 'Run batch — $35 per photo';
-    $('rc-test-one').textContent = 'Test one angle first — $35';
-  }
-  [...document.querySelectorAll('.rc-angle')].forEach(i => i.addEventListener('change', updateRunLabel));
-  updateRunLabel();
-
+  // The Run buttons are plain labels — no price on them. The Studio is
+  // staff-only and the team already knows the rate; the buttons just run.
   // Results accumulate in the step 04 grid — a new run never
   // wipes the previous one. Each run remembers its space, style and time.
   let runs = [];
@@ -654,7 +641,7 @@ function client() {
       return err(new Error('Twilight runs only on approved Virtually-Landscaped photos. Tick the box only if the photos are approved Virtually-Landscaped images — landscape first, twilight second.'));
     }
     const count = [...document.querySelectorAll('.rc-angle')].map(i => i.files[0]).filter(Boolean).length;
-    const costNote = `This sends ${onlyFirst ? 1 : count} paid OpenAI image call${(onlyFirst ? 1 : count) === 1 ? '' : 's'} (${recipe.price_anchor} per edited photo). Run it?`;
+    const costNote = `This sends ${onlyFirst ? 1 : count} paid OpenAI image call${(onlyFirst ? 1 : count) === 1 ? '' : 's'}. Run it?`;
     if (!confirm(costNote)) return;
     try {
       status(onlyFirst ? 'Running one angle…' : 'Running the batch — angle 1 first to set the look, then the rest matched to it…');

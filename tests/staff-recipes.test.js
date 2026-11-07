@@ -591,12 +591,13 @@ test('Recipe Studio layout: full-width step panels, numbered steps 01–04, batc
   assert.match(ui.html, /rc-model-toggle/);
   assert.doesNotMatch(ui.script, /rc-pick-category|rc-style-cards|rc-pick-back/);
   assert.doesNotMatch(ui.html, /<select[^>]*rc-recipe/);
-  // Cost visible where the user commits: $35 per photo × angles.
-  assert.match(ui.script, /const PRICE_PER_PHOTO = 35;/);
-  assert.match(ui.script, /Run batch — \$\{n\} angle\$\{n === 1 \? '' : 's'\} × \$35 = \$\$\{n \* PRICE_PER_PHOTO\}/);
-  assert.match(ui.html, /Run batch — \$35 per photo/);
-  assert.match(ui.script, /Test one angle first — \$35/);
-  assert.doesNotMatch(ui.script, /PRICE_PER_PHOTO = (?!35)\d+/);
+  // No price on the Run buttons — the Studio is staff-only and the team
+  // already knows the rate. The buttons are plain labels at any angle count.
+  assert.match(ui.html, /id="rc-run" type="button">Run batch<\//);
+  assert.match(ui.html, /id="rc-test-one" type="button">Test one angle first<\//);
+  assert.match(ui.html, /You confirm before anything is sent\./);
+  assert.doesNotMatch(ui.html, /\$35/);
+  assert.doesNotMatch(ui.script, /\$35|PRICE_PER_PHOTO|price_anchor|updateRunLabel/);
   // Results accumulate in step 04 instead of replacing each other, each card
   // a Before/After pair labelled with space, style badge and run time.
   assert.match(ui.script, /let runs = \[\];/);
